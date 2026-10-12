@@ -1086,7 +1086,7 @@
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3">
           <label class="text-xs text-slate-400">Time range<select id="analytics-range" onchange="renderAnalytics()" class="field-input mt-1"><option value="all">All completed tests</option><option value="30">Last 30 days</option><option value="90">Last 90 days</option><option value="7tests">Last 7 Tests</option><option value="15tests">Last 15 Tests</option></select></label>
-          <label class="text-xs text-slate-400">Trend metric<select id="analytics-metric" onchange="renderAnalytics()" class="field-input mt-1"><option value="percentage">Score percentage</option><option value="accuracy">Answer accuracy</option><option value="score">Marks scored</option></select></label>
+          <label class="text-xs text-slate-400">Trend metric<select id="analytics-metric" onchange="renderAnalytics()" class="field-input mt-1"><option value="percentage">Score percentage</option><option value="accuracy">Answer accuracy</option><option value="percentile">Percentile (%)</option></select></label>
           <div id="analytics-data-guidance" class="sm:col-span-2 rounded-lg border border-slate-800 bg-slate-950/50 p-3 text-xs text-slate-400"></div>
         </div>
         <div id="analytics-summary" class="grid grid-cols-2 lg:grid-cols-5 gap-3"></div>
@@ -1856,7 +1856,7 @@
         <label class="text-slate-300">Number of questions<input id="test-input-count" type="number" min="1" max="1000" value="90" required class="field-input mt-1"></label><label class="text-slate-300">Maximum marks<input id="test-input-max-marks" type="number" min="1" step="0.25" value="300" required class="field-input mt-1"></label></div>
         <fieldset class="rounded-lg border border-slate-700 p-3"><legend class="px-1 font-semibold text-slate-200">Subjects included</legend><div class="flex flex-wrap gap-4"><label class="flex items-center gap-2"><input name="test-subject" value="physics" type="checkbox" checked class="accent-blue-500">Physics</label><label class="flex items-center gap-2"><input name="test-subject" value="chemistry" type="checkbox" checked class="accent-green-500">Chemistry</label><label class="flex items-center gap-2"><input name="test-subject" value="maths" type="checkbox" checked class="accent-amber-500">Mathematics</label></div></fieldset>
         <fieldset class="rounded-lg border border-slate-700 p-3"><legend class="px-1 font-semibold text-slate-200">Marking scheme</legend><div class="grid grid-cols-2 sm:grid-cols-4 gap-3"><label class="text-slate-400">Correct marks<input id="test-input-correct-marks" type="number" step="0.25" value="4" class="field-input mt-1"></label><label class="text-slate-400">Wrong answer penalty<input id="test-input-negative-marks" type="number" min="0" step="0.25" value="1" class="field-input mt-1"></label><label class="text-slate-400">Partial marks default<input id="test-input-partial-marks" type="number" step="0.25" value="0" class="field-input mt-1"></label><label class="text-slate-400">Unattempted marks<input id="test-input-unattempted-marks" type="number" step="0.25" value="0" class="field-input mt-1"></label></div></fieldset>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3"><label class="text-slate-300">Status<select id="test-input-status" class="field-input mt-1"><option>Planned</option><option>In Progress</option><option>Completed</option><option>Analyzed</option><option>Archived</option></select></label><label class="text-slate-300">Notes<textarea id="test-input-notes" rows="2" class="field-input mt-1"></textarea></label></div>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3"><label class="text-slate-300">Status<select id="test-input-status" class="field-input mt-1"><option>Planned</option><option>In Progress</option><option>Completed</option><option>Analyzed</option><option>Archived</option></select></label><label class="text-slate-300">Percentile (%)<input id="test-input-percentile" type="number" min="0" max="100" step="0.01" class="field-input mt-1" placeholder="e.g. 98.75" aria-label="Test percentile"></label><label class="text-slate-300">Notes<textarea id="test-input-notes" rows="2" class="field-input mt-1"></textarea></label></div>
         <div id="test-form-error" class="hidden rounded border border-rose-800 bg-rose-950/40 p-2 text-rose-200" role="alert"></div><div class="flex justify-end gap-2 border-t border-slate-800 pt-3"><button type="button" onclick="closeTestForm()" class="rounded-lg bg-slate-800 px-4 py-2 text-slate-300">Cancel</button><button type="submit" class="rounded-lg bg-blue-700 px-4 py-2 font-semibold text-white">Save Test</button></div>
       </form>
     </div>
@@ -1870,6 +1870,208 @@
     </div>
   </div>
   <div id="test-delete-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[70] hidden flex items-center justify-center p-4"><div class="card-base w-full max-w-md p-5 bg-[#111827]"><h3 class="font-bold text-white">Delete this test?</h3><p id="test-delete-copy" class="mt-2 text-sm text-slate-300"></p><div class="mt-5 flex justify-end gap-2"><button onclick="closeTestDelete()" class="rounded bg-slate-800 px-3 py-2 text-xs">Cancel</button><button onclick="confirmTestDelete()" class="rounded bg-rose-700 px-3 py-2 text-xs font-semibold">Delete test</button></div></div></div>
+
+  <!-- Bulk Test Result Entry Modal -->
+  <div id="test-bulk-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[60] hidden flex items-center justify-center p-2 sm:p-4">
+    <div class="card-base w-full max-w-6xl max-h-[96vh] flex flex-col p-4 sm:p-6 bg-[#111827] border border-slate-700 shadow-2xl overflow-hidden">
+      <!-- Modal Header -->
+      <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-700 pb-3 shrink-0">
+        <div class="min-w-0">
+          <div class="flex items-center gap-2">
+            <h3 id="bulk-modal-title" class="truncate font-bold text-lg text-white">Bulk Result Entry</h3>
+            <span id="bulk-modal-badge" class="rounded bg-blue-950 border border-blue-700/60 px-2 py-0.5 text-[10px] text-blue-300 font-mono"></span>
+          </div>
+          <p id="bulk-modal-subtitle" class="mt-0.5 text-xs text-slate-400"></p>
+        </div>
+        <div class="flex items-center gap-3">
+          <div class="flex items-center gap-1.5 bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1">
+            <label for="bulk-input-percentile" class="text-[11px] text-slate-300 font-medium">Percentile (%):</label>
+            <input id="bulk-input-percentile" type="number" min="0" max="100" step="0.01" oninput="updateBulkLiveKPIs()" class="w-20 bg-slate-950 border border-slate-700 rounded px-1.5 py-0.5 text-xs text-white text-right focus:border-blue-500 focus:outline-none" placeholder="0.00">
+          </div>
+          <button type="button" onclick="closeBulkEntryModal()" class="rounded p-1.5 text-slate-400 hover:text-white" aria-label="Close bulk entry modal">✕</button>
+        </div>
+      </div>
+
+      <!-- Live Metric Strip -->
+      <div id="bulk-live-strip" class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-7 gap-2 py-2.5 px-3 my-2.5 bg-slate-950/70 border border-slate-800 rounded-lg text-center text-xs shrink-0">
+        <div><div class="text-[10px] text-slate-500 uppercase">Questions</div><div id="bulk-kpi-total" class="font-bold text-white">0</div></div>
+        <div><div class="text-[10px] text-slate-500 uppercase">Correct</div><div id="bulk-kpi-correct" class="font-bold text-emerald-400">0</div></div>
+        <div><div class="text-[10px] text-slate-500 uppercase">Wrong</div><div id="bulk-kpi-wrong" class="font-bold text-rose-400">0</div></div>
+        <div><div class="text-[10px] text-slate-500 uppercase">Unattempted</div><div id="bulk-kpi-unattempted" class="font-bold text-slate-400">0</div></div>
+        <div><div class="text-[10px] text-slate-500 uppercase">Score</div><div id="bulk-kpi-score" class="font-bold text-blue-300">0 / 0</div></div>
+        <div><div class="text-[10px] text-slate-500 uppercase">Accuracy</div><div id="bulk-kpi-accuracy" class="font-bold text-amber-300">—</div></div>
+        <div><div class="text-[10px] text-slate-500 uppercase">Mistakes Tagged</div><div id="bulk-kpi-mistakes" class="font-bold text-purple-300">0</div></div>
+      </div>
+
+      <!-- Tab Buttons -->
+      <div class="flex items-center gap-2 border-b border-slate-800 pb-2 mb-3 shrink-0">
+        <button id="bulk-tab-btn-grid" type="button" onclick="switchBulkMethod('grid')" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-blue-700 text-white">Method A: Bulk Question Grid</button>
+        <button id="bulk-tab-btn-paste" type="button" onclick="switchBulkMethod('paste')" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 text-slate-300 hover:text-white">Method B: Paste / Import Results</button>
+        <button id="bulk-tab-btn-summary" type="button" onclick="switchBulkMethod('summary')" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 text-slate-300 hover:text-white">Method C: Quick Summary Entry</button>
+      </div>
+
+      <!-- TAB A: GRID -->
+      <div id="bulk-tab-grid" class="flex-1 flex flex-col min-h-0 overflow-hidden space-y-3">
+        <!-- Grid Toolbar -->
+        <div class="flex flex-wrap items-center justify-between gap-2 shrink-0">
+          <div class="flex flex-wrap items-center gap-2">
+            <select id="bulk-grid-filter-subject" onchange="renderBulkGrid()" class="field-input text-xs py-1 px-2">
+              <option value="all">All Subjects</option>
+              <option value="physics">Physics</option>
+              <option value="chemistry">Chemistry</option>
+              <option value="maths">Mathematics</option>
+            </select>
+            <select id="bulk-grid-filter-status" onchange="renderBulkGrid()" class="field-input text-xs py-1 px-2">
+              <option value="all">All Statuses</option>
+              <option value="Correct">Correct</option>
+              <option value="Incorrect">Wrong</option>
+              <option value="Unattempted">Unattempted</option>
+            </select>
+            <label class="flex items-center gap-1.5 rounded border border-slate-700 bg-slate-900/60 px-2 py-1 text-xs text-slate-300 cursor-pointer">
+              <input id="bulk-grid-filter-attention" type="checkbox" onchange="renderBulkGrid()" class="accent-rose-500">
+              Needs Attention (<span id="bulk-grid-attention-count">0</span>)
+            </label>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="text-[10px] text-slate-400 hidden sm:inline">Shortcuts: <kbd class="px-1 py-0.5 bg-slate-800 rounded">C</kbd> Correct · <kbd class="px-1 py-0.5 bg-slate-800 rounded">W</kbd> Wrong · <kbd class="px-1 py-0.5 bg-slate-800 rounded">U</kbd> Unattempted</span>
+            <button type="button" onclick="bulkSetAllStatus('Unattempted')" class="rounded border border-slate-700 px-2 py-1 text-[11px] text-slate-400 hover:text-slate-200">Reset All to U</button>
+          </div>
+        </div>
+
+        <!-- Scrollable Table Container -->
+        <div class="flex-1 overflow-y-auto border border-slate-800 rounded-lg bg-slate-950/40">
+          <table class="w-full text-left text-xs text-slate-300 border-collapse">
+            <thead class="sticky top-0 bg-[#0d1424] text-[10px] uppercase text-slate-400 z-10 border-b border-slate-800">
+              <tr>
+                <th class="p-2 w-12 text-center">Q#</th>
+                <th class="p-2 w-28">Subject</th>
+                <th class="p-2 w-44">Status</th>
+                <th class="p-2 min-w-[160px]">Topic / Chapter</th>
+                <th class="p-2 min-w-[200px]">Mistake Type (for Wrong)</th>
+                <th class="p-2 min-w-[150px]">Question Notes</th>
+              </tr>
+            </thead>
+            <tbody id="bulk-grid-tbody" class="divide-y divide-slate-800/60"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- TAB B: PASTE / IMPORT -->
+      <div id="bulk-tab-paste" class="flex-1 flex flex-col min-h-0 overflow-y-auto space-y-3 hidden">
+        <div class="rounded-lg border border-slate-800 bg-slate-950/60 p-3 text-xs text-slate-300 space-y-1">
+          <p class="font-semibold text-white">Accepted Formats:</p>
+          <ul class="list-disc list-inside space-y-0.5 text-slate-400 text-[11px]">
+            <li><b class="text-slate-200">Compact sequence:</b> E.g. <code class="text-blue-300">C W U C W C C ...</code> (separated by spaces, commas, or newlines)</li>
+            <li><b class="text-slate-200">Spreadsheet rows (TSV):</b> Tab-separated rows copied from Excel or Google Sheets</li>
+            <li><b class="text-slate-200">CSV format:</b> Columns: <code class="text-blue-300">Question, Subject, Status, Topic, Mistake Type, Notes</code></li>
+          </ul>
+        </div>
+        <div class="flex items-center justify-between gap-2">
+          <span class="text-xs font-semibold text-white">Input Data</span>
+          <div class="flex items-center gap-2">
+            <input type="file" id="bulk-paste-file-input" accept=".csv,.tsv,.txt" class="hidden" onchange="handleBulkFileImport(event)">
+            <button type="button" onclick="document.getElementById('bulk-paste-file-input').click()" class="rounded border border-slate-700 bg-slate-900 px-2.5 py-1 text-xs text-slate-300 hover:bg-slate-800">📁 Upload CSV / TSV File</button>
+            <button type="button" onclick="document.getElementById('bulk-paste-textarea').value = ''; document.getElementById('bulk-paste-error-box').classList.add('hidden'); document.getElementById('bulk-paste-preview-box').classList.add('hidden');" class="rounded border border-slate-700 px-2.5 py-1 text-xs text-slate-400 hover:text-slate-200">Clear</button>
+          </div>
+        </div>
+        <textarea id="bulk-paste-textarea" rows="6" class="field-input font-mono text-xs w-full" placeholder="Paste data here... (e.g. C W U C W C or TSV rows)"></textarea>
+        <div>
+          <button type="button" onclick="validateBulkPasteData()" class="rounded-lg bg-blue-700 px-4 py-2 text-xs font-semibold text-white hover:bg-blue-600">Validate & Preview Results</button>
+        </div>
+        <div id="bulk-paste-error-box" class="hidden rounded-lg border border-rose-800 bg-rose-950/40 p-3 text-xs text-rose-200 space-y-1"></div>
+        <div id="bulk-paste-preview-box" class="hidden space-y-3">
+          <div id="bulk-paste-preview-kpi" class="rounded-lg border border-emerald-800 bg-emerald-950/40 p-3 text-xs text-emerald-200"></div>
+          <div class="max-h-60 overflow-y-auto border border-slate-800 rounded-lg">
+            <table class="w-full text-left text-xs text-slate-300 border-collapse">
+              <thead class="sticky top-0 bg-[#0d1424] text-[10px] uppercase text-slate-400 border-b border-slate-800">
+                <tr><th class="p-2">Q#</th><th class="p-2">Subject</th><th class="p-2">Status</th><th class="p-2">Topic</th><th class="p-2">Mistake Type</th><th class="p-2">Notes</th></tr>
+              </thead>
+              <tbody id="bulk-paste-preview-tbody" class="divide-y divide-slate-800"></tbody>
+            </table>
+          </div>
+          <div class="flex items-center gap-2">
+            <button type="button" onclick="applyBulkPasteToGrid()" class="rounded-lg bg-blue-700 px-4 py-2 text-xs font-semibold text-white">Apply to Grid (Method A) & Edit</button>
+            <button type="button" onclick="proceedToConfirmFromPaste()" class="rounded-lg bg-emerald-700 px-4 py-2 text-xs font-semibold text-white">Save Results Directly</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB C: QUICK SUMMARY -->
+      <div id="bulk-tab-summary" class="flex-1 flex flex-col min-h-0 overflow-y-auto space-y-4 hidden">
+        <div class="rounded-lg border border-indigo-800 bg-indigo-950/30 p-3 text-xs text-indigo-200">
+          <p class="font-semibold">Quick Summary Mode</p>
+          <p class="mt-0.5 text-indigo-300/80">Record overall test outcomes without entering individual questions. Question-level mistake analysis will not be recorded for this test.</p>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div>
+            <label class="text-xs text-slate-300">Total Questions (Configured)</label>
+            <input id="bulk-summary-total" type="number" class="field-input mt-1 bg-slate-900/50" disabled>
+          </div>
+          <div>
+            <label class="text-xs text-slate-300">Correct Answers *</label>
+            <input id="bulk-summary-correct" type="number" min="0" value="0" oninput="handleBulkSummaryInput()" class="field-input mt-1">
+          </div>
+          <div>
+            <label class="text-xs text-slate-300">Incorrect / Wrong Answers *</label>
+            <input id="bulk-summary-incorrect" type="number" min="0" value="0" oninput="handleBulkSummaryInput()" class="field-input mt-1">
+          </div>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div>
+            <label class="text-xs text-slate-300">Unattempted Questions</label>
+            <input id="bulk-summary-unattempted" type="number" min="0" value="0" oninput="handleBulkSummaryInput(true)" class="field-input mt-1">
+          </div>
+          <div>
+            <label class="flex items-center justify-between text-xs text-slate-300">
+              <span>Score</span>
+              <label class="text-[10px] text-blue-400 flex items-center gap-1 cursor-pointer"><input id="bulk-summary-override-toggle" type="checkbox" onchange="toggleBulkSummaryOverride()" class="accent-blue-500"> Custom Override</label>
+            </label>
+            <input id="bulk-summary-score" type="number" step="0.25" class="field-input mt-1 bg-slate-900/50" disabled>
+          </div>
+          <div>
+            <label class="text-xs text-slate-300">Percentile (%)</label>
+            <input id="bulk-summary-percentile" type="number" min="0" max="100" step="0.01" class="field-input mt-1" placeholder="e.g. 98.75">
+          </div>
+        </div>
+        <div id="bulk-summary-reconcile-warn" class="hidden rounded border border-amber-800 bg-amber-950/40 p-2.5 text-xs text-amber-200"></div>
+        <div>
+          <label class="text-xs text-slate-300">Test Notes (Optional)</label>
+          <textarea id="bulk-summary-notes" rows="2" class="field-input mt-1" placeholder="Summary observations, pacing notes, etc."></textarea>
+        </div>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="flex items-center justify-between border-t border-slate-700 pt-3 mt-3 shrink-0">
+        <div id="bulk-footer-status" class="text-xs text-slate-400 truncate max-w-md"></div>
+        <div class="flex items-center gap-2">
+          <button type="button" onclick="closeBulkEntryModal()" class="rounded-lg bg-slate-800 px-4 py-2 text-xs text-slate-300 hover:text-white">Cancel</button>
+          <button id="bulk-footer-submit" type="button" onclick="prepareBulkConfirmation()" class="rounded-lg bg-blue-700 hover:bg-blue-600 px-4 py-2 text-xs font-semibold text-white">Review & Save Results</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- In-App Confirmation Modal for Bulk Results (No browser alert/confirm) -->
+  <div id="test-bulk-confirm-modal" class="fixed inset-0 bg-black/85 backdrop-blur-sm z-[70] hidden flex items-center justify-center p-3 sm:p-5">
+    <div class="card-base w-full max-w-lg p-5 bg-[#111827] border border-slate-700 shadow-2xl space-y-4">
+      <div class="border-b border-slate-700 pb-3">
+        <h3 class="font-bold text-white text-base">Confirm & Save Test Results</h3>
+        <p id="bulk-confirm-subtitle" class="text-xs text-slate-400 mt-1"></p>
+      </div>
+
+      <div id="bulk-confirm-kpis" class="grid grid-cols-2 sm:grid-cols-3 gap-2 bg-slate-950/60 p-3 rounded-lg border border-slate-800 text-xs"></div>
+
+      <div id="bulk-confirm-warnings" class="space-y-2 hidden"></div>
+
+      <div class="flex items-center justify-end gap-2 border-t border-slate-800 pt-3">
+        <button type="button" onclick="closeBulkConfirmModal()" class="rounded-lg bg-slate-800 px-3.5 py-2 text-xs text-slate-300 hover:text-white">Go Back & Edit</button>
+        <button type="button" onclick="commitBulkResults()" class="rounded-lg bg-emerald-700 hover:bg-emerald-600 px-4 py-2 text-xs font-semibold text-white">Confirm & Save Results</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Datalist for Syllabus Topics -->
+  <datalist id="bulk-syllabus-topics"></datalist>
 
   <script>
     /**
@@ -2076,6 +2278,27 @@
       };
     }
 
+    function canonicalizeMistakeCategory(cat) {
+      if (!cat || typeof cat !== 'string') return '';
+      const trimmed = cat.trim();
+      if (!trimmed) return '';
+      if (MISTAKE_CATEGORIES.includes(trimmed)) return trimmed;
+      const lower = trimmed.toLowerCase();
+      const directMatch = MISTAKE_CATEGORIES.find(c => c.toLowerCase() === lower);
+      if (directMatch) return directMatch;
+      if (lower.includes('calc')) return 'Calculation / Execution';
+      if (lower.includes('concept')) return 'Conceptual Gap';
+      if (lower.includes('formula') || lower.includes('recall')) return 'Formula / Fact Recall';
+      if (lower.includes('misread') || lower.includes('interpret')) return 'Misread / Misinterpretation';
+      if (lower.includes('careless') || lower.includes('silly')) return 'Careless / Silly Mistake';
+      if (lower.includes('time')) return 'Time Management';
+      if (lower.includes('approach') || lower.includes('method') || lower.includes('wrong')) return 'Wrong Approach / Method';
+      if (lower.includes('partially') || lower.includes('incomplete')) return 'Incomplete / Partially Solved';
+      if (lower.includes('selection') || lower.includes('decision') || lower.includes('guess')) return 'Question Selection / Decision Error';
+      if (lower.includes('retention') || lower.includes('revision')) return 'Revision / Retention Failure';
+      return trimmed;
+    }
+
     /**
      * Normalizes raw storage data safely (§26, §27)
      * Preserves valid tasks, goals, targets, and settings across version upgrades
@@ -2277,21 +2500,34 @@
         const createdAt = String(test.createdAt || new Date().toISOString());
         const id = String(test.id || `test-${index}-${Math.random().toString(36).slice(2, 8)}`).replace(/[^a-zA-Z0-9_-]/g, '') || `test-${index}`;
         const marking = test.markingScheme && typeof test.markingScheme === 'object' ? test.markingScheme : {};
-        const questions = Array.isArray(test.questions) ? test.questions.filter(question => question && typeof question === 'object').map((question, qIndex) => ({
-          id: String(question.id || `${id}-q${qIndex + 1}`).replace(/[^a-zA-Z0-9_-]/g, '') || `${id}-q${qIndex + 1}`,
-          questionNumber: String(question.questionNumber || qIndex + 1),
-          subject: SUBJECT_KEYS.includes(question.subject) ? question.subject : 'physics',
-          chapter: String(question.chapter || ''), topic: String(question.topic || ''),
-          questionType: String(question.questionType || 'Single correct'), difficulty: ['Easy', 'Medium', 'Hard'].includes(question.difficulty) ? question.difficulty : 'Medium',
-          questionText: String(question.questionText || ''), userAnswer: String(question.userAnswer || ''), correctAnswer: String(question.correctAnswer || ''),
-          status: QUESTION_STATUSES.includes(question.status) ? question.status : 'Unattempted',
-          maxMarks: Math.max(0, Number(question.maxMarks) || Number(marking.correctMarks) || 0),
-          marksAwarded: question.marksAwarded === '' || question.marksAwarded === null || question.marksAwarded === undefined || !Number.isFinite(Number(question.marksAwarded)) ? null : Number(question.marksAwarded),
-          timeSpentMinutes: Math.max(0, Number(question.timeSpentMinutes) || 0), diagnosticType: String(question.diagnosticType || ''), diagnostic: String(question.diagnostic || ''),
-          mistakeId: question.mistakeId ? String(question.mistakeId).replace(/[^a-zA-Z0-9_-]/g, '') : null,
-          createdAt: String(question.createdAt || createdAt), updatedAt: String(question.updatedAt || createdAt)
-        })) : [];
+        const questions = Array.isArray(test.questions) ? test.questions.filter(question => question && typeof question === 'object').map((question, qIndex) => {
+          const mistakeCategory = canonicalizeMistakeCategory(question.mistakeCategory || question.diagnosticType);
+          return {
+            id: String(question.id || `${id}-q${qIndex + 1}`).replace(/[^a-zA-Z0-9_-]/g, '') || `${id}-q${qIndex + 1}`,
+            questionNumber: String(question.questionNumber || qIndex + 1),
+            subject: SUBJECT_KEYS.includes(question.subject) ? question.subject : 'physics',
+            chapter: String(question.chapter || ''), topic: String(question.topic || ''),
+            questionType: String(question.questionType || 'Single correct'), difficulty: ['Easy', 'Medium', 'Hard'].includes(question.difficulty) ? question.difficulty : 'Medium',
+            questionText: String(question.questionText || ''), userAnswer: String(question.userAnswer || ''), correctAnswer: String(question.correctAnswer || ''),
+            status: QUESTION_STATUSES.includes(question.status) ? question.status : 'Unattempted',
+            maxMarks: Math.max(0, Number(question.maxMarks) || Number(marking.correctMarks) || 0),
+            marksAwarded: question.marksAwarded === '' || question.marksAwarded === null || question.marksAwarded === undefined || !Number.isFinite(Number(question.marksAwarded)) ? null : Number(question.marksAwarded),
+            timeSpentMinutes: Math.max(0, Number(question.timeSpentMinutes) || 0), diagnosticType: String(question.diagnosticType || mistakeCategory || ''), diagnostic: String(question.diagnostic || ''),
+            mistakeCategory,
+            mistakeId: question.mistakeId ? String(question.mistakeId).replace(/[^a-zA-Z0-9_-]/g, '') : null,
+            createdAt: String(question.createdAt || createdAt), updatedAt: String(question.updatedAt || createdAt)
+          };
+        }) : [];
         const subjects = Array.isArray(test.subjects) ? [...new Set(test.subjects.filter(subject => SUBJECT_KEYS.includes(subject)))] : [...SUBJECT_KEYS];
+        const rawPct = test.percentile;
+        const percentile = (rawPct !== null && rawPct !== undefined && rawPct !== '' && Number.isFinite(Number(rawPct)) && Number(rawPct) >= 0 && Number(rawPct) <= 100)
+          ? Math.round(Number(rawPct) * 1000) / 1000
+          : null;
+        const resultMode = test.resultMode === 'summary' ? 'summary' : 'question_level';
+        const summaryScore = test.summaryScore !== null && test.summaryScore !== undefined && test.summaryScore !== '' && Number.isFinite(Number(test.summaryScore)) ? Number(test.summaryScore) : null;
+        const summaryCorrect = test.summaryCorrect !== null && test.summaryCorrect !== undefined && test.summaryCorrect !== '' && Number.isFinite(Number(test.summaryCorrect)) ? Math.max(0, Math.floor(Number(test.summaryCorrect))) : null;
+        const summaryIncorrect = test.summaryIncorrect !== null && test.summaryIncorrect !== undefined && test.summaryIncorrect !== '' && Number.isFinite(Number(test.summaryIncorrect)) ? Math.max(0, Math.floor(Number(test.summaryIncorrect))) : null;
+        const summaryUnattempted = test.summaryUnattempted !== null && test.summaryUnattempted !== undefined && test.summaryUnattempted !== '' && Number.isFinite(Number(test.summaryUnattempted)) ? Math.max(0, Math.floor(Number(test.summaryUnattempted))) : null;
         return {
           id, title: String(test.title || 'Untitled Test'), testType: TEST_TYPES.includes(test.testType) ? test.testType : 'Other',
           testDate: /^\d{4}-\d{2}-\d{2}$/.test(String(test.testDate || '')) ? String(test.testDate) : getTodayLocalDate(),
@@ -2299,6 +2535,7 @@
           maximumMarks: Math.max(1, Number(test.maximumMarks) || 300),
           markingScheme: { correctMarks: Number.isFinite(Number(marking.correctMarks)) ? Number(marking.correctMarks) : 4, negativeMarks: Math.max(0, Number(marking.negativeMarks) || 0), partialMarks: Number(marking.partialMarks) || 0, unattemptedMarks: Number(marking.unattemptedMarks) || 0 },
           subjects: subjects.length ? subjects : [...SUBJECT_KEYS], status: TEST_STATUSES.includes(test.status) ? test.status : 'Planned',
+          percentile, resultMode, summaryScore, summaryCorrect, summaryIncorrect, summaryUnattempted,
           notes: String(test.notes || ''), questions, createdAt, updatedAt: String(test.updatedAt || createdAt), completedAt: test.completedAt ? String(test.completedAt) : null, analyzedAt: test.analyzedAt ? String(test.analyzedAt) : null,
           archivedAt: test.status === 'Archived' && test.archivedAt ? String(test.archivedAt) : null,
           archivedFromStatus: TEST_STATUSES.includes(test.archivedFromStatus) && test.archivedFromStatus !== 'Archived' ? test.archivedFromStatus : null
@@ -2317,7 +2554,7 @@
           const subjects = Array.isArray(legacyUpcomingTest.subjects) ? [...new Set(legacyUpcomingTest.subjects.map(value => String(value).toLowerCase()).map(value => value === 'mathematics' ? 'maths' : value).filter(value => SUBJECT_KEYS.includes(value)))] : [...SUBJECT_KEYS];
           const status = TEST_STATUSES.includes(legacyUpcomingTest.status) && legacyUpcomingTest.status !== 'Archived' ? legacyUpcomingTest.status : 'Planned';
           const now = new Date().toISOString();
-          tests.unshift({ id: legacyId, title: String(legacyUpcomingTest.name || 'Upcoming test'), testType: TEST_TYPES.includes(legacyUpcomingTest.testType) ? legacyUpcomingTest.testType : 'Other', testDate, durationMinutes: Math.max(1, Number(legacyUpcomingTest.duration) || 180), totalQuestions: 1, maximumMarks: Math.max(1, Number(legacyUpcomingTest.maxMarks) || 300), markingScheme: { correctMarks: 4, negativeMarks: 0, partialMarks: 0, unattemptedMarks: 0 }, subjects: subjects.length ? subjects : [...SUBJECT_KEYS], status, notes: String(legacyUpcomingTest.syllabus || ''), questions: [], createdAt: now, updatedAt: now, completedAt: null, analyzedAt: null });
+          tests.unshift({ id: legacyId, title: String(legacyUpcomingTest.name || 'Upcoming test'), testType: TEST_TYPES.includes(legacyUpcomingTest.testType) ? legacyUpcomingTest.testType : 'Other', testDate, durationMinutes: Math.max(1, Number(legacyUpcomingTest.duration) || 180), totalQuestions: 1, maximumMarks: Math.max(1, Number(legacyUpcomingTest.maxMarks) || 300), markingScheme: { correctMarks: 4, negativeMarks: 0, partialMarks: 0, unattemptedMarks: 0 }, subjects: subjects.length ? subjects : [...SUBJECT_KEYS], status, percentile: null, resultMode: 'question_level', summaryScore: null, summaryCorrect: null, summaryIncorrect: null, summaryUnattempted: null, notes: String(legacyUpcomingTest.syllabus || ''), questions: [], createdAt: now, updatedAt: now, completedAt: null, analyzedAt: null });
         }
       }
 
@@ -5271,6 +5508,29 @@ showToast(`Target achieved! "${goal.title}"`, 'success');
       return Number(test.markingScheme.partialMarks) || 0;
     }
     function calculateTestMetrics(test) {
+      if (!test) return { score: 0, accuracy: null, percentage: null, attempted: 0, correct: 0, incorrect: 0, partial: 0, unattempted: 0, time: 0, averageTime: null, marksLost: 0, questions: 0, isSummaryOnly: false, percentile: null };
+      const rawPct = test.percentile;
+      const percentile = (rawPct !== null && rawPct !== undefined && rawPct !== '' && Number.isFinite(Number(rawPct))) ? Number(rawPct) : null;
+      if (test.resultMode === 'summary' || (!test.questions?.length && (test.summaryScore !== null || test.summaryCorrect !== null))) {
+        const totalQ = Math.max(1, Number(test.totalQuestions) || 1);
+        const correct = Math.max(0, Number(test.summaryCorrect) || 0);
+        const incorrect = Math.max(0, Number(test.summaryIncorrect) || 0);
+        const unattempted = test.summaryUnattempted !== null && test.summaryUnattempted !== undefined && Number.isFinite(Number(test.summaryUnattempted))
+          ? Math.max(0, Number(test.summaryUnattempted))
+          : Math.max(0, totalQ - correct - incorrect);
+        const attempted = correct + incorrect;
+        const correctMarks = Number(test.markingScheme?.correctMarks ?? 4);
+        const negativeMarks = Number(test.markingScheme?.negativeMarks ?? 1);
+        const unattemptedMarks = Number(test.markingScheme?.unattemptedMarks ?? 0);
+        const calculatedScore = roundTestNumber((correct * correctMarks) - (incorrect * negativeMarks) + (unattempted * unattemptedMarks));
+        const score = (test.summaryScore !== null && test.summaryScore !== undefined && Number.isFinite(Number(test.summaryScore)))
+          ? roundTestNumber(test.summaryScore)
+          : calculatedScore;
+        const accuracy = attempted > 0 ? roundTestNumber(correct / attempted * 100) : null;
+        const percentage = Number(test.maximumMarks) > 0 ? roundTestNumber(score / Number(test.maximumMarks) * 100) : null;
+        const marksLost = roundTestNumber(Math.max(0, Number(test.maximumMarks) - score));
+        return { score, accuracy, percentage, attempted, correct, incorrect, partial: 0, unattempted, time: 0, averageTime: null, marksLost, questions: 0, isSummaryOnly: true, percentile };
+      }
       const questions = test.questions || [];
       const attempted = questions.filter(question => ['Correct', 'Incorrect', 'Partially Correct'].includes(question.status));
       const correct = questions.filter(question => question.status === 'Correct').length;
@@ -5282,11 +5542,26 @@ showToast(`Target achieved! "${goal.title}"`, 'success');
       const time = roundTestNumber(questions.reduce((sum, question) => sum + (Number(question.timeSpentMinutes) || 0), 0));
       const notCounted = questions.filter(question => question.status === 'Bonus / Not Counted').length;
       const marksLost = roundTestNumber(Math.max(0, Number(test.maximumMarks) - score));
-      return { score, accuracy, percentage, attempted: attempted.length, correct, incorrect, partial, unattempted: Math.max(0, Number(test.totalQuestions) - attempted.length - notCounted), time, averageTime: attempted.length ? roundTestNumber(time / attempted.length) : null, marksLost, questions: questions.length };
+      return { score, accuracy, percentage, attempted: attempted.length, correct, incorrect, partial, unattempted: Math.max(0, Number(test.totalQuestions) - attempted.length - notCounted), time, averageTime: attempted.length ? roundTestNumber(time / attempted.length) : null, marksLost, questions: questions.length, isSummaryOnly: false, percentile };
     }
     function openTestForm(id = null) {
       const test = id ? appState.tests.find(item => item.id === id) : null;
-      const fields = { 'test-input-id': test?.id || '', 'test-input-title': test?.title || '', 'test-input-type': test?.testType || 'JEE Main', 'test-input-date': test?.testDate || getTodayLocalDate(), 'test-input-duration': test?.durationMinutes || 180, 'test-input-count': test?.totalQuestions || 90, 'test-input-max-marks': test?.maximumMarks || 300, 'test-input-correct-marks': test?.markingScheme?.correctMarks ?? 4, 'test-input-negative-marks': test?.markingScheme?.negativeMarks ?? 1, 'test-input-partial-marks': test?.markingScheme?.partialMarks ?? 0, 'test-input-unattempted-marks': test?.markingScheme?.unattemptedMarks ?? 0, 'test-input-status': test?.status || 'Planned', 'test-input-notes': test?.notes || '' };
+      const fields = {
+        'test-input-id': test?.id || '',
+        'test-input-title': test?.title || '',
+        'test-input-type': test?.testType || 'JEE Main',
+        'test-input-date': test?.testDate || getTodayLocalDate(),
+        'test-input-duration': test?.durationMinutes || 180,
+        'test-input-count': test?.totalQuestions || 90,
+        'test-input-max-marks': test?.maximumMarks || 300,
+        'test-input-correct-marks': test?.markingScheme?.correctMarks ?? 4,
+        'test-input-negative-marks': test?.markingScheme?.negativeMarks ?? 1,
+        'test-input-partial-marks': test?.markingScheme?.partialMarks ?? 0,
+        'test-input-unattempted-marks': test?.markingScheme?.unattemptedMarks ?? 0,
+        'test-input-status': test?.status || 'Planned',
+        'test-input-percentile': (test?.percentile !== null && test?.percentile !== undefined) ? test.percentile : '',
+        'test-input-notes': test?.notes || ''
+      };
       Object.entries(fields).forEach(([key, value]) => { const input = document.getElementById(key); if (input) input.value = value; });
       document.querySelectorAll('[name="test-subject"]').forEach(box => { box.checked = test ? test.subjects.includes(box.value) : true; });
       document.getElementById('test-form-title').textContent = test ? 'Edit Test' : 'Add Test';
@@ -5305,9 +5580,50 @@ showToast(`Target achieved! "${goal.title}"`, 'success');
       const totalQuestions = Number(document.getElementById('test-input-count').value);
       const error = document.getElementById('test-form-error');
       if (!title || !subjects.length || !(maximumMarks > 0) || !(totalQuestions > 0)) { error.textContent = 'Enter a title, choose at least one subject, and provide positive question and mark totals.'; error.classList.remove('hidden'); return; }
+
+      const rawPct = (document.getElementById('test-input-percentile')?.value || '').trim();
+      let percentile = null;
+      if (rawPct !== '') {
+        const num = Number(rawPct);
+        if (!Number.isFinite(num) || num < 0 || num > 100) {
+          error.textContent = 'Percentile must be a number between 0 and 100.';
+          error.classList.remove('hidden');
+          return;
+        }
+        percentile = Math.round(num * 1000) / 1000;
+      }
+
       const now = new Date().toISOString();
       const status = TEST_STATUSES.includes(document.getElementById('test-input-status').value) ? document.getElementById('test-input-status').value : 'Planned';
-      const record = { id: existing?.id || `test-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`, title, testType: TEST_TYPES.includes(document.getElementById('test-input-type').value) ? document.getElementById('test-input-type').value : 'Other', testDate: document.getElementById('test-input-date').value || getTodayLocalDate(), durationMinutes: Math.max(1, Number(document.getElementById('test-input-duration').value) || 180), totalQuestions: Math.floor(totalQuestions), maximumMarks, markingScheme: { correctMarks: Number(document.getElementById('test-input-correct-marks').value) || 0, negativeMarks: Math.max(0, Number(document.getElementById('test-input-negative-marks').value) || 0), partialMarks: Number(document.getElementById('test-input-partial-marks').value) || 0, unattemptedMarks: Number(document.getElementById('test-input-unattempted-marks').value) || 0 }, subjects, status, notes: document.getElementById('test-input-notes').value.trim(), questions: existing?.questions || [], createdAt: existing?.createdAt || now, updatedAt: now, completedAt: status === 'Completed' || status === 'Analyzed' ? (existing?.completedAt || now) : null, analyzedAt: status === 'Analyzed' ? (existing?.analyzedAt || now) : null };
+      const record = {
+        id: existing?.id || `test-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+        title,
+        testType: TEST_TYPES.includes(document.getElementById('test-input-type').value) ? document.getElementById('test-input-type').value : 'Other',
+        testDate: document.getElementById('test-input-date').value || getTodayLocalDate(),
+        durationMinutes: Math.max(1, Number(document.getElementById('test-input-duration').value) || 180),
+        totalQuestions: Math.floor(totalQuestions),
+        maximumMarks,
+        markingScheme: {
+          correctMarks: Number(document.getElementById('test-input-correct-marks').value) || 0,
+          negativeMarks: Math.max(0, Number(document.getElementById('test-input-negative-marks').value) || 0),
+          partialMarks: Number(document.getElementById('test-input-partial-marks').value) || 0,
+          unattemptedMarks: Number(document.getElementById('test-input-unattempted-marks').value) || 0
+        },
+        subjects,
+        status,
+        percentile,
+        resultMode: existing?.resultMode || 'question_level',
+        summaryScore: existing?.summaryScore ?? null,
+        summaryCorrect: existing?.summaryCorrect ?? null,
+        summaryIncorrect: existing?.summaryIncorrect ?? null,
+        summaryUnattempted: existing?.summaryUnattempted ?? null,
+        notes: document.getElementById('test-input-notes').value.trim(),
+        questions: existing?.questions || [],
+        createdAt: existing?.createdAt || now,
+        updatedAt: now,
+        completedAt: status === 'Completed' || status === 'Analyzed' ? (existing?.completedAt || now) : null,
+        analyzedAt: status === 'Analyzed' ? (existing?.analyzedAt || now) : null
+      };
       if (status === 'Archived') { record.archivedFromStatus = existing?.status && existing.status !== 'Archived' ? existing.status : existing?.archivedFromStatus || 'Planned'; record.archivedAt = existing?.archivedAt || now; }
       else { record.archivedFromStatus = null; record.archivedAt = null; }
       if (existing) Object.assign(existing, record); else appState.tests.unshift(record);
@@ -5326,18 +5642,25 @@ showToast(`Target achieved! "${goal.title}"`, 'success');
       const status = document.getElementById('test-filter-status')?.value || 'all';
       const dateFrom = document.getElementById('test-filter-date')?.value || '';
       const sort = document.getElementById('test-sort')?.value || 'newest';
-      const finished = tests.filter(test => ['Completed', 'Analyzed'].includes(test.status) && test.questions.length > 0);
+      const finished = tests.filter(test => ['Completed', 'Analyzed'].includes(test.status) && (test.questions?.length > 0 || test.resultMode === 'summary' || test.summaryScore !== null));
       const summary = document.getElementById('test-summary');
       if (summary) {
         const mean = finished.length ? roundTestNumber(finished.reduce((sum, test) => sum + (calculateTestMetrics(test).percentage ?? 0), 0) / finished.length) : null;
-        const stats = [['Tests', tests.length], ['Completed / Analyzed', finished.length], ['Awaiting Analysis', tests.filter(test => test.status === 'Completed').length], ['Average Score', mean === null ? '—' : `${mean}%`], ['Questions Logged', tests.reduce((sum, test) => sum + test.questions.length, 0)]];
+        const stats = [['Tests', tests.length], ['Completed / Analyzed', finished.length], ['Awaiting Analysis', tests.filter(test => test.status === 'Completed').length], ['Average Score', mean === null ? '—' : `${mean}%`], ['Questions Logged', tests.reduce((sum, test) => sum + (test.questions?.length || 0), 0)]];
         summary.innerHTML = stats.map(([label, value]) => `<div class="card-base p-3"><div class="text-[10px] uppercase tracking-wide text-slate-400">${label}</div><div class="mt-1 text-xl font-bold text-white">${value}</div></div>`).join('');
       }
-      const visible = tests.filter(test => (!search || `${test.title} ${test.testType} ${test.notes} ${test.questions.map(q => `${q.chapter} ${q.topic}`).join(' ')}`.toLowerCase().includes(search)) && (type === 'all' || test.testType === type) && (subject === 'all' || test.subjects.includes(subject) || test.questions.some(question => question.subject === subject)) && (status === 'all' || test.status === status) && (!dateFrom || test.testDate >= dateFrom));
+      const visible = tests.filter(test => (!search || `${test.title} ${test.testType} ${test.notes} ${(test.questions || []).map(q => `${q.chapter} ${q.topic}`).join(' ')}`.toLowerCase().includes(search)) && (type === 'all' || test.testType === type) && (subject === 'all' || test.subjects.includes(subject) || (test.questions || []).some(question => question.subject === subject)) && (status === 'all' || test.status === status) && (!dateFrom || test.testDate >= dateFrom));
       visible.sort((a, b) => sort === 'oldest' ? a.testDate.localeCompare(b.testDate) : sort === 'score' ? (calculateTestMetrics(b).score - calculateTestMetrics(a).score) : sort === 'accuracy' ? ((calculateTestMetrics(b).accuracy || 0) - (calculateTestMetrics(a).accuracy || 0)) : b.testDate.localeCompare(a.testDate));
       const list = document.getElementById('test-list'); if (!list) return;
       if (!visible.length) { list.innerHTML = tests.length ? '<div class="xl:col-span-2 rounded-lg border border-dashed border-slate-700 p-8 text-center text-sm text-slate-400">No tests match these filters.</div>' : '<div class="xl:col-span-2 rounded-lg border border-dashed border-slate-700 p-8 text-center"><p class="font-semibold text-slate-200">No tests recorded yet.</p><p class="mt-1 text-xs text-slate-400">Add a test to record question outcomes and build useful performance trends.</p><button onclick="openTestForm()" class="mt-3 rounded-lg bg-blue-700 px-4 py-2 text-xs font-semibold text-white">Add Your First Test</button></div>'; return; }
-      list.innerHTML = visible.map(test => { const m = calculateTestMetrics(test); const tone = test.status === 'Analyzed' ? 'text-emerald-300' : test.status === 'Completed' ? 'text-amber-300' : 'text-slate-300'; return `<article class="rounded-xl border border-slate-700 bg-slate-900/50 p-4"><div class="flex items-start justify-between gap-3"><button onclick="openTestDetail('${test.id}')" class="min-w-0 text-left"><span class="text-[10px] uppercase tracking-wide text-blue-300">${escapeHtml(test.testType)} · ${escapeHtml(test.testDate)}</span><h3 class="mt-1 truncate font-semibold text-white">${escapeHtml(test.title)}</h3><p class="mt-1 text-xs text-slate-400">${test.subjects.map(testSubjectLabel).join(' · ')} · ${test.totalQuestions} questions · ${test.durationMinutes} min</p></button><span class="rounded bg-slate-800 px-2 py-1 text-[10px] ${tone}">${escapeHtml(test.status)}</span></div><div class="mt-3 grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs"><div class="rounded bg-slate-950/70 p-2"><span class="text-slate-500">Score</span><strong class="ml-2 text-white">${m.score} / ${test.maximumMarks}</strong></div><div class="rounded bg-slate-950/70 p-2"><span class="text-slate-500">Score %</span><strong class="ml-2 text-white">${m.percentage === null ? '—' : `${m.percentage}%`}</strong></div><div class="rounded bg-slate-950/70 p-2"><span class="text-slate-500">Accuracy</span><strong class="ml-2 text-white">${m.accuracy === null ? '—' : `${m.accuracy}%`}</strong></div><div class="rounded bg-slate-950/70 p-2"><span class="text-slate-500">Attempted</span><strong class="ml-2 text-white">${m.attempted} / ${test.totalQuestions}</strong></div></div><div class="mt-3 flex flex-wrap gap-2 border-t border-slate-800 pt-3"><button onclick="openTestDetail('${test.id}')" class="mistake-action">Details & Questions</button><button onclick="openTestForm('${test.id}')" class="mistake-action">Edit Test</button>${test.status === 'Planned' ? `<button onclick="setTestStatus('${test.id}','In Progress')" class="mistake-action">Start</button>` : ''}${test.status === 'In Progress' ? `<button onclick="setTestStatus('${test.id}','Completed')" class="mistake-action">Mark Completed</button>` : ''}${test.status === 'Completed' ? `<button onclick="analyzeTest('${test.id}')" class="mistake-action">Analyze</button>` : ''}${test.status !== 'Archived' ? `<button onclick="setTestStatus('${test.id}','Archived')" class="mistake-action">Archive</button>` : ''}<button onclick="openTestDelete('${test.id}')" class="mistake-action text-rose-300">Delete</button></div></article>`; }).join('');
+      list.innerHTML = visible.map(test => {
+        const m = calculateTestMetrics(test);
+        const tone = test.status === 'Analyzed' ? 'text-emerald-300' : test.status === 'Completed' ? 'text-amber-300' : 'text-slate-300';
+        const modeBadge = test.resultMode === 'summary' || (!test.questions?.length && (test.summaryScore !== null || test.summaryCorrect !== null))
+          ? '<span class="rounded bg-indigo-950/80 border border-indigo-700/50 px-2 py-0.5 text-[10px] text-indigo-300">Summary Only</span>'
+          : (test.questions?.length ? `<span class="rounded bg-cyan-950/80 border border-cyan-700/50 px-2 py-0.5 text-[10px] text-cyan-300">${test.questions.length} Qs Logged</span>` : '');
+        return `<article class="rounded-xl border border-slate-700 bg-slate-900/50 p-4"><div class="flex items-start justify-between gap-3"><button onclick="openTestDetail('${test.id}')" class="min-w-0 text-left"><div class="flex items-center gap-2 flex-wrap"><span class="text-[10px] uppercase tracking-wide text-blue-300">${escapeHtml(test.testType)} · ${escapeHtml(test.testDate)}</span>${modeBadge}</div><h3 class="mt-1 truncate font-semibold text-white">${escapeHtml(test.title)}</h3><p class="mt-1 text-xs text-slate-400">${test.subjects.map(testSubjectLabel).join(' · ')} · ${test.totalQuestions} questions · ${test.durationMinutes} min</p></button><span class="rounded bg-slate-800 px-2 py-1 text-[10px] ${tone}">${escapeHtml(test.status)}</span></div><div class="mt-3 grid grid-cols-2 sm:grid-cols-5 gap-2 text-xs"><div class="rounded bg-slate-950/70 p-2"><span class="text-slate-500">Score</span><strong class="ml-2 text-white">${m.score} / ${test.maximumMarks}</strong></div><div class="rounded bg-slate-950/70 p-2"><span class="text-slate-500">Score %</span><strong class="ml-2 text-white">${m.percentage === null ? '—' : `${m.percentage}%`}</strong></div><div class="rounded bg-slate-950/70 p-2"><span class="text-slate-500">Accuracy</span><strong class="ml-2 text-white">${m.accuracy === null ? '—' : `${m.accuracy}%`}</strong></div><div class="rounded bg-slate-950/70 p-2"><span class="text-slate-500">Percentile</span><strong class="ml-2 ${test.percentile !== null ? 'text-blue-300' : 'text-slate-400'}">${test.percentile !== null ? `${test.percentile}%` : '—'}</strong></div><div class="rounded bg-slate-950/70 p-2"><span class="text-slate-500">Attempted</span><strong class="ml-2 text-white">${m.attempted} / ${test.totalQuestions}</strong></div></div><div class="mt-3 flex flex-wrap gap-2 border-t border-slate-800 pt-3"><button onclick="openTestDetail('${test.id}')" class="mistake-action">Details & Questions</button><button onclick="openBulkEntryModal('${test.id}')" class="mistake-action text-blue-300 font-medium">+ Bulk Results</button><button onclick="openTestForm('${test.id}')" class="mistake-action">Edit Test</button>${test.status === 'Planned' ? `<button onclick="setTestStatus('${test.id}','In Progress')" class="mistake-action">Start</button>` : ''}${test.status === 'In Progress' ? `<button onclick="setTestStatus('${test.id}','Completed')" class="mistake-action">Mark Completed</button>` : ''}${test.status === 'Completed' ? `<button onclick="analyzeTest('${test.id}')" class="mistake-action">Analyze</button>` : ''}${test.status !== 'Archived' ? `<button onclick="setTestStatus('${test.id}','Archived')" class="mistake-action">Archive</button>` : ''}<button onclick="openTestDelete('${test.id}')" class="mistake-action text-rose-300">Delete</button></div></article>`;
+      }).join('');
       if (currentTestDetailId && !document.getElementById('test-detail-modal')?.classList.contains('hidden')) renderTestDetail(currentTestDetailId);
     }
     function getTestById(id) { return (appState?.tests || []).find(test => test.id === id); }
@@ -5345,14 +5668,917 @@ showToast(`Target achieved! "${goal.title}"`, 'success');
     function closeTestDetail() { document.getElementById('test-detail-modal')?.classList.add('hidden'); currentTestDetailId = null; }
     function renderTestDetail(id) {
       const test = getTestById(id), box = document.getElementById('test-detail-content'); if (!test || !box) return;
-      const m = calculateTestMetrics(test); document.getElementById('test-detail-title').textContent = test.title; document.getElementById('test-detail-subtitle').textContent = `${test.testType} · ${test.testDate} · ${test.status}`;
-      const subjects = SUBJECT_KEYS.map(subject => { const qs = test.questions.filter(q => q.subject === subject); const attempted = qs.filter(q => ['Correct', 'Incorrect', 'Partially Correct'].includes(q.status)); const correct = qs.filter(q => q.status === 'Correct').length; const incorrect = qs.filter(q => q.status === 'Incorrect').length; const marks = roundTestNumber(qs.reduce((sum, q) => sum + testQuestionScore(test, q), 0)); const lost = roundTestNumber(qs.reduce((sum, q) => sum + Math.max(0, q.maxMarks - testQuestionScore(test, q)), 0)); const time = roundTestNumber(qs.reduce((sum, q) => sum + q.timeSpentMinutes, 0)); return `<div class="rounded-lg border border-slate-800 p-3"><div class="text-xs font-semibold text-white">${testSubjectLabel(subject)}</div><div class="mt-1 text-xs text-slate-400">${marks} marks · ${attempted.length ? roundTestNumber(correct / attempted.length * 100) : '—'}% accuracy</div><div class="mt-1 text-[10px] text-slate-500">${attempted.length} attempted · ${correct} correct · ${incorrect} incorrect · ${qs.filter(q => q.status === 'Unattempted').length} unattempted logged · ${lost} marks lost · ${attempted.length ? roundTestNumber(time / attempted.length) : '—'} min/attempt</div></div>`; }).join('');
-      const questionCards = test.questions.length ? test.questions.map(question => { const mark = testQuestionScore(test, question); return `<article class="rounded-lg border border-slate-800 bg-slate-950/40 p-3"><div class="flex flex-wrap items-center justify-between gap-2"><div><span class="font-semibold text-white">Q${escapeHtml(question.questionNumber)} · ${testSubjectLabel(question.subject)}</span><span class="ml-2 text-[10px] text-slate-400">${escapeHtml(question.chapter || 'Chapter not set')}${question.topic ? ` · ${escapeHtml(question.topic)}` : ''}</span></div><span class="rounded bg-slate-800 px-2 py-1 text-[10px] text-slate-200">${escapeHtml(question.status)} · ${mark}/${question.maxMarks}</span></div><p class="mt-2 whitespace-pre-wrap text-xs text-slate-300">${escapeHtml(question.questionText || 'Question statement not recorded')}</p><div class="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-[10px] text-slate-400"><span>Your answer: ${escapeHtml(question.userAnswer || '—')}</span><span>Correct: ${escapeHtml(question.correctAnswer || '—')}</span><span>${question.timeSpentMinutes} min</span></div>${question.diagnosticType ? `<p class="mt-2 text-[10px] text-amber-300">${escapeHtml(question.diagnosticType)}</p>` : ''}${question.diagnostic ? `<p class="mt-1 text-xs text-amber-200">${escapeHtml(question.diagnostic)}</p>` : ''}${question.mistakeId ? `<p class="mt-2 text-[10px] text-rose-300">Linked mistake: ${escapeHtml(getMistakeById(question.mistakeId)?.topic || getMistakeById(question.mistakeId)?.chapter || question.mistakeId)}</p>` : ''}<div class="mt-2 flex flex-wrap gap-2"><button onclick="openQuestionForm('${test.id}','${question.id}')" class="mistake-action">Edit</button><button onclick="createMistakeFromQuestion('${test.id}','${question.id}')" class="mistake-action">${question.mistakeId ? 'Open Linked Mistake' : 'Create Mistake'}</button><button onclick="createRevisionFromQuestion('${test.id}','${question.id}')" class="mistake-action">Create Revision</button><button onclick="deleteQuestion('${test.id}','${question.id}')" class="mistake-action text-rose-300">Delete</button></div></article>`; }).join('') : '<div class="rounded border border-dashed border-slate-700 p-5 text-center text-xs text-slate-400">No question results logged yet. Add question rows to calculate score, accuracy, time, and chapter patterns.</div>';
-      const weakChapters = new Map(); test.questions.forEach(question => { if (!question.chapter || question.status !== 'Incorrect') return; const key = `${question.subject}|${question.chapter}`; weakChapters.set(key, (weakChapters.get(key) || 0) + 1); });
-      const linkedMistakes = (appState.mistakes || []).filter(mistake => mistake.linkedTestId === test.id || test.questions.some(question => question.mistakeId === mistake.id));
-      const slowQuestions = m.averageTime === null ? [] : test.questions.filter(question => ['Correct', 'Incorrect', 'Partially Correct'].includes(question.status) && question.timeSpentMinutes > m.averageTime * 1.5);
-      const bulkPanel = `<details class="rounded-lg border border-slate-800 p-3"><summary class="cursor-pointer text-xs font-semibold text-slate-200">Bulk add question results (tab separated)</summary><p class="mt-2 text-[10px] text-slate-500">Columns: number, subject key, chapter, topic, result, max marks, minutes, your answer, correct answer, question text, diagnostic. Subject keys: physics, chemistry, maths.</p><textarea id="bulk-questions-${test.id}" rows="4" class="field-input mt-2 font-mono" placeholder="1\tphysics\tKinematics\tVectors\tCorrect\t4\t3\tA\tA\tQuestion prompt"></textarea><button onclick="bulkAddQuestions('${test.id}')" class="mt-2 rounded-lg bg-slate-700 px-3 py-2 text-xs text-white">Add Rows</button></details>`;
-      box.innerHTML = `<div class="flex flex-wrap justify-end gap-2"><button onclick="openTestForm('${test.id}')" class="mistake-action">Edit Test</button>${test.status !== 'Archived' ? `<button onclick="setTestStatus('${test.id}','Archived')" class="mistake-action">Archive</button>` : ''}${test.status === 'Completed' ? `<button onclick="analyzeTest('${test.id}')" class="mistake-action">Mark Analyzed</button>` : ''}</div><div class="grid grid-cols-2 sm:grid-cols-4 gap-2"><div class="rounded bg-slate-950 p-3"><div class="text-[10px] text-slate-500">Score</div><div class="font-bold text-white">${m.score} / ${test.maximumMarks}</div></div><div class="rounded bg-slate-950 p-3"><div class="text-[10px] text-slate-500">Marks Lost</div><div class="font-bold text-white">${m.marksLost}</div></div><div class="rounded bg-slate-950 p-3"><div class="text-[10px] text-slate-500">Score %</div><div class="font-bold text-white">${m.percentage === null ? '—' : `${m.percentage}%`}</div></div><div class="rounded bg-slate-950 p-3"><div class="text-[10px] text-slate-500">Accuracy</div><div class="font-bold text-white">${m.accuracy === null ? '—' : `${m.accuracy}%`}</div></div><div class="rounded bg-slate-950 p-3"><div class="text-[10px] text-slate-500">Attempted / Correct</div><div class="font-bold text-white">${m.attempted} / ${m.correct}</div></div><div class="rounded bg-slate-950 p-3"><div class="text-[10px] text-slate-500">Incorrect / Unattempted</div><div class="font-bold text-white">${m.incorrect} / ${m.unattempted}</div></div><div class="rounded bg-slate-950 p-3"><div class="text-[10px] text-slate-500">Time Used</div><div class="font-bold text-white">${m.time} min</div></div><div class="rounded bg-slate-950 p-3"><div class="text-[10px] text-slate-500">Avg / Attempt</div><div class="font-bold text-white">${m.averageTime === null ? '—' : `${m.averageTime} min`}</div></div></div><section><h4 class="mb-2 text-xs font-semibold text-white">Subject Performance</h4><div class="grid grid-cols-1 md:grid-cols-3 gap-2">${subjects}</div></section><section class="rounded-lg border border-slate-800 p-3"><h4 class="text-xs font-semibold text-white">Time Analysis</h4><p class="mt-1 text-xs text-slate-400">${m.averageTime === null ? 'Log question time to calculate time per attempt.' : `${slowQuestions.length} question${slowQuestions.length === 1 ? '' : 's'} took more than 1.5× your average attempted-question time.`} ${test.questions.filter(q => q.diagnosticType === 'Unattempted Due to Time').length} question(s) marked unattempted due to time.</p></section><section class="rounded-lg border border-slate-800 p-3"><h4 class="text-xs font-semibold text-white">Mistake Summary</h4><p class="mt-1 text-xs text-slate-400">${linkedMistakes.length} linked mistake${linkedMistakes.length === 1 ? '' : 's'} · ${linkedMistakes.filter(mistake => mistake.occurrenceCount > 1).length} recurring · ${linkedMistakes.filter(mistake => ['Open', 'Learning'].includes(mistake.status)).length} unresolved.</p></section><section class="rounded-lg border border-slate-800 p-3"><h4 class="text-xs font-semibold text-white">Weak Chapters</h4><p class="mt-1 text-xs text-slate-400">${[...weakChapters.entries()].sort((a, b) => b[1] - a[1]).slice(0, 5).map(([key, count]) => `${escapeHtml(key.split('|')[1])} (${count} incorrect)`).join(' · ') || 'No incorrect question chapters recorded yet.'}</p></section><div class="flex flex-wrap items-center justify-between gap-2"><div><h4 class="font-semibold text-white">Question Analysis</h4><p class="text-[10px] text-slate-500">Marks follow the saved marking scheme unless a question has an explicit override.</p></div><button onclick="openQuestionForm('${test.id}')" class="rounded-lg bg-blue-700 px-3 py-2 text-xs font-semibold text-white">+ Add Question Result</button></div>${bulkPanel}<div class="space-y-2">${questionCards}</div><div class="rounded-lg border border-slate-800 p-3"><h4 class="text-xs font-semibold text-white">Test Notes</h4><p class="mt-1 whitespace-pre-wrap text-xs text-slate-400">${escapeHtml(test.notes || 'No notes recorded.')}</p></div>`;
+      const m = calculateTestMetrics(test);
+      const isSummary = m.isSummaryOnly;
+      document.getElementById('test-detail-title').textContent = test.title;
+      document.getElementById('test-detail-subtitle').textContent = `${test.testType} · ${test.testDate} · ${test.status} · ${isSummary ? 'Summary Only Result' : `${test.questions.length} Questions Logged`}`;
+      const subjects = SUBJECT_KEYS.map(subject => {
+        const qs = (test.questions || []).filter(q => q.subject === subject);
+        const attempted = qs.filter(q => ['Correct', 'Incorrect', 'Partially Correct'].includes(q.status));
+        const correct = qs.filter(q => q.status === 'Correct').length;
+        const incorrect = qs.filter(q => q.status === 'Incorrect').length;
+        const marks = roundTestNumber(qs.reduce((sum, q) => sum + testQuestionScore(test, q), 0));
+        const lost = roundTestNumber(qs.reduce((sum, q) => sum + Math.max(0, q.maxMarks - testQuestionScore(test, q)), 0));
+        const time = roundTestNumber(qs.reduce((sum, q) => sum + q.timeSpentMinutes, 0));
+        return `<div class="rounded-lg border border-slate-800 p-3"><div class="text-xs font-semibold text-white">${testSubjectLabel(subject)}</div><div class="mt-1 text-xs text-slate-400">${marks} marks · ${attempted.length ? roundTestNumber(correct / attempted.length * 100) : '—'}% accuracy</div><div class="mt-1 text-[10px] text-slate-500">${attempted.length} attempted · ${correct} correct · ${incorrect} incorrect · ${qs.filter(q => q.status === 'Unattempted').length} unattempted logged · ${lost} marks lost · ${attempted.length ? roundTestNumber(time / attempted.length) : '—'} min/attempt</div></div>`;
+      }).join('');
+      const questionCards = test.questions?.length ? test.questions.map(question => {
+        const mark = testQuestionScore(test, question);
+        return `<article class="rounded-lg border border-slate-800 bg-slate-950/40 p-3"><div class="flex flex-wrap items-center justify-between gap-2"><div><span class="font-semibold text-white">Q${escapeHtml(question.questionNumber)} · ${testSubjectLabel(question.subject)}</span><span class="ml-2 text-[10px] text-slate-400">${escapeHtml(question.chapter || 'Chapter not set')}${question.topic ? ` · ${escapeHtml(question.topic)}` : ''}</span></div><span class="rounded bg-slate-800 px-2 py-1 text-[10px] text-slate-200">${escapeHtml(question.status)} · ${mark}/${question.maxMarks}</span></div><p class="mt-2 whitespace-pre-wrap text-xs text-slate-300">${escapeHtml(question.questionText || 'Question statement not recorded')}</p><div class="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-[10px] text-slate-400"><span>Your answer: ${escapeHtml(question.userAnswer || '—')}</span><span>Correct: ${escapeHtml(question.correctAnswer || '—')}</span><span>${question.timeSpentMinutes} min</span></div>${question.mistakeCategory || question.diagnosticType ? `<p class="mt-2 text-[10px] text-purple-300 font-semibold">Mistake: ${escapeHtml(question.mistakeCategory || question.diagnosticType)}</p>` : ''}${question.diagnostic ? `<p class="mt-1 text-xs text-amber-200">${escapeHtml(question.diagnostic)}</p>` : ''}${question.mistakeId ? `<p class="mt-2 text-[10px] text-rose-300">Linked mistake: ${escapeHtml(getMistakeById(question.mistakeId)?.topic || getMistakeById(question.mistakeId)?.chapter || question.mistakeId)}</p>` : ''}<div class="mt-2 flex flex-wrap gap-2"><button onclick="openQuestionForm('${test.id}','${question.id}')" class="mistake-action">Edit</button><button onclick="createMistakeFromQuestion('${test.id}','${question.id}')" class="mistake-action">${question.mistakeId ? 'Open Linked Mistake' : 'Create Mistake'}</button><button onclick="createRevisionFromQuestion('${test.id}','${question.id}')" class="mistake-action">Create Revision</button><button onclick="deleteQuestion('${test.id}','${question.id}')" class="mistake-action text-rose-300">Delete</button></div></article>`;
+      }).join('') : (isSummary ? `<div class="rounded-lg border border-indigo-800/60 bg-indigo-950/20 p-5 text-center text-xs text-indigo-300"><p class="font-semibold">This test has overall summary results recorded.</p><p class="mt-1 text-slate-400">Score: ${m.score}/${test.maximumMarks} · Correct: ${m.correct} · Wrong: ${m.incorrect} · Unattempted: ${m.unattempted}${test.percentile !== null ? ` · Percentile: ${test.percentile}%` : ''}.</p><button onclick="openBulkEntryModal('${test.id}')" class="mt-3 rounded-lg bg-blue-700 px-3 py-1.5 text-xs font-semibold text-white hover:bg-blue-600">Add Question-Level Analysis</button></div>` : '<div class="rounded border border-dashed border-slate-700 p-5 text-center text-xs text-slate-400">No question results logged yet. Add question rows or use Bulk Result Entry to calculate score, accuracy, time, and chapter patterns.</div>');
+      const weakChapters = new Map(); (test.questions || []).forEach(question => { if (!question.chapter || question.status !== 'Incorrect') return; const key = `${question.subject}|${question.chapter}`; weakChapters.set(key, (weakChapters.get(key) || 0) + 1); });
+      const linkedMistakes = (appState.mistakes || []).filter(mistake => mistake.linkedTestId === test.id || (test.questions || []).some(question => question.mistakeId === mistake.id));
+      const slowQuestions = m.averageTime === null ? [] : (test.questions || []).filter(question => ['Correct', 'Incorrect', 'Partially Correct'].includes(question.status) && question.timeSpentMinutes > m.averageTime * 1.5);
+      
+      const bulkBanner = `<div class="rounded-lg border border-blue-900/60 bg-blue-950/20 p-3 flex flex-wrap items-center justify-between gap-2"><div><span class="font-semibold text-white text-xs">Bulk Result Entry System</span><p class="text-[10px] text-slate-400">Record all questions together via interactive grid, paste spreadsheets/sequences, or quick summary.</p></div><button onclick="openBulkEntryModal('${test.id}')" class="rounded-lg bg-blue-700 hover:bg-blue-600 px-3 py-1.5 text-xs font-semibold text-white">+ Bulk Result Entry</button></div>`;
+
+      box.innerHTML = `<div class="flex flex-wrap justify-end gap-2"><button onclick="openBulkEntryModal('${test.id}')" class="mistake-action bg-blue-700/30 text-blue-300 font-semibold">+ Bulk Results</button><button onclick="openTestForm('${test.id}')" class="mistake-action">Edit Test</button>${test.status !== 'Archived' ? `<button onclick="setTestStatus('${test.id}','Archived')" class="mistake-action">Archive</button>` : ''}${test.status === 'Completed' ? `<button onclick="analyzeTest('${test.id}')" class="mistake-action">Mark Analyzed</button>` : ''}</div><div class="grid grid-cols-2 sm:grid-cols-5 gap-2"><div class="rounded bg-slate-950 p-3"><div class="text-[10px] text-slate-500">Score</div><div class="font-bold text-white">${m.score} / ${test.maximumMarks}</div></div><div class="rounded bg-slate-950 p-3"><div class="text-[10px] text-slate-500">Score %</div><div class="font-bold text-white">${m.percentage === null ? '—' : `${m.percentage}%`}</div></div><div class="rounded bg-slate-950 p-3"><div class="text-[10px] text-slate-500">Accuracy</div><div class="font-bold text-white">${m.accuracy === null ? '—' : `${m.accuracy}%`}</div></div><div class="rounded bg-slate-950 p-3"><div class="text-[10px] text-slate-500">Percentile</div><div class="font-bold ${test.percentile !== null ? 'text-blue-300' : 'text-white'}">${test.percentile !== null ? `${test.percentile}%` : '—'}</div></div><div class="rounded bg-slate-950 p-3"><div class="text-[10px] text-slate-500">Attempted / Correct</div><div class="font-bold text-white">${m.attempted} / ${m.correct}</div></div><div class="rounded bg-slate-950 p-3"><div class="text-[10px] text-slate-500">Incorrect / Unattempted</div><div class="font-bold text-white">${m.incorrect} / ${m.unattempted}</div></div><div class="rounded bg-slate-950 p-3"><div class="text-[10px] text-slate-500">Marks Lost</div><div class="font-bold text-white">${m.marksLost}</div></div><div class="rounded bg-slate-950 p-3"><div class="text-[10px] text-slate-500">Time Used</div><div class="font-bold text-white">${m.time} min</div></div><div class="rounded bg-slate-950 p-3 sm:col-span-2"><div class="text-[10px] text-slate-500">Avg / Attempt</div><div class="font-bold text-white">${m.averageTime === null ? '—' : `${m.averageTime} min`}</div></div></div>${!isSummary ? `<section><h4 class="mb-2 text-xs font-semibold text-white">Subject Performance</h4><div class="grid grid-cols-1 md:grid-cols-3 gap-2">${subjects}</div></section><section class="rounded-lg border border-slate-800 p-3"><h4 class="text-xs font-semibold text-white">Time Analysis</h4><p class="mt-1 text-xs text-slate-400">${m.averageTime === null ? 'Log question time to calculate time per attempt.' : `${slowQuestions.length} question${slowQuestions.length === 1 ? '' : 's'} took more than 1.5× your average attempted-question time.`} ${(test.questions || []).filter(q => q.diagnosticType === 'Unattempted Due to Time').length} question(s) marked unattempted due to time.</p></section><section class="rounded-lg border border-slate-800 p-3"><h4 class="text-xs font-semibold text-white">Mistake Summary</h4><p class="mt-1 text-xs text-slate-400">${linkedMistakes.length} linked mistake${linkedMistakes.length === 1 ? '' : 's'} · ${linkedMistakes.filter(mistake => mistake.occurrenceCount > 1).length} recurring · ${linkedMistakes.filter(mistake => ['Open', 'Learning'].includes(mistake.status)).length} unresolved.</p></section><section class="rounded-lg border border-slate-800 p-3"><h4 class="text-xs font-semibold text-white">Weak Chapters</h4><p class="mt-1 text-xs text-slate-400">${[...weakChapters.entries()].sort((a, b) => b[1] - a[1]).slice(0, 5).map(([key, count]) => `${escapeHtml(key.split('|')[1])} (${count} incorrect)`).join(' · ') || 'No incorrect question chapters recorded yet.'}</p></section>` : ''}${bulkBanner}<div class="flex flex-wrap items-center justify-between gap-2"><div><h4 class="font-semibold text-white">Question Analysis</h4><p class="text-[10px] text-slate-500">Marks follow the saved marking scheme unless a question has an explicit override.</p></div><div class="flex gap-2"><button onclick="openBulkEntryModal('${test.id}')" class="rounded-lg bg-blue-700 px-3 py-2 text-xs font-semibold text-white">+ Bulk Entry</button><button onclick="openQuestionForm('${test.id}')" class="rounded-lg bg-slate-800 px-3 py-2 text-xs text-slate-300">+ Add Single Q</button></div></div><div class="space-y-2">${questionCards}</div><div class="rounded-lg border border-slate-800 p-3"><h4 class="text-xs font-semibold text-white">Test Notes</h4><p class="mt-1 whitespace-pre-wrap text-xs text-slate-400">${escapeHtml(test.notes || 'No notes recorded.')}</p></div>`;
+    }
+
+    // Bulk Test Result Entry State & Engine
+    let bulkActiveTestId = null;
+    let bulkActiveMethod = 'grid'; // 'grid' | 'paste' | 'summary'
+    let bulkWorkingQuestions = [];
+    let bulkPasteParsedData = null;
+
+    function openBulkEntryModal(testId) {
+      bulkActiveTestId = testId;
+      const test = getTestById(testId);
+      if (!test) return;
+
+      // Populate datalist for syllabus topics
+      const dl = document.getElementById('bulk-syllabus-topics');
+      if (dl) {
+        const topics = [...new Set((appState.syllabus || []).map(s => s.chapter).concat((appState.syllabus || []).map(s => s.unit)).filter(Boolean))];
+        dl.innerHTML = topics.map(t => `<option value="${escapeHtml(t)}"></option>`).join('');
+      }
+
+      document.getElementById('bulk-modal-title').textContent = `Bulk Result Entry · ${test.title}`;
+      document.getElementById('bulk-modal-badge').textContent = `${test.testType} · +${test.markingScheme.correctMarks}/-${test.markingScheme.negativeMarks}`;
+      document.getElementById('bulk-modal-subtitle').textContent = `${test.testDate} · Configured ${test.totalQuestions} questions · Max ${test.maximumMarks} marks · Subjects: ${test.subjects.map(testSubjectLabel).join(', ')}`;
+      document.getElementById('bulk-input-percentile').value = test.percentile !== null && test.percentile !== undefined ? test.percentile : '';
+
+      // Reset paste inputs
+      document.getElementById('bulk-paste-textarea').value = '';
+      document.getElementById('bulk-paste-error-box').classList.add('hidden');
+      document.getElementById('bulk-paste-error-box').innerHTML = '';
+      document.getElementById('bulk-paste-preview-box').classList.add('hidden');
+      bulkPasteParsedData = null;
+
+      const isSummary = test.resultMode === 'summary' || (!test.questions?.length && (test.summaryScore !== null || test.summaryCorrect !== null));
+      if (isSummary && !test.questions?.length) {
+        bulkWorkingQuestions = [];
+        initBulkSummaryForm(test);
+        switchBulkMethod('summary');
+      } else {
+        const total = Math.max(1, Number(test.totalQuestions) || 1);
+        const subjects = test.subjects?.length ? test.subjects : SUBJECT_KEYS;
+        if (test.questions?.length) {
+          bulkWorkingQuestions = test.questions.map((q, idx) => ({
+            id: q.id || `${test.id}-q-${idx + 1}`,
+            questionNumber: String(q.questionNumber || idx + 1),
+            subject: SUBJECT_KEYS.includes(q.subject) ? q.subject : subjects[0],
+            status: q.status === 'Correct' ? 'Correct' : q.status === 'Incorrect' ? 'Incorrect' : 'Unattempted',
+            chapter: q.chapter || '',
+            topic: q.topic || '',
+            mistakeCategory: q.mistakeCategory || (MISTAKE_CATEGORIES.includes(q.diagnosticType) ? q.diagnosticType : ''),
+            notes: q.diagnostic || q.questionText || '',
+            mistakeId: q.mistakeId || null,
+            marksAwarded: (q.marksAwarded !== null && q.marksAwarded !== undefined && Number.isFinite(Number(q.marksAwarded))) ? Number(q.marksAwarded) : null
+          }));
+          while (bulkWorkingQuestions.length < total) {
+            const qNum = bulkWorkingQuestions.length + 1;
+            const subIdx = Math.min(subjects.length - 1, Math.floor((qNum - 1) / Math.ceil(total / subjects.length)));
+            bulkWorkingQuestions.push({
+              id: `${test.id}-q-${qNum}`,
+              questionNumber: String(qNum),
+              subject: subjects[subIdx] || subjects[0],
+              status: 'Unattempted',
+              chapter: '',
+              topic: '',
+              mistakeCategory: '',
+              notes: '',
+              mistakeId: null,
+              marksAwarded: null
+            });
+          }
+        } else {
+          bulkWorkingQuestions = [];
+          for (let i = 1; i <= total; i++) {
+            const subIdx = Math.min(subjects.length - 1, Math.floor((i - 1) / Math.ceil(total / subjects.length)));
+            bulkWorkingQuestions.push({
+              id: `${test.id}-q-${i}`,
+              questionNumber: String(i),
+              subject: subjects[subIdx] || subjects[0],
+              status: 'Unattempted',
+              chapter: '',
+              topic: '',
+              mistakeCategory: '',
+              notes: '',
+              mistakeId: null,
+              marksAwarded: null
+            });
+          }
+        }
+        initBulkSummaryForm(test);
+        switchBulkMethod('grid');
+        renderBulkGrid();
+      }
+      updateBulkLiveKPIs();
+      document.getElementById('test-bulk-modal').classList.remove('hidden');
+    }
+
+    function closeBulkEntryModal() {
+      document.getElementById('test-bulk-modal')?.classList.add('hidden');
+      bulkActiveTestId = null;
+      bulkWorkingQuestions = [];
+      bulkPasteParsedData = null;
+    }
+
+    function switchBulkMethod(method) {
+      bulkActiveMethod = method;
+      const methods = ['grid', 'paste', 'summary'];
+      methods.forEach(m => {
+        const btn = document.getElementById(`bulk-tab-btn-${m}`);
+        const panel = document.getElementById(`bulk-tab-${m}`);
+        if (m === method) {
+          btn?.classList.remove('bg-slate-800', 'text-slate-300');
+          btn?.classList.add('bg-blue-700', 'text-white');
+          panel?.classList.remove('hidden');
+        } else {
+          btn?.classList.remove('bg-blue-700', 'text-white');
+          btn?.classList.add('bg-slate-800', 'text-slate-300');
+          panel?.classList.add('hidden');
+        }
+      });
+      if (method === 'grid') renderBulkGrid();
+      if (method === 'summary') {
+        const test = getTestById(bulkActiveTestId);
+        if (test) initBulkSummaryForm(test);
+      }
+      updateBulkLiveKPIs();
+    }
+
+    function renderBulkGrid() {
+      const tbody = document.getElementById('bulk-grid-tbody');
+      if (!tbody) return;
+      const test = getTestById(bulkActiveTestId);
+      if (!test) return;
+
+      const subFilter = document.getElementById('bulk-grid-filter-subject')?.value || 'all';
+      const statusFilter = document.getElementById('bulk-grid-filter-status')?.value || 'all';
+      const attentionFilter = document.getElementById('bulk-grid-filter-attention')?.checked || false;
+
+      const subjects = test.subjects?.length ? test.subjects : SUBJECT_KEYS;
+
+      let rowsHtml = '';
+      bulkWorkingQuestions.forEach((q, idx) => {
+        const isWrong = q.status === 'Incorrect';
+        const needsAttention = isWrong && !q.mistakeCategory;
+
+        if (subFilter !== 'all' && q.subject !== subFilter) return;
+        if (statusFilter !== 'all' && q.status !== statusFilter) return;
+        if (attentionFilter && !needsAttention) return;
+
+        const rowBg = needsAttention ? 'bg-rose-950/20' : (idx % 2 === 0 ? 'bg-transparent' : 'bg-slate-900/20');
+        const statusPills = `
+          <div class="inline-flex rounded-lg border border-slate-700/80 p-0.5 bg-slate-900/90 text-[11px]">
+            <button type="button" onclick="setBulkQuestionStatus(${idx}, 'Correct')" class="px-2 py-0.5 rounded font-semibold transition ${q.status === 'Correct' ? 'bg-emerald-600 text-white shadow' : 'text-slate-400 hover:text-white'}">C</button>
+            <button type="button" onclick="setBulkQuestionStatus(${idx}, 'Incorrect')" class="px-2 py-0.5 rounded font-semibold transition ${q.status === 'Incorrect' ? 'bg-rose-600 text-white shadow' : 'text-slate-400 hover:text-white'}">W</button>
+            <button type="button" onclick="setBulkQuestionStatus(${idx}, 'Unattempted')" class="px-2 py-0.5 rounded font-semibold transition ${q.status === 'Unattempted' ? 'bg-slate-600 text-white shadow' : 'text-slate-400 hover:text-white'}">U</button>
+          </div>
+        `;
+
+        const mistakeSelect = `
+          <select id="bulk-q-mistake-${idx}" onchange="updateBulkQuestionMistake(${idx}, this.value)" class="field-input text-xs py-1 px-2 w-full transition ${isWrong ? (q.mistakeCategory ? 'border-purple-600/80 bg-purple-950/30 text-purple-200' : 'border-rose-500 bg-rose-950/40 text-rose-200') : 'opacity-25 pointer-events-none'}" ${!isWrong ? 'disabled' : ''}>
+            <option value="">${isWrong ? '-- Select Mistake Type --' : '—'}</option>
+            ${MISTAKE_CATEGORIES.map(cat => `<option value="${escapeHtml(cat)}" ${cat === q.mistakeCategory ? 'selected' : ''}>${escapeHtml(cat)}</option>`).join('')}
+          </select>
+        `;
+
+        const subjectSelect = `
+          <select onchange="updateBulkQuestionSubject(${idx}, this.value)" class="field-input text-xs py-1 px-1.5 w-full bg-slate-900">
+            ${subjects.map(s => `<option value="${s}" ${s === q.subject ? 'selected' : ''}>${testSubjectLabel(s)}</option>`).join('')}
+          </select>
+        `;
+
+        rowsHtml += `
+          <tr id="bulk-grid-row-${idx}" class="${rowBg} hover:bg-slate-800/40 transition" tabindex="0" onkeydown="handleBulkRowKeydown(event, ${idx})">
+            <td class="p-2 text-center font-mono font-bold text-slate-300">Q${q.questionNumber}</td>
+            <td class="p-2">${subjectSelect}</td>
+            <td class="p-2">${statusPills}</td>
+            <td class="p-2">
+              <input type="text" list="bulk-syllabus-topics" value="${escapeHtml(q.topic || q.chapter || '')}" oninput="updateBulkQuestionTopic(${idx}, this.value)" class="field-input text-xs py-1 px-2 w-full" placeholder="e.g. Kinematics">
+            </td>
+            <td class="p-2">${mistakeSelect}</td>
+            <td class="p-2">
+              <input type="text" value="${escapeHtml(q.notes || '')}" oninput="updateBulkQuestionNotes(${idx}, this.value)" class="field-input text-xs py-1 px-2 w-full" placeholder="Optional notes">
+            </td>
+          </tr>
+        `;
+      });
+
+      tbody.innerHTML = rowsHtml || `<tr><td colspan="6" class="p-8 text-center text-xs text-slate-500">No questions match the current filters.</td></tr>`;
+    }
+
+    function setBulkQuestionStatus(idx, status) {
+      if (!bulkWorkingQuestions[idx]) return;
+      bulkWorkingQuestions[idx].status = status;
+      if (status !== 'Incorrect') {
+        bulkWorkingQuestions[idx].mistakeCategory = '';
+      }
+      renderBulkGrid();
+      updateBulkLiveKPIs();
+    }
+
+    function bulkSetAllStatus(status) {
+      bulkWorkingQuestions.forEach(q => {
+        q.status = status;
+        if (status !== 'Incorrect') q.mistakeCategory = '';
+      });
+      renderBulkGrid();
+      updateBulkLiveKPIs();
+      showToast(`All questions set to ${status}.`, 'info');
+    }
+
+    function updateBulkQuestionSubject(idx, subject) {
+      if (bulkWorkingQuestions[idx]) bulkWorkingQuestions[idx].subject = subject;
+    }
+
+    function updateBulkQuestionTopic(idx, val) {
+      if (bulkWorkingQuestions[idx]) {
+        bulkWorkingQuestions[idx].topic = val.trim();
+        bulkWorkingQuestions[idx].chapter = val.trim();
+      }
+    }
+
+    function updateBulkQuestionMistake(idx, val) {
+      if (bulkWorkingQuestions[idx]) {
+        bulkWorkingQuestions[idx].mistakeCategory = val;
+        renderBulkGrid();
+        updateBulkLiveKPIs();
+      }
+    }
+
+    function updateBulkQuestionNotes(idx, val) {
+      if (bulkWorkingQuestions[idx]) bulkWorkingQuestions[idx].notes = val.trim();
+    }
+
+    function handleBulkRowKeydown(event, idx) {
+      const tag = (event.target.tagName || '').toLowerCase();
+      if (tag === 'input' || tag === 'textarea' || tag === 'select') return;
+      const key = event.key.toLowerCase();
+      if (key === 'c') {
+        event.preventDefault();
+        setBulkQuestionStatus(idx, 'Correct');
+        focusNextBulkRow(idx);
+      } else if (key === 'w') {
+        event.preventDefault();
+        setBulkQuestionStatus(idx, 'Incorrect');
+        const mistakeEl = document.getElementById(`bulk-q-mistake-${idx}`);
+        if (mistakeEl) mistakeEl.focus();
+      } else if (key === 'u') {
+        event.preventDefault();
+        setBulkQuestionStatus(idx, 'Unattempted');
+        focusNextBulkRow(idx);
+      } else if (event.key === 'ArrowDown') {
+        event.preventDefault();
+        focusNextBulkRow(idx);
+      } else if (event.key === 'ArrowUp') {
+        event.preventDefault();
+        focusPrevBulkRow(idx);
+      }
+    }
+
+    function focusNextBulkRow(idx) {
+      const next = document.getElementById(`bulk-grid-row-${idx + 1}`);
+      if (next) next.focus();
+    }
+
+    function focusPrevBulkRow(idx) {
+      const prev = document.getElementById(`bulk-grid-row-${idx - 1}`);
+      if (prev) prev.focus();
+    }
+
+    function updateBulkLiveKPIs() {
+      const test = getTestById(bulkActiveTestId);
+      if (!test) return;
+
+      let total = 0, correct = 0, wrong = 0, unattempted = 0, score = 0, accuracy = null, mistakes = 0, unclassified = 0;
+      const correctMarks = Number(test.markingScheme?.correctMarks ?? 4);
+      const negativeMarks = Number(test.markingScheme?.negativeMarks ?? 1);
+      const unattemptedMarks = Number(test.markingScheme?.unattemptedMarks ?? 0);
+
+      if (bulkActiveMethod === 'summary') {
+        total = Number(document.getElementById('bulk-summary-total')?.value) || test.totalQuestions;
+        correct = Math.max(0, Number(document.getElementById('bulk-summary-correct')?.value) || 0);
+        wrong = Math.max(0, Number(document.getElementById('bulk-summary-incorrect')?.value) || 0);
+        unattempted = Math.max(0, Number(document.getElementById('bulk-summary-unattempted')?.value) || 0);
+        const attempted = correct + wrong;
+        const override = document.getElementById('bulk-summary-override-toggle')?.checked;
+        const calcScore = roundTestNumber(correct * correctMarks - wrong * negativeMarks + unattempted * unattemptedMarks);
+        score = override ? (Number(document.getElementById('bulk-summary-score')?.value) || 0) : calcScore;
+        accuracy = attempted > 0 ? roundTestNumber(correct / attempted * 100) : null;
+      } else {
+        total = bulkWorkingQuestions.length;
+        correct = bulkWorkingQuestions.filter(q => q.status === 'Correct').length;
+        wrong = bulkWorkingQuestions.filter(q => q.status === 'Incorrect').length;
+        unattempted = bulkWorkingQuestions.filter(q => q.status === 'Unattempted').length;
+        mistakes = bulkWorkingQuestions.filter(q => q.status === 'Incorrect' && q.mistakeCategory).length;
+        unclassified = bulkWorkingQuestions.filter(q => q.status === 'Incorrect' && !q.mistakeCategory).length;
+        const attempted = correct + wrong;
+        score = roundTestNumber(bulkWorkingQuestions.reduce((sum, q) => sum + testQuestionScore(test, q), 0));
+        accuracy = attempted > 0 ? roundTestNumber(correct / attempted * 100) : null;
+      }
+
+      document.getElementById('bulk-kpi-total').textContent = total;
+      document.getElementById('bulk-kpi-correct').textContent = correct;
+      document.getElementById('bulk-kpi-wrong').textContent = wrong;
+      document.getElementById('bulk-kpi-unattempted').textContent = unattempted;
+      document.getElementById('bulk-kpi-score').textContent = `${score} / ${test.maximumMarks}`;
+      document.getElementById('bulk-kpi-accuracy').textContent = accuracy === null ? '—' : `${accuracy}%`;
+      document.getElementById('bulk-kpi-mistakes').textContent = mistakes;
+      const attBadge = document.getElementById('bulk-grid-attention-count');
+      if (attBadge) attBadge.textContent = unclassified;
+
+      const footer = document.getElementById('bulk-footer-status');
+      if (footer) {
+        if (bulkActiveMethod === 'summary') {
+          footer.textContent = `Summary mode: ${correct} Correct, ${wrong} Wrong, ${unattempted} Unattempted · Score: ${score}`;
+        } else if (unclassified > 0) {
+          footer.innerHTML = `<span class="text-rose-400">⚠️ ${unclassified} wrong question${unclassified === 1 ? '' : 's'} without mistake classification.</span>`;
+        } else {
+          footer.innerHTML = `<span class="text-emerald-400">✓ All questions accounted for (${mistakes} mistake${mistakes === 1 ? '' : 's'} tagged).</span>`;
+        }
+      }
+    }
+
+    function initBulkSummaryForm(test) {
+      document.getElementById('bulk-summary-total').value = test.totalQuestions;
+      const c = test.summaryCorrect ?? bulkWorkingQuestions.filter(q => q.status === 'Correct').length;
+      const w = test.summaryIncorrect ?? bulkWorkingQuestions.filter(q => q.status === 'Incorrect').length;
+      const u = test.summaryUnattempted ?? (test.totalQuestions - c - w);
+      document.getElementById('bulk-summary-correct').value = c;
+      document.getElementById('bulk-summary-incorrect').value = w;
+      document.getElementById('bulk-summary-unattempted').value = Math.max(0, u);
+      const correctMarks = Number(test.markingScheme?.correctMarks ?? 4);
+      const negativeMarks = Number(test.markingScheme?.negativeMarks ?? 1);
+      const unattemptedMarks = Number(test.markingScheme?.unattemptedMarks ?? 0);
+      const defaultScore = test.summaryScore ?? roundTestNumber(c * correctMarks - w * negativeMarks + u * unattemptedMarks);
+      document.getElementById('bulk-summary-score').value = defaultScore;
+      document.getElementById('bulk-summary-percentile').value = test.percentile !== null && test.percentile !== undefined ? test.percentile : '';
+      document.getElementById('bulk-summary-notes').value = test.notes || '';
+      document.getElementById('bulk-summary-override-toggle').checked = false;
+      document.getElementById('bulk-summary-score').disabled = true;
+      document.getElementById('bulk-summary-score').classList.add('bg-slate-900/50');
+      document.getElementById('bulk-summary-reconcile-warn').classList.add('hidden');
+    }
+
+    function handleBulkSummaryInput(isUnattemptedManual = false) {
+      const test = getTestById(bulkActiveTestId);
+      if (!test) return;
+      const total = Number(document.getElementById('bulk-summary-total').value) || test.totalQuestions;
+      const c = Math.max(0, Number(document.getElementById('bulk-summary-correct').value) || 0);
+      const w = Math.max(0, Number(document.getElementById('bulk-summary-incorrect').value) || 0);
+      let u = Math.max(0, Number(document.getElementById('bulk-summary-unattempted').value) || 0);
+      if (!isUnattemptedManual) {
+        u = Math.max(0, total - c - w);
+        document.getElementById('bulk-summary-unattempted').value = u;
+      }
+      const warnBox = document.getElementById('bulk-summary-reconcile-warn');
+      if (c + w + u !== total) {
+        warnBox.textContent = `Note: Sum of questions (${c} + ${w} + ${u} = ${c + w + u}) does not match configured total questions (${total}).`;
+        warnBox.classList.remove('hidden');
+      } else {
+        warnBox.classList.add('hidden');
+      }
+      const override = document.getElementById('bulk-summary-override-toggle').checked;
+      if (!override) {
+        const correctMarks = Number(test.markingScheme?.correctMarks ?? 4);
+        const negativeMarks = Number(test.markingScheme?.negativeMarks ?? 1);
+        const unattemptedMarks = Number(test.markingScheme?.unattemptedMarks ?? 0);
+        const score = roundTestNumber(c * correctMarks - w * negativeMarks + u * unattemptedMarks);
+        document.getElementById('bulk-summary-score').value = score;
+      }
+      updateBulkLiveKPIs();
+    }
+
+    function toggleBulkSummaryOverride() {
+      const override = document.getElementById('bulk-summary-override-toggle').checked;
+      const input = document.getElementById('bulk-summary-score');
+      input.disabled = !override;
+      if (override) {
+        input.classList.remove('bg-slate-900/50');
+        input.focus();
+      } else {
+        input.classList.add('bg-slate-900/50');
+        handleBulkSummaryInput();
+      }
+      updateBulkLiveKPIs();
+    }
+
+    // Method B Parser & Validator
+    function parseBulkTestInput(rawText, test) {
+      const text = (rawText || '').trim();
+      if (!text) return { success: false, errors: ['Please paste or upload data before validating.'] };
+      const totalExpected = Math.max(1, Number(test.totalQuestions) || 1);
+      const subjects = test.subjects?.length ? test.subjects : SUBJECT_KEYS;
+      const errors = [];
+
+      const lines = text.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+      const isSequence = lines.length === 1 || (!text.includes('\t') && lines.every(l => /^(\s*([cwu]|correct|wrong|incorrect|unattempted)\s*[, ]*)+$/i.test(l)));
+
+      if (isSequence && !text.includes('\t')) {
+        const tokens = text.split(/[\s,]+/).filter(Boolean);
+        if (tokens.length !== totalExpected) {
+          errors.push(`Expected exactly ${totalExpected} question results, but found ${tokens.length} entries (Difference: ${tokens.length - totalExpected > 0 ? '+' : ''}${tokens.length - totalExpected}).`);
+        }
+        const questions = [];
+        tokens.forEach((token, idx) => {
+          const qNum = idx + 1;
+          const lower = token.toLowerCase();
+          let status = '';
+          if (lower === 'c' || lower === 'correct') status = 'Correct';
+          else if (lower === 'w' || lower === 'wrong' || lower === 'incorrect') status = 'Incorrect';
+          else if (lower === 'u' || lower === 'unattempted') status = 'Unattempted';
+          else {
+            errors.push(`Item ${qNum}: Invalid status code "${token}". Allowed codes: C (Correct), W (Wrong), U (Unattempted).`);
+          }
+          const subIdx = Math.min(subjects.length - 1, Math.floor(idx / Math.ceil(totalExpected / subjects.length)));
+          questions.push({
+            id: `${test.id}-q-${qNum}`,
+            questionNumber: String(qNum),
+            subject: subjects[subIdx] || subjects[0],
+            status: status || 'Unattempted',
+            chapter: '',
+            topic: '',
+            mistakeCategory: '',
+            notes: '',
+            mistakeId: null
+          });
+        });
+        if (errors.length) return { success: false, errors };
+        return { success: true, questions };
+      }
+
+      // TSV / CSV parser
+      const delimiter = lines[0].includes('\t') ? '\t' : ',';
+      function splitRow(row, delim) {
+        if (delim === '\t') return row.split('\t').map(c => c.trim());
+        const result = [];
+        let current = '', inQuotes = false;
+        for (let i = 0; i < row.length; i++) {
+          const char = row[i];
+          if (char === '"') {
+            if (inQuotes && row[i + 1] === '"') { current += '"'; i++; }
+            else inQuotes = !inQuotes;
+          } else if (char === delim && !inQuotes) {
+            result.push(current.trim());
+            current = '';
+          } else current += char;
+        }
+        result.push(current.trim());
+        return result;
+      }
+
+      let startRow = 0;
+      let colQ = 0, colSub = -1, colStatus = 1, colTopic = -1, colMistake = -1, colNotes = -1;
+      const firstRowCols = splitRow(lines[0], delimiter).map(c => c.toLowerCase());
+      const hasHeader = firstRowCols.some(c => /^(q|question|#|number|status|result|subject|topic|chapter)$/i.test(c));
+
+      if (hasHeader) {
+        startRow = 1;
+        firstRowCols.forEach((col, idx) => {
+          if (/^(q|question|#|number|qno)$/i.test(col)) colQ = idx;
+          else if (/^(subject|sub)$/i.test(col)) colSub = idx;
+          else if (/^(status|result|outcome|ans)$/i.test(col)) colStatus = idx;
+          else if (/^(topic|chapter|topic \/ chapter)$/i.test(col)) colTopic = idx;
+          else if (/^(mistake|mistake type|category|error type)$/i.test(col)) colMistake = idx;
+          else if (/^(note|notes|comment|diagnostic)$/i.test(col)) colNotes = idx;
+        });
+      } else {
+        const sample = splitRow(lines[0], delimiter);
+        if (sample.length >= 6) { colQ = 0; colSub = 1; colStatus = 2; colTopic = 3; colMistake = 4; colNotes = 5; }
+        else if (sample.length === 5) { colQ = 0; colSub = 1; colStatus = 2; colTopic = 3; colMistake = 4; }
+        else if (sample.length === 4) { colQ = 0; colSub = 1; colStatus = 2; colTopic = 3; }
+        else if (sample.length === 3) {
+          colQ = 0;
+          if (SUBJECT_KEYS.includes(sample[1].toLowerCase())) { colSub = 1; colStatus = 2; }
+          else { colStatus = 1; colTopic = 2; }
+        } else if (sample.length === 2) { colQ = 0; colStatus = 1; }
+      }
+
+      const dataRows = lines.slice(startRow);
+      if (!dataRows.length) return { success: false, errors: ['No data rows found. Please check your input.'] };
+
+      const seenQNums = new Set();
+      const parsedMap = new Map();
+
+      dataRows.forEach((row, rowIdx) => {
+        const lineNum = startRow + rowIdx + 1;
+        const cols = splitRow(row, delimiter);
+        if (!cols.length || (cols.length === 1 && !cols[0])) return;
+
+        const rawQ = cols[colQ] !== undefined ? cols[colQ] : '';
+        const qNum = parseInt(rawQ.replace(/[^0-9]/g, ''), 10);
+        if (isNaN(qNum) || qNum < 1) {
+          errors.push(`Row ${lineNum}: Missing or invalid Question Number "${rawQ}". Must be a positive integer.`);
+          return;
+        }
+        if (qNum > totalExpected) {
+          errors.push(`Row ${lineNum}: Question number Q${qNum} exceeds configured total questions (${totalExpected}).`);
+          return;
+        }
+        if (seenQNums.has(qNum)) {
+          errors.push(`Row ${lineNum}: Duplicate Question Number Q${qNum} found.`);
+          return;
+        }
+        seenQNums.add(qNum);
+
+        const rawStatus = (cols[colStatus] !== undefined ? cols[colStatus] : '').trim().toLowerCase();
+        let status = '';
+        if (rawStatus === 'c' || rawStatus === 'correct') status = 'Correct';
+        else if (rawStatus === 'w' || rawStatus === 'wrong' || rawStatus === 'incorrect') status = 'Incorrect';
+        else if (rawStatus === 'u' || rawStatus === 'unattempted') status = 'Unattempted';
+        else {
+          errors.push(`Row ${lineNum} (Q${qNum}): Invalid status "${cols[colStatus]}". Expected Correct (C), Wrong (W), or Unattempted (U).`);
+        }
+
+        let subject = '';
+        if (colSub >= 0 && cols[colSub]) {
+          const rawSub = cols[colSub].trim().toLowerCase();
+          if (rawSub === 'mathematics' || rawSub === 'maths') subject = 'maths';
+          else if (rawSub === 'physics') subject = 'physics';
+          else if (rawSub === 'chemistry') subject = 'chemistry';
+          else {
+            errors.push(`Row ${lineNum} (Q${qNum}): Unknown subject "${cols[colSub]}". Allowed: Physics, Chemistry, Maths.`);
+          }
+        } else {
+          const subIdx = Math.min(subjects.length - 1, Math.floor((qNum - 1) / Math.ceil(totalExpected / subjects.length)));
+          subject = subjects[subIdx] || subjects[0];
+        }
+
+        const topic = colTopic >= 0 && cols[colTopic] ? cols[colTopic].trim() : '';
+        let mistakeCategory = '';
+        if (colMistake >= 0 && cols[colMistake]) {
+          const rawMistake = cols[colMistake].trim();
+          if (rawMistake && status === 'Incorrect') {
+            mistakeCategory = canonicalizeMistakeCategory(rawMistake);
+          }
+        }
+        const notes = colNotes >= 0 && cols[colNotes] ? cols[colNotes].trim() : '';
+
+        parsedMap.set(qNum, {
+          id: `${test.id}-q-${qNum}`,
+          questionNumber: String(qNum),
+          subject: subject || 'physics',
+          status: status || 'Unattempted',
+          chapter: topic,
+          topic,
+          mistakeCategory,
+          notes,
+          mistakeId: null
+        });
+      });
+
+      const missingQ = [];
+      for (let i = 1; i <= totalExpected; i++) {
+        if (!seenQNums.has(i)) missingQ.push(i);
+      }
+      if (missingQ.length > 0) {
+        if (missingQ.length <= 10) errors.push(`Missing question row(s): Q${missingQ.join(', Q')} are missing from the data.`);
+        else errors.push(`Missing ${missingQ.length} question rows. All ${totalExpected} questions must be accounted for.`);
+      }
+
+      if (errors.length) return { success: false, errors };
+
+      const questions = [];
+      for (let i = 1; i <= totalExpected; i++) questions.push(parsedMap.get(i));
+      return { success: true, questions };
+    }
+
+    function validateBulkPasteData() {
+      const test = getTestById(bulkActiveTestId);
+      if (!test) return;
+      const rawText = document.getElementById('bulk-paste-textarea')?.value || '';
+      const result = parseBulkTestInput(rawText, test);
+      const errBox = document.getElementById('bulk-paste-error-box');
+      const prevBox = document.getElementById('bulk-paste-preview-box');
+
+      if (!result.success) {
+        errBox.innerHTML = `<p class="font-bold text-rose-300">Validation Errors (${result.errors.length}):</p><ul class="list-disc list-inside mt-1 space-y-0.5 text-[11px]">${result.errors.map(e => `<li>${escapeHtml(e)}</li>`).join('')}</ul>`;
+        errBox.classList.remove('hidden');
+        prevBox.classList.add('hidden');
+        bulkPasteParsedData = null;
+        return;
+      }
+
+      errBox.classList.add('hidden');
+      bulkPasteParsedData = result.questions;
+
+      const total = result.questions.length;
+      const correct = result.questions.filter(q => q.status === 'Correct').length;
+      const wrong = result.questions.filter(q => q.status === 'Incorrect').length;
+      const unattempted = result.questions.filter(q => q.status === 'Unattempted').length;
+      const mistakes = result.questions.filter(q => q.status === 'Incorrect' && q.mistakeCategory).length;
+      const score = roundTestNumber(correct * Number(test.markingScheme?.correctMarks ?? 4) - wrong * Number(test.markingScheme?.negativeMarks ?? 1) + unattempted * Number(test.markingScheme?.unattemptedMarks ?? 0));
+
+      const kpiEl = document.getElementById('bulk-paste-preview-kpi');
+      kpiEl.innerHTML = `<span class="font-bold">✓ Successfully Validated:</span> ${total} questions (${correct} Correct, ${wrong} Wrong, ${unattempted} Unattempted). Projected Score: <b>${score} / ${test.maximumMarks}</b> (${mistakes} mistake${mistakes === 1 ? '' : 's'} classified).`;
+
+      const tbody = document.getElementById('bulk-paste-preview-tbody');
+      tbody.innerHTML = result.questions.map(q => `
+        <tr class="hover:bg-slate-800/30">
+          <td class="p-2 font-mono font-bold text-slate-300">Q${q.questionNumber}</td>
+          <td class="p-2">${testSubjectLabel(q.subject)}</td>
+          <td class="p-2"><span class="px-2 py-0.5 rounded text-[10px] font-semibold ${q.status === 'Correct' ? 'bg-emerald-950 text-emerald-300 border border-emerald-800' : q.status === 'Incorrect' ? 'bg-rose-950 text-rose-300 border border-rose-800' : 'bg-slate-800 text-slate-400'}">${q.status}</span></td>
+          <td class="p-2">${escapeHtml(q.topic || '—')}</td>
+          <td class="p-2">${q.mistakeCategory ? `<span class="text-purple-300 font-medium">${escapeHtml(q.mistakeCategory)}</span>` : '—'}</td>
+          <td class="p-2 text-slate-400 truncate max-w-xs">${escapeHtml(q.notes || '—')}</td>
+        </tr>
+      `).join('');
+
+      prevBox.classList.remove('hidden');
+    }
+
+    function handleBulkFileImport(event) {
+      const file = event.target.files?.[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = e => {
+        document.getElementById('bulk-paste-textarea').value = e.target.result || '';
+        validateBulkPasteData();
+      };
+      reader.readAsText(file);
+      event.target.value = '';
+    }
+
+    function applyBulkPasteToGrid() {
+      if (!bulkPasteParsedData) return;
+      bulkWorkingQuestions = JSON.parse(JSON.stringify(bulkPasteParsedData));
+      switchBulkMethod('grid');
+      renderBulkGrid();
+      updateBulkLiveKPIs();
+      showToast('Imported results loaded into grid for editing.', 'success');
+    }
+
+    function proceedToConfirmFromPaste() {
+      if (!bulkPasteParsedData) return;
+      bulkWorkingQuestions = JSON.parse(JSON.stringify(bulkPasteParsedData));
+      bulkActiveMethod = 'grid';
+      prepareBulkConfirmation();
+    }
+
+    function prepareBulkConfirmation() {
+      const test = getTestById(bulkActiveTestId);
+      if (!test) return;
+
+      const modal = document.getElementById('test-bulk-confirm-modal');
+      const subtitle = document.getElementById('bulk-confirm-subtitle');
+      const kpis = document.getElementById('bulk-confirm-kpis');
+      const warnBox = document.getElementById('bulk-confirm-warnings');
+
+      const isSummary = bulkActiveMethod === 'summary';
+      subtitle.textContent = `${test.title} · ${isSummary ? 'Quick Summary Entry' : 'Question-Level Analysis'}`;
+
+      let total = 0, correct = 0, wrong = 0, unattempted = 0, score = 0, accuracy = null, unclassified = 0;
+      const correctMarks = Number(test.markingScheme?.correctMarks ?? 4);
+      const negativeMarks = Number(test.markingScheme?.negativeMarks ?? 1);
+      const unattemptedMarks = Number(test.markingScheme?.unattemptedMarks ?? 0);
+
+      let rawPct = isSummary
+        ? document.getElementById('bulk-summary-percentile')?.value
+        : document.getElementById('bulk-input-percentile')?.value;
+      rawPct = (rawPct || '').trim();
+      let percentileVal = null;
+      if (rawPct !== '') {
+        const num = Number(rawPct);
+        if (!Number.isFinite(num) || num < 0 || num > 100) {
+          showToast('Percentile must be between 0 and 100.', 'warn');
+          return;
+        }
+        percentileVal = Math.round(num * 1000) / 1000;
+      }
+
+      if (isSummary) {
+        total = Number(document.getElementById('bulk-summary-total')?.value) || test.totalQuestions;
+        correct = Math.max(0, Number(document.getElementById('bulk-summary-correct')?.value) || 0);
+        wrong = Math.max(0, Number(document.getElementById('bulk-summary-incorrect')?.value) || 0);
+        unattempted = Math.max(0, Number(document.getElementById('bulk-summary-unattempted')?.value) || 0);
+        const attempted = correct + wrong;
+        const override = document.getElementById('bulk-summary-override-toggle')?.checked;
+        score = override ? (Number(document.getElementById('bulk-summary-score')?.value) || 0) : roundTestNumber(correct * correctMarks - wrong * negativeMarks + unattempted * unattemptedMarks);
+        accuracy = attempted > 0 ? roundTestNumber(correct / attempted * 100) : null;
+      } else {
+        total = bulkWorkingQuestions.length;
+        correct = bulkWorkingQuestions.filter(q => q.status === 'Correct').length;
+        wrong = bulkWorkingQuestions.filter(q => q.status === 'Incorrect').length;
+        unattempted = bulkWorkingQuestions.filter(q => q.status === 'Unattempted').length;
+        unclassified = bulkWorkingQuestions.filter(q => q.status === 'Incorrect' && !q.mistakeCategory).length;
+        const attempted = correct + wrong;
+        score = roundTestNumber(bulkWorkingQuestions.reduce((sum, q) => sum + testQuestionScore(test, q), 0));
+        accuracy = attempted > 0 ? roundTestNumber(correct / attempted * 100) : null;
+      }
+
+      kpis.innerHTML = `
+        <div class="rounded bg-slate-900 p-2"><div class="text-[10px] text-slate-500 uppercase">Mode</div><strong class="text-white">${isSummary ? 'Summary' : `${total} Questions`}</strong></div>
+        <div class="rounded bg-slate-900 p-2"><div class="text-[10px] text-slate-500 uppercase">Score</div><strong class="text-blue-300">${score} / ${test.maximumMarks}</strong></div>
+        <div class="rounded bg-slate-900 p-2"><div class="text-[10px] text-slate-500 uppercase">Accuracy</div><strong class="text-amber-300">${accuracy === null ? '—' : `${accuracy}%`}</strong></div>
+        <div class="rounded bg-slate-900 p-2"><div class="text-[10px] text-slate-500 uppercase">Correct</div><strong class="text-emerald-400">${correct}</strong></div>
+        <div class="rounded bg-slate-900 p-2"><div class="text-[10px] text-slate-500 uppercase">Wrong</div><strong class="text-rose-400">${wrong}</strong></div>
+        <div class="rounded bg-slate-900 p-2"><div class="text-[10px] text-slate-500 uppercase">Percentile</div><strong class="text-purple-300">${percentileVal !== null ? `${percentileVal}%` : 'Not entered'}</strong></div>
+      `;
+
+      const warnings = [];
+      if (!isSummary && unclassified > 0) {
+        warnings.push(`<div class="rounded border border-amber-800 bg-amber-950/40 p-2.5 text-xs text-amber-200">⚠️ <b>${unclassified} wrong question(s)</b> have no mistake type classified. They will be saved without a Mistake Notebook entry.</div>`);
+      }
+      if (isSummary && (correct + wrong + unattempted !== total)) {
+        warnings.push(`<div class="rounded border border-amber-800 bg-amber-950/40 p-2.5 text-xs text-amber-200">⚠️ Question sum (${correct} + ${wrong} + ${unattempted} = ${correct + wrong + unattempted}) differs from configured total (${total}).</div>`);
+      }
+
+      if (warnings.length) {
+        warnBox.innerHTML = warnings.join('');
+        warnBox.classList.remove('hidden');
+      } else {
+        warnBox.innerHTML = '';
+        warnBox.classList.add('hidden');
+      }
+
+      modal.classList.remove('hidden');
+    }
+
+    function closeBulkConfirmModal() {
+      document.getElementById('test-bulk-confirm-modal')?.classList.add('hidden');
+    }
+
+    function commitBulkResults() {
+      const test = getTestById(bulkActiveTestId);
+      if (!test) return;
+
+      const now = new Date().toISOString();
+      const isSummary = bulkActiveMethod === 'summary';
+
+      if (isSummary) {
+        const total = Number(document.getElementById('bulk-summary-total')?.value) || test.totalQuestions;
+        const c = Math.max(0, Number(document.getElementById('bulk-summary-correct')?.value) || 0);
+        const w = Math.max(0, Number(document.getElementById('bulk-summary-incorrect')?.value) || 0);
+        const u = Math.max(0, Number(document.getElementById('bulk-summary-unattempted')?.value) || 0);
+        const override = document.getElementById('bulk-summary-override-toggle')?.checked;
+        const correctMarks = Number(test.markingScheme?.correctMarks ?? 4);
+        const negativeMarks = Number(test.markingScheme?.negativeMarks ?? 1);
+        const unattemptedMarks = Number(test.markingScheme?.unattemptedMarks ?? 0);
+        const score = override ? (Number(document.getElementById('bulk-summary-score')?.value) || 0) : roundTestNumber(c * correctMarks - w * negativeMarks + u * unattemptedMarks);
+
+        let rawPct = (document.getElementById('bulk-summary-percentile')?.value || '').trim();
+        let percentile = null;
+        if (rawPct !== '') {
+          const num = Number(rawPct);
+          if (Number.isFinite(num) && num >= 0 && num <= 100) percentile = Math.round(num * 1000) / 1000;
+        }
+
+        test.resultMode = 'summary';
+        test.summaryScore = score;
+        test.summaryCorrect = c;
+        test.summaryIncorrect = w;
+        test.summaryUnattempted = u;
+        test.percentile = percentile;
+        const customNotes = document.getElementById('bulk-summary-notes')?.value.trim();
+        if (customNotes) test.notes = customNotes;
+
+      } else {
+        let rawPct = (document.getElementById('bulk-input-percentile')?.value || '').trim();
+        let percentile = null;
+        if (rawPct !== '') {
+          const num = Number(rawPct);
+          if (Number.isFinite(num) && num >= 0 && num <= 100) percentile = Math.round(num * 1000) / 1000;
+        }
+        test.percentile = percentile;
+        test.resultMode = 'question_level';
+
+        const updatedQuestions = [];
+        bulkWorkingQuestions.forEach(q => {
+          const qNumStr = String(q.questionNumber);
+          const existingQ = test.questions.find(item => String(item.questionNumber) === qNumStr);
+          const qId = existingQ?.id || `${test.id}-q-${qNumStr}`;
+
+          let mistakeId = existingQ?.mistakeId || q.mistakeId || null;
+
+          if (q.status === 'Incorrect' && q.mistakeCategory) {
+            let mistake = mistakeId ? getMistakeById(mistakeId) : null;
+            if (!mistake) {
+              mistake = (appState.mistakes || []).find(m => m.linkedTestId === test.id && String(m.questionNumber) === qNumStr);
+            }
+            if (mistake) {
+              mistake.subject = q.subject;
+              mistake.chapter = q.chapter || q.topic || mistake.chapter;
+              mistake.topic = q.topic || q.chapter || mistake.topic;
+              mistake.category = q.mistakeCategory;
+              mistake.notes = q.notes || mistake.notes;
+              mistake.mistakeDescription = [q.mistakeCategory, q.notes].filter(Boolean).join(' — ') || `Question ${qNumStr} was incorrect in ${test.title}.`;
+              mistake.updatedAt = now;
+              mistakeId = mistake.id;
+            } else {
+              const newMistakeId = `mistake-test-${test.id}-q${qNumStr}`;
+              const newMistake = {
+                id: newMistakeId,
+                subject: q.subject,
+                chapter: q.chapter || q.topic || '',
+                topic: q.topic || q.chapter || '',
+                category: q.mistakeCategory,
+                severity: 'High',
+                questionText: '',
+                questionSource: 'Mock Test',
+                questionNumber: qNumStr,
+                userAnswer: '',
+                correctAnswer: '',
+                mistakeDescription: [q.mistakeCategory, q.notes].filter(Boolean).join(' — ') || `Question ${qNumStr} was incorrect in ${test.title}.`,
+                rootCause: '',
+                correctApproach: '',
+                preventionRule: '',
+                status: 'Open',
+                occurrenceCount: 1,
+                firstOccurredAt: now,
+                lastOccurredAt: now,
+                resolvedAt: null,
+                reviewRequired: true,
+                reviewDueDate: getOffsetDateFrom(getTodayLocalDate(), 1),
+                linkedTaskId: null,
+                linkedRevisionId: null,
+                linkedSyllabusId: null,
+                linkedTestId: test.id,
+                tags: [test.testType, 'test question'],
+                notes: q.notes ? `Notes: ${q.notes}. Created from ${test.title}, question ${qNumStr}.` : `Created from ${test.title}, question ${qNumStr}.`,
+                createdAt: now,
+                updatedAt: now,
+                archivedAt: null
+              };
+              appState.mistakes.unshift(newMistake);
+              mistakeId = newMistake.id;
+            }
+          } else {
+            if (mistakeId) {
+              const mistake = getMistakeById(mistakeId);
+              if (mistake && mistake.linkedTestId === test.id) {
+                mistake.linkedTestId = null;
+              }
+              mistakeId = null;
+            }
+          }
+
+          updatedQuestions.push({
+            id: qId,
+            questionNumber: qNumStr,
+            subject: q.subject,
+            chapter: q.chapter || q.topic || '',
+            topic: q.topic || q.chapter || '',
+            questionType: existingQ?.questionType || 'Single correct',
+            difficulty: existingQ?.difficulty || 'Medium',
+            questionText: existingQ?.questionText || '',
+            userAnswer: existingQ?.userAnswer || '',
+            correctAnswer: existingQ?.correctAnswer || '',
+            status: q.status,
+            maxMarks: existingQ?.maxMarks ?? Number(test.markingScheme?.correctMarks ?? 4),
+            marksAwarded: (q.marksAwarded !== null && q.marksAwarded !== undefined && Number.isFinite(Number(q.marksAwarded)))
+              ? Number(q.marksAwarded)
+              : (existingQ?.marksAwarded !== null && existingQ?.marksAwarded !== undefined && Number.isFinite(Number(existingQ?.marksAwarded)))
+                ? Number(existingQ.marksAwarded)
+                : null,
+            timeSpentMinutes: existingQ?.timeSpentMinutes || 0,
+            diagnosticType: q.mistakeCategory || existingQ?.diagnosticType || '',
+            diagnostic: q.notes || existingQ?.diagnostic || '',
+            mistakeCategory: q.mistakeCategory || '',
+            mistakeId,
+            createdAt: existingQ?.createdAt || now,
+            updatedAt: now
+          });
+        });
+
+        test.questions = updatedQuestions;
+      }
+
+      if (test.status === 'Planned') test.status = 'Completed';
+      test.updatedAt = now;
+      if (['Completed', 'Analyzed'].includes(test.status)) test.completedAt = test.completedAt || now;
+
+      appendHistoryEvent({
+        module: 'Tests',
+        action: 'results recorded',
+        entityType: 'test',
+        entityId: test.id,
+        title: `Results recorded: ${test.title}`,
+        description: isSummary ? `Summary mode: Score ${test.summaryScore}` : `${test.questions.length} questions recorded · Score ${calculateTestMetrics(test).score}`,
+        subject: test.subjects[0] || 'general'
+      });
+
+      saveAppState(false);
+      closeBulkConfirmModal();
+      closeBulkEntryModal();
+      renderTests();
+      if (currentTestDetailId === test.id) renderTestDetail(test.id);
+      renderAnalytics();
+      renderDashboard();
+      showToast('Test results and mistakes saved successfully.', 'success');
     }
     function setTestStatus(id, status) {
       const test = getTestById(id); if (!test || !TEST_STATUSES.includes(status)) return;
@@ -5427,13 +6653,22 @@ showToast(`Target achieved! "${goal.title}"`, 'success');
 
     // Phase 8: all views below are derived from the authoritative test and mistake records.
     function getAnalyticsTests() {
-      let tests = (appState.tests || []).filter(test => ['Completed', 'Analyzed'].includes(test.status) && test.questions.length > 0);
+      let tests = (appState.tests || []).filter(test => ['Completed', 'Analyzed'].includes(test.status) && ((Array.isArray(test.questions) && test.questions.length > 0) || test.resultMode === 'summary' || test.summaryScore !== null || (test.percentile !== null && test.percentile !== undefined)));
       const range = document.getElementById('analytics-range')?.value || 'all';
       if (range === '7tests' || range === '15tests') { tests = tests.slice().sort((a, b) => a.testDate.localeCompare(b.testDate)); return tests.slice(-Number(range.slice(0, -5))); }
       if (range === '30' || range === '90') { const cutoff = getOffsetDateFrom(getTodayLocalDate(), -Number(range)); tests = tests.filter(test => test.testDate >= cutoff); }
       return tests.slice().sort((a, b) => a.testDate.localeCompare(b.testDate));
     }
-    function analyticsMeasure(test, metric) { const m = calculateTestMetrics(test); return metric === 'score' ? m.score : metric === 'accuracy' ? m.accuracy : m.percentage; }
+    function analyticsMeasure(test, metric) {
+      const m = calculateTestMetrics(test);
+      if (metric === 'percentile') {
+        const p = m.percentile;
+        return (p !== null && p !== undefined && p !== '' && Number.isFinite(Number(p))) ? Number(p) : null;
+      }
+      if (metric === 'score') return m.score;
+      if (metric === 'accuracy') return m.accuracy;
+      return m.percentage;
+    }
     function renderAnalytics() {
       if (!appState) return;
       const tests = getAnalyticsTests(), metrics = tests.map(test => ({ test, values: calculateTestMetrics(test) }));
@@ -5443,24 +6678,62 @@ showToast(`Target achieved! "${goal.title}"`, 'success');
       const avgPercentage = tests.length ? roundTestNumber(metrics.reduce((sum, item) => sum + (item.values.percentage ?? 0), 0) / tests.length) : null;
       const avgAccuracy = tests.length ? roundTestNumber(metrics.reduce((sum, item) => sum + (item.values.accuracy ?? 0), 0) / tests.length) : null;
       const totalAttempted = metrics.reduce((sum, item) => sum + item.values.attempted, 0), totalCorrect = metrics.reduce((sum, item) => sum + item.values.correct, 0), totalWrong = metrics.reduce((sum, item) => sum + item.values.incorrect, 0);
-      const bestTest = tests.length ? tests.reduce((best, test) => calculateTestMetrics(test).percentage > calculateTestMetrics(best).percentage ? test : best) : null;
+      const bestTest = tests.length ? tests.reduce((best, test) => (calculateTestMetrics(test).percentage ?? -1) > (calculateTestMetrics(best).percentage ?? -1) ? test : best) : null;
       const recentTest = tests.at(-1) || null;
-      const trendLabel = tests.length < 4 ? 'Not enough data yet' : roundTestNumber(calculateTestMetrics(tests.at(-1)).percentage - calculateTestMetrics(tests[0]).percentage) > 0 ? `+${roundTestNumber(calculateTestMetrics(tests.at(-1)).percentage - calculateTestMetrics(tests[0]).percentage)} pts` : `${roundTestNumber(calculateTestMetrics(tests.at(-1)).percentage - calculateTestMetrics(tests[0]).percentage)} pts`;
+      const trendLabel = tests.length < 4 ? 'Not enough data yet' : (() => {
+        const pLast = calculateTestMetrics(tests.at(-1)).percentage;
+        const pFirst = calculateTestMetrics(tests[0]).percentage;
+        if (pLast === null || pFirst === null) return '—';
+        const diff = roundTestNumber(pLast - pFirst);
+        return diff > 0 ? `+${diff} pts` : `${diff} pts`;
+      })();
       const summary = document.getElementById('analytics-summary'); if (summary) { const stats = [['Total Tests', tests.length], ['Average Score', avg === null ? '—' : `${avg} marks`], ['Average Accuracy', avgAccuracy === null ? '—' : `${avgAccuracy}%`], ['Average Percentage', avgPercentage === null ? '—' : `${avgPercentage}%`], ['Best Score', bestTest ? `${calculateTestMetrics(bestTest).score} (${calculateTestMetrics(bestTest).percentage}%)` : '—'], ['Recent Score', recentTest ? `${calculateTestMetrics(recentTest).score} (${calculateTestMetrics(recentTest).percentage}%)` : '—'], ['Improvement Trend', trendLabel]]; summary.innerHTML = stats.map(([label, value]) => `<div class="card-base p-3"><div class="text-[10px] uppercase tracking-wide text-slate-400">${label}</div><div class="mt-1 text-xl font-bold text-white">${value}</div></div>`).join(''); }
       const trend = document.getElementById('analytics-trend'), metric = document.getElementById('analytics-metric')?.value || 'percentage';
       if (trend) {
-        if (!tests.length) trend.innerHTML = '<div class="flex min-h-40 items-center justify-center text-center text-xs text-slate-500">Record a completed test to see a trend.</div>';
-        else if (tests.length === 1) trend.innerHTML = `<div class="flex min-h-40 flex-col items-center justify-center text-center"><div class="text-3xl font-bold text-blue-300">${analyticsMeasure(tests[0], metric) ?? '—'}${metric === 'score' ? '' : '%'}</div><p class="mt-2 text-xs text-slate-400">Baseline · ${escapeHtml(tests[0].title)} (${escapeHtml(tests[0].testDate)})</p></div>`;
-        else { const values = tests.map(test => analyticsMeasure(test, metric) ?? 0); const max = Math.max(1, ...values); const min = Math.min(0, ...values); const span = Math.max(1, max - min); const points = values.map((value, index) => `${40 + index * 720 / (values.length - 1)},${170 - (value - min) / span * 130}`).join(' '); trend.innerHTML = `<svg viewBox="0 0 800 210" role="img" aria-label="Test ${escapeHtml(metric)} trend" class="w-full"><line x1="36" y1="170" x2="764" y2="170" stroke="#334155"/><polyline points="${points}" fill="none" stroke="#60a5fa" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>${values.map((value, index) => `<circle cx="${40 + index * 720 / (values.length - 1)}" cy="${170 - (value - min) / span * 130}" r="4" fill="#93c5fd"><title>${escapeHtml(tests[index].title)}: ${value}</title></circle>`).join('')}</svg><div class="mt-2 grid grid-cols-2 gap-2 text-[10px] text-slate-500 sm:grid-cols-4">${tests.slice(-4).map(test => `<span class="truncate">${escapeHtml(test.testDate)} · ${escapeHtml(test.title)}</span>`).join('')}</div>`; }
+        if (metric === 'percentile') {
+          const eligibleTests = tests.filter(test => {
+            const val = test.percentile;
+            return val !== null && val !== undefined && val !== '' && Number.isFinite(Number(val));
+          });
+          if (!eligibleTests.length) {
+            trend.innerHTML = `<div class="flex min-h-40 flex-col items-center justify-center p-4 text-center"><div class="text-sm font-semibold text-slate-300">No percentile data recorded</div><p class="mt-1 text-xs text-slate-500">None of the ${tests.length} completed tests in this range have a recorded percentile. Add or edit percentiles in the Tests module to view this trend.</p></div>`;
+          } else if (eligibleTests.length === 1) {
+            const t = eligibleTests[0];
+            const pVal = Number(t.percentile);
+            trend.innerHTML = `<div class="flex min-h-40 flex-col items-center justify-center text-center"><div class="text-3xl font-bold text-blue-300">${pVal}%</div><p class="mt-2 text-xs text-slate-400">Baseline · ${escapeHtml(t.title)} (${escapeHtml(t.testDate)})</p><p class="mt-1 text-[11px] text-slate-500">1 of ${tests.length} completed test${tests.length === 1 ? '' : 's'} has recorded percentile</p></div>`;
+          } else {
+            const values = eligibleTests.map(t => Number(t.percentile));
+            const points = values.map((val, idx) => {
+              const x = 50 + idx * 700 / (values.length - 1);
+              const y = 170 - (val / 100) * 140;
+              return `${x},${y}`;
+            }).join(' ');
+            const circles = eligibleTests.map((t, idx) => {
+              const val = Number(t.percentile);
+              const x = 50 + idx * 700 / (values.length - 1);
+              const y = 170 - (val / 100) * 140;
+              return `<circle cx="${x}" cy="${y}" r="4.5" fill="#93c5fd" stroke="#1e3a8a" stroke-width="1.5"><title>${escapeHtml(t.title)} (${escapeHtml(t.testDate)}): ${val}%</title></circle>`;
+            }).join('');
+            trend.innerHTML = `<div class="space-y-2"><div class="flex items-center justify-between text-[11px] text-slate-400"><span>Plotted: <strong class="text-blue-300">${eligibleTests.length}</strong> of ${tests.length} test${tests.length === 1 ? '' : 's'} with recorded percentile</span><span>Scale: 0% – 100%</span></div><svg viewBox="0 0 800 210" role="img" aria-label="Test Percentile trend" class="w-full"><line x1="45" y1="30" x2="755" y2="30" stroke="#334155" stroke-dasharray="4" stroke-width="0.75"/><text x="38" y="34" fill="#64748b" font-size="10" text-anchor="end">100%</text><line x1="45" y1="100" x2="755" y2="100" stroke="#334155" stroke-dasharray="4" stroke-width="0.75"/><text x="38" y="104" fill="#64748b" font-size="10" text-anchor="end">50%</text><line x1="45" y1="170" x2="755" y2="170" stroke="#475569" stroke-width="1"/><text x="38" y="174" fill="#64748b" font-size="10" text-anchor="end">0%</text><polyline points="${points}" fill="none" stroke="#60a5fa" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>${circles}</svg><div class="grid grid-cols-2 gap-2 text-[10px] text-slate-500 sm:grid-cols-4">${eligibleTests.slice(-4).map(t => `<span class="truncate">${escapeHtml(t.testDate)} · ${escapeHtml(t.title)} <strong class="text-slate-300">(${Number(t.percentile)}%)</strong></span>`).join('')}</div></div>`;
+          }
+        } else {
+          const eligibleTests = tests.filter(test => {
+            const val = analyticsMeasure(test, metric);
+            return val !== null && val !== undefined && Number.isFinite(val);
+          });
+          if (!eligibleTests.length) trend.innerHTML = '<div class="flex min-h-40 items-center justify-center text-center text-xs text-slate-500">Record a completed test to see a trend.</div>';
+          else if (eligibleTests.length === 1) trend.innerHTML = `<div class="flex min-h-40 flex-col items-center justify-center text-center"><div class="text-3xl font-bold text-blue-300">${analyticsMeasure(eligibleTests[0], metric) ?? '—'}${metric === 'score' ? '' : '%'}</div><p class="mt-2 text-xs text-slate-400">Baseline · ${escapeHtml(eligibleTests[0].title)} (${escapeHtml(eligibleTests[0].testDate)})</p></div>`;
+          else { const values = eligibleTests.map(test => analyticsMeasure(test, metric) ?? 0); const max = Math.max(1, ...values); const min = Math.min(0, ...values); const span = Math.max(1, max - min); const points = values.map((value, index) => `${40 + index * 720 / (values.length - 1)},${170 - (value - min) / span * 130}`).join(' '); trend.innerHTML = `<svg viewBox="0 0 800 210" role="img" aria-label="Test ${escapeHtml(metric)} trend" class="w-full"><line x1="36" y1="170" x2="764" y2="170" stroke="#334155"/><polyline points="${points}" fill="none" stroke="#60a5fa" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>${values.map((value, index) => `<circle cx="${40 + index * 720 / (values.length - 1)}" cy="${170 - (value - min) / span * 130}" r="4" fill="#93c5fd"><title>${escapeHtml(eligibleTests[index].title)}: ${value}${metric === 'score' ? '' : '%'}</title></circle>`).join('')}</svg><div class="mt-2 grid grid-cols-2 gap-2 text-[10px] text-slate-500 sm:grid-cols-4">${eligibleTests.slice(-4).map(test => `<span class="truncate">${escapeHtml(test.testDate)} · ${escapeHtml(test.title)}</span>`).join('')}</div>`; }
+        }
       }
       const subjectBox = document.getElementById('analytics-subjects');
-      const subjectStats = SUBJECT_KEYS.map(subject => { const rows = tests.flatMap(test => test.questions.filter(question => question.subject === subject).map(question => ({ test, question }))); const attempted = rows.filter(row => ['Correct', 'Incorrect', 'Partially Correct'].includes(row.question.status)); const correct = rows.filter(row => row.question.status === 'Correct').length; const incorrect = rows.filter(row => row.question.status === 'Incorrect').length; const score = roundTestNumber(rows.reduce((sum, row) => sum + testQuestionScore(row.test, row.question), 0)); const max = roundTestNumber(rows.reduce((sum, row) => sum + row.question.maxMarks, 0)); const accuracy = attempted.length ? roundTestNumber(correct / attempted.length * 100) : null; const percentage = max > 0 ? roundTestNumber(score / max * 100) : null; const testCount = new Set(rows.map(row => row.test.id)).size; const avgTime = attempted.length ? roundTestNumber(rows.reduce((sum, row) => sum + row.question.timeSpentMinutes, 0) / attempted.length) : null; const lost = roundTestNumber(rows.reduce((sum, row) => sum + Math.max(0, row.question.maxMarks - testQuestionScore(row.test, row.question)), 0)); const perTest = tests.map(test => { const qs = test.questions.filter(question => question.subject === subject && ['Correct', 'Incorrect', 'Partially Correct'].includes(question.status)); return qs.length ? qs.filter(question => question.status === 'Correct').length / qs.length * 100 : null; }).filter(value => value !== null); const trend = perTest.length >= 2 ? roundTestNumber(perTest.at(-1) - perTest[0]) : null; return { subject, rows, attempted, correct, incorrect, score, accuracy, percentage, testCount, avgTime, lost, trend, unattempted: rows.filter(row => row.question.status === 'Unattempted').length }; });
+      const subjectStats = SUBJECT_KEYS.map(subject => { const rows = tests.flatMap(test => (test.questions || []).filter(question => question.subject === subject).map(question => ({ test, question }))); const attempted = rows.filter(row => ['Correct', 'Incorrect', 'Partially Correct'].includes(row.question.status)); const correct = rows.filter(row => row.question.status === 'Correct').length; const incorrect = rows.filter(row => row.question.status === 'Incorrect').length; const score = roundTestNumber(rows.reduce((sum, row) => sum + testQuestionScore(row.test, row.question), 0)); const max = roundTestNumber(rows.reduce((sum, row) => sum + row.question.maxMarks, 0)); const accuracy = attempted.length ? roundTestNumber(correct / attempted.length * 100) : null; const percentage = max > 0 ? roundTestNumber(score / max * 100) : null; const testCount = new Set(rows.map(row => row.test.id)).size; const avgTime = attempted.length ? roundTestNumber(rows.reduce((sum, row) => sum + row.question.timeSpentMinutes, 0) / attempted.length) : null; const lost = roundTestNumber(rows.reduce((sum, row) => sum + Math.max(0, row.question.maxMarks - testQuestionScore(row.test, row.question)), 0)); const perTest = tests.map(test => { const qs = (test.questions || []).filter(question => question.subject === subject && ['Correct', 'Incorrect', 'Partially Correct'].includes(question.status)); return qs.length ? qs.filter(question => question.status === 'Correct').length / qs.length * 100 : null; }).filter(value => value !== null); const trend = perTest.length >= 2 ? roundTestNumber(perTest.at(-1) - perTest[0]) : null; return { subject, rows, attempted, correct, incorrect, score, accuracy, percentage, testCount, avgTime, lost, trend, unattempted: rows.filter(row => row.question.status === 'Unattempted').length }; });
       const meaningfulSubjects = subjectStats.filter(item => item.accuracy !== null && item.attempted.length >= 5 && item.testCount >= 2).sort((a, b) => b.accuracy - a.accuracy);
       if (subjectBox) subjectBox.innerHTML = tests.length ? `${meaningfulSubjects.length >= 2 ? `<p class="mb-2 text-xs text-slate-300">Strongest: <b class="text-emerald-300">${testSubjectLabel(meaningfulSubjects[0].subject)}</b> · Weakest: <b class="text-amber-300">${testSubjectLabel(meaningfulSubjects.at(-1).subject)}</b> <span class="text-slate-500">(accuracy across at least 5 attempts in 2 tests)</span></p>` : '<p class="mb-2 text-xs text-slate-500">Not enough subject data yet to name strengths reliably.</p>'}${subjectStats.map(item => `<div class="rounded-lg border border-slate-800 p-3"><div class="flex items-center justify-between gap-2"><span class="badge ${item.subject === 'physics' ? 'badge-physics' : item.subject === 'chemistry' ? 'badge-chemistry' : 'badge-maths'}">${testSubjectLabel(item.subject)}</span><span class="text-xs text-slate-300">${item.score} marks · ${item.percentage === null ? '—' : `${item.percentage}% marks rate`} · ${item.accuracy === null ? '—' : `${item.accuracy}% accuracy`}</span></div><p class="mt-2 text-[10px] text-slate-500">${item.testCount} tests · ${item.attempted.length} attempted · ${item.correct} correct · ${item.incorrect} incorrect · ${item.unattempted} unattempted logged · ${item.lost} marks lost · ${item.avgTime === null ? '—' : `${item.avgTime} min`} average time · ${item.trend === null ? 'not enough trend data' : `trend ${item.trend > 0 ? '+' : ''}${item.trend} pts`}</p></div>`).join('')}` : '<p class="text-xs text-slate-500">Complete your first test to compare subject performance.</p>';
       const chapterBox = document.getElementById('analytics-chapters');
-      if (chapterBox) { const groups = new Map(); tests.forEach(test => test.questions.forEach(question => { if (!question.chapter && !question.topic) return; const key = `${question.subject}|${question.chapter || 'Chapter not set'}|${question.topic}`; const group = groups.get(key) || { subject: question.subject, chapter: question.chapter || 'Chapter not set', topic: question.topic, attempted: 0, correct: 0, wrong: 0, unattempted: 0, marks: 0, max: 0, marksLost: 0, mistakes: [] }; group.attempted += ['Correct', 'Incorrect', 'Partially Correct'].includes(question.status) ? 1 : 0; group.correct += question.status === 'Correct' ? 1 : 0; group.wrong += question.status === 'Incorrect' ? 1 : 0; group.unattempted += question.status === 'Unattempted' ? 1 : 0; group.marks += testQuestionScore(test, question); group.max += question.maxMarks; group.marksLost += Math.max(0, question.maxMarks - testQuestionScore(test, question)); if (question.mistakeId) { const linked = getMistakeById(question.mistakeId); if (linked) group.mistakes.push(linked); } groups.set(key, group); })); const allGroups = [...groups.values()]; const sorted = allGroups.slice().sort((a, b) => (b.wrong + b.marksLost) - (a.wrong + a.marksLost)).slice(0, 8); const strength = allGroups.filter(group => group.attempted >= 3).sort((a, b) => b.correct / b.attempted - a.correct / a.attempted)[0]; chapterBox.innerHTML = sorted.length ? `${strength ? `<p class="mb-2 text-xs text-emerald-300">Top strength: ${testSubjectLabel(strength.subject)} · ${escapeHtml(strength.chapter)}${strength.topic ? ` · ${escapeHtml(strength.topic)}` : ''} (${roundTestNumber(strength.correct / strength.attempted * 100)}% across ${strength.attempted} attempts)</p>` : '<p class="mb-2 text-xs text-slate-500">Not enough chapter attempts yet to name a strength.</p>'}<p class="mb-2 text-[10px] uppercase tracking-wide text-amber-300">Priority weak areas</p>${sorted.map(group => `<div class="rounded border border-slate-800 p-2 text-xs"><div class="flex items-center justify-between gap-2"><span class="min-w-0 truncate text-slate-200">${testSubjectLabel(group.subject)} · ${escapeHtml(group.chapter)}${group.topic ? ` · ${escapeHtml(group.topic)}` : ''}</span><span class="shrink-0 text-amber-300">${group.wrong} wrong · ${roundTestNumber(group.marksLost)} lost</span></div><p class="mt-1 text-[10px] text-slate-500">${group.attempted} attempts · ${group.correct} correct · ${group.unattempted} unattempted · ${group.attempted ? roundTestNumber(group.correct / group.attempted * 100) : '—'}% accuracy · ${roundTestNumber(group.marks / Math.max(1, group.attempted))} avg marks · ${group.mistakes.length} linked mistakes (${group.mistakes.filter(m => m.occurrenceCount > 1).length} recurring)</p></div>`).join('')}` : '<p class="text-xs text-slate-500">Add chapter and topic to question records to see where errors cluster.</p>'; }
+      if (chapterBox) { const groups = new Map(); tests.forEach(test => (test.questions || []).forEach(question => { if (!question.chapter && !question.topic) return; const key = `${question.subject}|${question.chapter || 'Chapter not set'}|${question.topic}`; const group = groups.get(key) || { subject: question.subject, chapter: question.chapter || 'Chapter not set', topic: question.topic, attempted: 0, correct: 0, wrong: 0, unattempted: 0, marks: 0, max: 0, marksLost: 0, mistakes: [] }; group.attempted += ['Correct', 'Incorrect', 'Partially Correct'].includes(question.status) ? 1 : 0; group.correct += question.status === 'Correct' ? 1 : 0; group.wrong += question.status === 'Incorrect' ? 1 : 0; group.unattempted += question.status === 'Unattempted' ? 1 : 0; group.marks += testQuestionScore(test, question); group.max += question.maxMarks; group.marksLost += Math.max(0, question.maxMarks - testQuestionScore(test, question)); if (question.mistakeId) { const linked = getMistakeById(question.mistakeId); if (linked) group.mistakes.push(linked); } groups.set(key, group); })); const allGroups = [...groups.values()]; const sorted = allGroups.slice().sort((a, b) => (b.wrong + b.marksLost) - (a.wrong + a.marksLost)).slice(0, 8); const strength = allGroups.filter(group => group.attempted >= 3).sort((a, b) => b.correct / b.attempted - a.correct / a.attempted)[0]; chapterBox.innerHTML = sorted.length ? `${strength ? `<p class="mb-2 text-xs text-emerald-300">Top strength: ${testSubjectLabel(strength.subject)} · ${escapeHtml(strength.chapter)}${strength.topic ? ` · ${escapeHtml(strength.topic)}` : ''} (${roundTestNumber(strength.correct / strength.attempted * 100)}% across ${strength.attempted} attempts)</p>` : '<p class="mb-2 text-xs text-slate-500">Not enough chapter attempts yet to name a strength.</p>'}<p class="mb-2 text-[10px] uppercase tracking-wide text-amber-300">Priority weak areas</p>${sorted.map(group => `<div class="rounded border border-slate-800 p-2 text-xs"><div class="flex items-center justify-between gap-2"><span class="min-w-0 truncate text-slate-200">${testSubjectLabel(group.subject)} · ${escapeHtml(group.chapter)}${group.topic ? ` · ${escapeHtml(group.topic)}` : ''}</span><span class="shrink-0 text-amber-300">${group.wrong} wrong · ${roundTestNumber(group.marksLost)} lost</span></div><p class="mt-1 text-[10px] text-slate-500">${group.attempted} attempts · ${group.correct} correct · ${group.unattempted} unattempted · ${group.attempted ? roundTestNumber(group.correct / group.attempted * 100) : '—'}% accuracy · ${roundTestNumber(group.marks / Math.max(1, group.attempted))} avg marks · ${group.mistakes.length} linked mistakes (${group.mistakes.filter(m => m.occurrenceCount > 1).length} recurring)</p></div>`).join('')}` : '<p class="text-xs text-slate-500">Add chapter and topic to question records to see where errors cluster.</p>'; }
       const mistakeBox = document.getElementById('analytics-mistakes');
-      if (mistakeBox) { const ids = new Set(tests.map(test => test.id)); const testMistakes = (appState.mistakes || []).filter(mistake => mistake.status !== 'Archived' && (ids.has(mistake.linkedTestId) || tests.some(test => test.questions.some(question => question.mistakeId === mistake.id)))); const recurrent = testMistakes.filter(mistake => mistake.occurrenceCount > 1).length; const unresolved = testMistakes.filter(mistake => ['Open', 'Learning'].includes(mistake.status)).length; const categories = MISTAKE_CATEGORIES.map(category => ({ category, count: testMistakes.filter(mistake => mistake.category === category).length })).filter(item => item.count).sort((a, b) => b.count - a.count).slice(0, 4); const avgTime = totalAttempted ? roundTestNumber(metrics.reduce((sum, item) => sum + item.values.time, 0) / totalAttempted) : null; const questionCapacity = metrics.reduce((sum, item) => sum + item.test.totalQuestions, 0); const unattemptedTotal = metrics.reduce((sum, item) => sum + item.values.unattempted, 0); const avgAttemptRate = tests.length ? roundTestNumber(metrics.reduce((sum, item) => sum + item.values.attempted / Math.max(1, item.test.totalQuestions), 0) / tests.length * 100) : null; const incorrectRate = totalAttempted ? roundTestNumber(totalWrong / totalAttempted * 100) : null; const wrongTime = roundTestNumber(tests.reduce((sum, test) => sum + test.questions.filter(q => q.status === 'Incorrect').reduce((s, q) => s + q.timeSpentMinutes, 0), 0)); const negative = roundTestNumber(metrics.reduce((sum, item) => sum + item.test.questions.filter(q => q.status === 'Incorrect').reduce((s, q) => s + Math.max(0, -testQuestionScore(item.test, q)), 0), 0)); const slowCorrect = tests.flatMap(test => test.questions.filter(q => q.status === 'Correct' && q.diagnosticType === 'Correct but Slow')).length; const insights = [];
+      if (mistakeBox) { const ids = new Set(tests.map(test => test.id)); const testMistakes = (appState.mistakes || []).filter(mistake => mistake.status !== 'Archived' && (ids.has(mistake.linkedTestId) || tests.some(test => (test.questions || []).some(question => question.mistakeId === mistake.id)))); const recurrent = testMistakes.filter(mistake => mistake.occurrenceCount > 1).length; const unresolved = testMistakes.filter(mistake => ['Open', 'Learning'].includes(mistake.status)).length; const categories = MISTAKE_CATEGORIES.map(category => ({ category, count: testMistakes.filter(mistake => mistake.category === category).length })).filter(item => item.count).sort((a, b) => b.count - a.count).slice(0, 4); const avgTime = totalAttempted ? roundTestNumber(metrics.reduce((sum, item) => sum + item.values.time, 0) / totalAttempted) : null; const questionCapacity = metrics.reduce((sum, item) => sum + item.test.totalQuestions, 0); const unattemptedTotal = metrics.reduce((sum, item) => sum + item.values.unattempted, 0); const avgAttemptRate = tests.length ? roundTestNumber(metrics.reduce((sum, item) => sum + item.values.attempted / Math.max(1, item.test.totalQuestions), 0) / tests.length * 100) : null; const incorrectRate = totalAttempted ? roundTestNumber(totalWrong / totalAttempted * 100) : null; const wrongTime = roundTestNumber(tests.reduce((sum, test) => sum + (test.questions || []).filter(q => q.status === 'Incorrect').reduce((s, q) => s + q.timeSpentMinutes, 0), 0)); const negative = roundTestNumber(metrics.reduce((sum, item) => sum + (item.test.questions || []).filter(q => q.status === 'Incorrect').reduce((s, q) => s + Math.max(0, -testQuestionScore(item.test, q)), 0), 0)); const slowCorrect = tests.flatMap(test => (test.questions || []).filter(q => q.status === 'Correct' && q.diagnosticType === 'Correct but Slow')).length; const insights = [];
         if (tests.length < 4) insights.push('Not enough data yet for reliable trend claims. Insights are limited to recorded counts and comparisons.');
         if (meaningfulSubjects.length >= 2) insights.push(`${testSubjectLabel(meaningfulSubjects.at(-1).subject)} has lower recorded accuracy than ${testSubjectLabel(meaningfulSubjects[0].subject)} across the selected tests.`);
         if (tests.length >= 4 && calculateTestMetrics(tests.at(-1)).percentage < calculateTestMetrics(tests[0]).percentage) insights.push('The latest score percentage is below the first score in this range. Review recent question errors and time use.');
@@ -5468,7 +6741,7 @@ showToast(`Target achieved! "${goal.title}"`, 'success');
         if (avgAttemptRate !== null && avgAttemptRate < 60) insights.push(`The average attempt rate is ${avgAttemptRate}%. Check whether unanswered questions were due to time or topic coverage.`);
         if (recurrent) insights.push(`${recurrent} linked mistake${recurrent === 1 ? ' is' : 's are'} recurring; schedule another review from the Mistake Notebook.`);
         if (slowCorrect) insights.push(`${slowCorrect} correct question${slowCorrect === 1 ? '' : 's'} are classified as slow. Review solution efficiency while preserving accuracy.`);
-        mistakeBox.innerHTML = `<div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center"><div class="rounded bg-slate-950 p-3"><div class="text-lg font-bold text-white">${testMistakes.length}</div><div class="text-[10px] text-slate-500">Test linked mistakes</div></div><div class="rounded bg-slate-950 p-3"><div class="text-lg font-bold text-white">${recurrent}</div><div class="text-[10px] text-slate-500">Recurring</div></div><div class="rounded bg-slate-950 p-3"><div class="text-lg font-bold text-white">${unresolved}</div><div class="text-[10px] text-slate-500">Unresolved</div></div><div class="rounded bg-slate-950 p-3"><div class="text-lg font-bold text-white">${totalWrong}</div><div class="text-[10px] text-slate-500">Incorrect answers</div></div></div>${categories.length ? `<div><div class="mb-2 text-[10px] uppercase text-slate-500">Most common linked mistake categories</div>${categories.map(item => `<div class="flex justify-between py-1 text-xs"><span class="text-slate-300">${escapeHtml(item.category)}</span><span class="text-rose-300">${item.count}</span></div>`).join('')}</div>` : '<p class="text-xs text-slate-500">Use Create Mistake on a question to connect test errors to the Notebook.</p>'}<div class="rounded border border-slate-800 p-3 text-xs text-slate-400">${avgAttemptRate === null ? 'No attempt-rate data yet.' : `Attempt rate ${avgAttemptRate}% · unattempted ${questionCapacity ? roundTestNumber(unattemptedTotal / questionCapacity * 100) : '—'}% · incorrect attempt rate ${incorrectRate}% · ${totalCorrect} correct · ${negative} marks lost to negative marking · ${avgTime === null ? '—' : `${avgTime} min`} average time per attempted question · ${wrongTime} min spent on incorrect questions.`} ${tests.flatMap(test => test.questions).filter(q => q.diagnosticType === 'Unattempted Due to Time').length} questions marked unattempted due to time.</div>`;
+        mistakeBox.innerHTML = `<div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center"><div class="rounded bg-slate-950 p-3"><div class="text-lg font-bold text-white">${testMistakes.length}</div><div class="text-[10px] text-slate-500">Test linked mistakes</div></div><div class="rounded bg-slate-950 p-3"><div class="text-lg font-bold text-white">${recurrent}</div><div class="text-[10px] text-slate-500">Recurring</div></div><div class="rounded bg-slate-950 p-3"><div class="text-lg font-bold text-white">${unresolved}</div><div class="text-[10px] text-slate-500">Unresolved</div></div><div class="rounded bg-slate-950 p-3"><div class="text-lg font-bold text-white">${totalWrong}</div><div class="text-[10px] text-slate-500">Incorrect answers</div></div></div>${categories.length ? `<div><div class="mb-2 text-[10px] uppercase text-slate-500">Most common linked mistake categories</div>${categories.map(item => `<div class="flex justify-between py-1 text-xs"><span class="text-slate-300">${escapeHtml(item.category)}</span><span class="text-rose-300">${item.count}</span></div>`).join('')}</div>` : '<p class="text-xs text-slate-500">Use Create Mistake on a question to connect test errors to the Notebook.</p>'}<div class="rounded border border-slate-800 p-3 text-xs text-slate-400">${avgAttemptRate === null ? 'No attempt-rate data yet.' : `Attempt rate ${avgAttemptRate}% · unattempted ${questionCapacity ? roundTestNumber(unattemptedTotal / questionCapacity * 100) : '—'}% · incorrect attempt rate ${incorrectRate}% · ${totalCorrect} correct · ${negative} marks lost to negative marking · ${avgTime === null ? '—' : `${avgTime} min`} average time per attempted question · ${wrongTime} min spent on incorrect questions.`} ${tests.flatMap(test => test.questions || []).filter(q => q.diagnosticType === 'Unattempted Due to Time').length} questions marked unattempted due to time.</div>`;
         const insightBox = document.getElementById('analytics-insights'); if (insightBox) insightBox.innerHTML = insights.length ? insights.map(text => `<div class="rounded border border-slate-800 bg-slate-950/50 p-3 text-xs text-slate-300">${escapeHtml(text)}</div>`).join('') : '<p class="text-xs text-slate-500">Complete and analyze tests with question-level results to generate evidence-based insights.</p>'; }
     }
 
