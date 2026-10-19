@@ -1921,7 +1921,7 @@
   </div>
   <div id="question-form-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[60] hidden flex items-center justify-center p-3 sm:p-5">
     <div class="card-base w-full max-w-2xl max-h-[92vh] overflow-y-auto p-4 sm:p-6 bg-[#111827]"><div class="mb-4 flex items-center justify-between border-b border-slate-700 pb-3"><h3 id="question-form-title" class="font-bold text-white">Add Question Result</h3><button type="button" onclick="closeQuestionForm()" class="rounded p-2 text-slate-400" aria-label="Close question form">✕</button></div>
-      <form onsubmit="saveQuestion(event)" class="space-y-3 text-xs"><input id="question-input-id" type="hidden"><div class="grid grid-cols-1 sm:grid-cols-3 gap-3"><label class="text-slate-300">Question number<input id="question-input-number" class="field-input mt-1" required></label><label class="text-slate-300">Subject<select id="question-input-subject" class="field-input mt-1"><option value="physics">Physics</option><option value="chemistry">Chemistry</option><option value="maths">Mathematics</option></select></label><label class="text-slate-300">Difficulty<select id="question-input-difficulty" class="field-input mt-1"><option>Medium</option><option>Easy</option><option>Hard</option></select></label><label class="text-slate-300">Chapter<input id="question-input-chapter" class="field-input mt-1"></label><label class="text-slate-300">Topic<input id="question-input-topic" class="field-input mt-1"></label><label class="text-slate-300">Question type<select id="question-input-type" class="field-input mt-1"><option>Single correct</option><option>Multiple correct</option><option>Numerical</option><option>Integer</option><option>Subjective</option><option>Other</option></select></label><label class="text-slate-300">Question maximum marks<input id="question-input-max" type="number" min="0" step="0.25" value="4" class="field-input mt-1"></label><label class="text-slate-300">Result<select id="question-input-status" class="field-input mt-1"><option>Correct</option><option>Incorrect</option><option>Unattempted</option><option>Partially Correct</option><option>Bonus / Not Counted</option></select></label><label class="text-slate-300">Time spent (minutes)<input id="question-input-time" type="number" min="0" step="0.5" value="0" class="field-input mt-1"></label><label class="text-slate-300">Marks awarded (optional override)<input id="question-input-marks" type="number" step="0.25" class="field-input mt-1" placeholder="Use marking scheme"></label><label class="text-slate-300">Your answer<input id="question-input-answer" class="field-input mt-1"></label><label class="text-slate-300">Correct answer<input id="question-input-correct" class="field-input mt-1"></label></div><label class="block text-slate-300">Question / problem<textarea id="question-input-text" rows="2" class="field-input mt-1"></textarea></label><label class="block text-slate-300">Diagnostic classification<select id="question-input-diagnostic-type" class="field-input mt-1"><option value="">Not classified</option><option>Correct but Slow</option><option>Conceptual Mistake</option><option>Formula Mistake</option><option>Calculation Mistake</option><option>Silly Mistake</option><option>Misread Question</option><option>Wrong Approach</option><option>Time Pressure</option><option>Guessing Error</option><option>Knowledge Gap</option><option>Unattempted Due to Time</option><option>Unattempted Due to Difficulty</option></select></label><label class="block text-slate-300">Diagnostic note<textarea id="question-input-diagnostic" rows="2" class="field-input mt-1" placeholder="What affected the result?"></textarea></label><div id="question-form-error" class="hidden rounded border border-rose-800 bg-rose-950/40 p-2 text-rose-200" role="alert"></div><div class="flex justify-end gap-2 border-t border-slate-800 pt-3"><button type="button" onclick="closeQuestionForm()" class="rounded-lg bg-slate-800 px-4 py-2 text-slate-300">Cancel</button><button type="submit" class="rounded-lg bg-blue-700 px-4 py-2 font-semibold text-white">Save Question</button></div></form>
+      <form onsubmit="saveQuestion(event)" class="space-y-3 text-xs"><input id="question-input-id" type="hidden"><div class="grid grid-cols-1 sm:grid-cols-3 gap-3"><label class="text-slate-300">Question number<input id="question-input-number" class="field-input mt-1" required></label><label class="text-slate-300">Subject<select id="question-input-subject" class="field-input mt-1"><option value="physics">Physics</option><option value="chemistry">Chemistry</option><option value="maths">Mathematics</option></select></label><label class="text-slate-300">Difficulty<select id="question-input-difficulty" class="field-input mt-1"><option>Medium</option><option>Easy</option><option>Hard</option></select></label><label class="text-slate-300">Chapter<input id="question-input-chapter" class="field-input mt-1"></label><label class="text-slate-300">Topic<input id="question-input-topic" class="field-input mt-1"></label><label class="text-slate-300">Question type<select id="question-input-type" class="field-input mt-1"><option>Single correct</option><option>Multiple correct</option><option>Numerical</option><option>Integer</option><option>Matrix Match</option><option>Subjective</option><option>Other</option></select></label><label class="text-slate-300">Question maximum marks<input id="question-input-max" type="number" min="0" step="0.25" value="4" class="field-input mt-1"></label><label class="text-slate-300">Result<select id="question-input-status" class="field-input mt-1"><option>Correct</option><option>Incorrect</option><option>Unattempted</option><option>Partially Correct</option><option>Bonus / Not Counted</option></select></label><label class="text-slate-300">Time spent (minutes)<input id="question-input-time" type="number" min="0" step="0.5" value="0" class="field-input mt-1"></label><label class="text-slate-300">Marks awarded (optional override)<input id="question-input-marks" type="number" step="0.25" class="field-input mt-1" placeholder="Use marking scheme"></label><label class="text-slate-300">Your answer<input id="question-input-answer" class="field-input mt-1"></label><label class="text-slate-300">Correct answer<input id="question-input-correct" class="field-input mt-1"></label></div><label class="block text-slate-300">Question / problem<textarea id="question-input-text" rows="2" class="field-input mt-1"></textarea></label><label class="block text-slate-300">Diagnostic classification<select id="question-input-diagnostic-type" class="field-input mt-1"><option value="">Not classified</option><option>Correct but Slow</option><option>Conceptual Mistake</option><option>Formula Mistake</option><option>Calculation Mistake</option><option>Silly Mistake</option><option>Misread Question</option><option>Wrong Approach</option><option>Time Pressure</option><option>Guessing Error</option><option>Knowledge Gap</option><option>Unattempted Due to Time</option><option>Unattempted Due to Difficulty</option></select></label><label class="block text-slate-300">Diagnostic note<textarea id="question-input-diagnostic" rows="2" class="field-input mt-1" placeholder="What affected the result?"></textarea></label><div id="question-form-error" class="hidden rounded border border-rose-800 bg-rose-950/40 p-2 text-rose-200" role="alert"></div><div class="flex justify-end gap-2 border-t border-slate-800 pt-3"><button type="button" onclick="closeQuestionForm()" class="rounded-lg bg-slate-800 px-4 py-2 text-slate-300">Cancel</button><button type="submit" class="rounded-lg bg-blue-700 px-4 py-2 font-semibold text-white">Save Question</button></div></form>
     </div>
   </div>
   <div id="test-delete-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[70] hidden flex items-center justify-center p-4"><div class="card-base w-full max-w-md p-5 bg-[#111827]"><h3 class="font-bold text-white">Delete this test?</h3><p id="test-delete-copy" class="mt-2 text-sm text-slate-300"></p><div class="mt-5 flex justify-end gap-2"><button onclick="closeTestDelete()" class="rounded bg-slate-800 px-3 py-2 text-xs">Cancel</button><button onclick="confirmTestDelete()" class="rounded bg-rose-700 px-3 py-2 text-xs font-semibold">Delete test</button></div></div></div>
@@ -1995,15 +1995,21 @@
 
         <!-- Scrollable Table Container -->
         <div class="flex-1 min-h-0 w-full max-w-full min-w-0 overflow-x-auto overflow-y-auto border border-slate-800 rounded-lg bg-slate-950/40 overscroll-contain" style="-webkit-overflow-scrolling: touch; touch-action: pan-x pan-y;">
-          <table class="w-full min-w-[800px] text-left text-xs text-slate-300 border-collapse" style="min-width: 800px;">
+          <table class="w-full min-w-[1150px] text-left text-xs text-slate-300 border-collapse" style="min-width: 1150px;">
             <thead class="sticky top-0 bg-[#0d1424] text-[10px] uppercase text-slate-400 z-10 border-b border-slate-800">
               <tr>
                 <th class="p-2 w-12 text-center">Q#</th>
                 <th class="p-2 w-28">Subject</th>
-                <th class="p-2 w-44">Status</th>
-                <th class="p-2 min-w-[160px]">Topic / Chapter</th>
-                <th class="p-2 min-w-[200px]">Mistake Type (for Wrong)</th>
-                <th class="p-2 min-w-[150px]">Question Notes</th>
+                <th class="p-2 w-32">Type</th>
+                <th class="p-2 w-24">Diff</th>
+                <th class="p-2 w-28 text-center">Status</th>
+                <th class="p-2 w-16 text-center">Max</th>
+                <th class="p-2 w-20 text-center">Marks</th>
+                <th class="p-2 min-w-[150px]">Topic / Chapter</th>
+                <th class="p-2 min-w-[190px]">Mistake Type (for Wrong)</th>
+                <th class="p-2 w-16 text-center">Time (m)</th>
+                <th class="p-2 min-w-[140px]">Notes</th>
+                <th class="p-2 w-16 text-center">Details</th>
               </tr>
             </thead>
             <tbody id="bulk-grid-tbody" class="divide-y divide-slate-800/60"></tbody>
@@ -2018,7 +2024,7 @@
           <ul class="list-disc list-inside space-y-0.5 text-slate-400 text-[11px]">
             <li><b class="text-slate-200">Compact sequence:</b> E.g. <code class="text-blue-300">C W U C W C C ...</code> (separated by spaces, commas, or newlines)</li>
             <li><b class="text-slate-200">Spreadsheet rows (TSV):</b> Tab-separated rows copied from Excel or Google Sheets</li>
-            <li><b class="text-slate-200">CSV format:</b> Columns: <code class="text-blue-300">Question, Subject, Status, Topic, Mistake Type, Notes</code></li>
+            <li><b class="text-slate-200">CSV format:</b> Columns: <code class="text-blue-300">Question, Subject, Status, Topic, Mistake Type, Notes</code> (plus optional <code class="text-blue-300">Type, Diff, Max, Marks, Time</code>)</li>
           </ul>
         </div>
         <div class="flex items-center justify-between gap-2">
@@ -2039,7 +2045,7 @@
           <div class="max-h-60 overflow-y-auto border border-slate-800 rounded-lg">
             <table class="w-full text-left text-xs text-slate-300 border-collapse">
               <thead class="sticky top-0 bg-[#0d1424] text-[10px] uppercase text-slate-400 border-b border-slate-800">
-                <tr><th class="p-2">Q#</th><th class="p-2">Subject</th><th class="p-2">Status</th><th class="p-2">Topic</th><th class="p-2">Mistake Type</th><th class="p-2">Notes</th></tr>
+                <tr><th class="p-2">Q#</th><th class="p-2">Subject</th><th class="p-2">Type</th><th class="p-2">Status</th><th class="p-2">Marks</th><th class="p-2">Topic</th><th class="p-2">Mistake Type</th><th class="p-2">Notes</th></tr>
               </thead>
               <tbody id="bulk-paste-preview-tbody" class="divide-y divide-slate-800"></tbody>
             </table>
@@ -2156,6 +2162,8 @@
     const TEST_TYPES = ['JEE Main Mock', 'JEE Advanced Mock', 'JEE Main', 'JEE Advanced', 'Coaching Test', 'Chapter Test', 'Subject Test', 'Part Test', 'PYQ Test', 'Full Mock', 'School Test', 'Custom Test', 'Other'];
     const TEST_STATUSES = ['Planned', 'In Progress', 'Completed', 'Analyzed', 'Archived'];
     const QUESTION_STATUSES = ['Correct', 'Incorrect', 'Unattempted', 'Partially Correct', 'Bonus / Not Counted'];
+    const QUESTION_TYPES = ['Single correct', 'Multiple correct', 'Numerical', 'Integer', 'Matrix Match', 'Subjective', 'Other'];
+    const QUESTION_DIFFICULTIES = ['Easy', 'Medium', 'Hard'];
     const SUBJECT_KEYS = ['physics', 'chemistry', 'maths'];
     let currentTestDetailId = null;
     let currentQuestionTestId = null;
@@ -2573,7 +2581,7 @@
             questionNumber: String(question.questionNumber || qIndex + 1),
             subject: SUBJECT_KEYS.includes(question.subject) ? question.subject : 'physics',
             chapter: String(question.chapter || ''), topic: String(question.topic || ''),
-            questionType: String(question.questionType || 'Single correct'), difficulty: ['Easy', 'Medium', 'Hard'].includes(question.difficulty) ? question.difficulty : 'Medium',
+            questionType: QUESTION_TYPES.includes(question.questionType) ? question.questionType : 'Single correct', difficulty: QUESTION_DIFFICULTIES.includes(question.difficulty) ? question.difficulty : 'Medium',
             questionText: String(question.questionText || ''), userAnswer: String(question.userAnswer || ''), correctAnswer: String(question.correctAnswer || ''),
             status: QUESTION_STATUSES.includes(question.status) ? question.status : 'Unattempted',
             maxMarks: Math.max(0, Number(question.maxMarks) || Number(marking.correctMarks) || 0),
@@ -5604,8 +5612,8 @@ showToast(`Target achieved! "${goal.title}"`, 'success');
     function testSubjectLabel(subject) { return subject === 'maths' ? 'Mathematics' : subject === 'chemistry' ? 'Chemistry' : 'Physics'; }
     function testQuestionScore(test, question) {
       if (question.status === 'Bonus / Not Counted') return 0;
-      if (question.status === 'Unattempted') return Number(test.markingScheme.unattemptedMarks) || 0;
       if (Number.isFinite(question.marksAwarded)) return roundTestNumber(question.marksAwarded);
+      if (question.status === 'Unattempted') return Number(test.markingScheme.unattemptedMarks) || 0;
       if (question.status === 'Correct') return Number(test.markingScheme.correctMarks) || 0;
       if (question.status === 'Incorrect') return -(Number(test.markingScheme.negativeMarks) || 0);
       return Number(test.markingScheme.partialMarks) || 0;
@@ -5614,7 +5622,7 @@ showToast(`Target achieved! "${goal.title}"`, 'success');
       if (!test) return { score: 0, accuracy: null, percentage: null, attempted: 0, correct: 0, incorrect: 0, partial: 0, unattempted: 0, time: 0, averageTime: null, marksLost: 0, questions: 0, isSummaryOnly: false, percentile: null };
       const rawPct = test.percentile;
       const percentile = (rawPct !== null && rawPct !== undefined && rawPct !== '' && Number.isFinite(Number(rawPct))) ? Number(rawPct) : null;
-      if (test.resultMode === 'summary' || (!test.questions?.length && (test.summaryScore !== null || test.summaryCorrect !== null))) {
+      if (test.resultMode === 'summary' || (!test.questions?.length && (test.summaryScore != null || test.summaryCorrect != null))) {
         const totalQ = Math.max(1, Number(test.totalQuestions) || 1);
         const correct = Math.max(0, Number(test.summaryCorrect) || 0);
         const incorrect = Math.max(0, Number(test.summaryIncorrect) || 0);
@@ -5759,7 +5767,7 @@ showToast(`Target achieved! "${goal.title}"`, 'success');
       list.innerHTML = visible.map(test => {
         const m = calculateTestMetrics(test);
         const tone = test.status === 'Analyzed' ? 'text-emerald-300' : test.status === 'Completed' ? 'text-amber-300' : 'text-slate-300';
-        const modeBadge = test.resultMode === 'summary' || (!test.questions?.length && (test.summaryScore !== null || test.summaryCorrect !== null))
+        const modeBadge = test.resultMode === 'summary' || (!test.questions?.length && (test.summaryScore != null || test.summaryCorrect != null))
           ? '<span class="rounded bg-indigo-950/80 border border-indigo-700/50 px-2 py-0.5 text-[10px] text-indigo-300">Summary Only</span>'
           : (test.questions?.length ? `<span class="rounded bg-cyan-950/80 border border-cyan-700/50 px-2 py-0.5 text-[10px] text-cyan-300">${test.questions.length} Qs Logged</span>` : '');
         return `<article class="rounded-xl border border-slate-700 bg-slate-900/50 p-4"><div class="flex items-start justify-between gap-3"><button onclick="openTestDetail('${test.id}')" class="min-w-0 text-left"><div class="flex items-center gap-2 flex-wrap"><span class="text-[10px] uppercase tracking-wide text-blue-300">${escapeHtml(test.testType)} · ${escapeHtml(test.testDate)}</span>${modeBadge}</div><h3 class="mt-1 truncate font-semibold text-white">${escapeHtml(test.title)}</h3><p class="mt-1 text-xs text-slate-400">${test.subjects.map(testSubjectLabel).join(' · ')} · ${test.totalQuestions} questions · ${test.durationMinutes} min</p></button><span class="rounded bg-slate-800 px-2 py-1 text-[10px] ${tone}">${escapeHtml(test.status)}</span></div><div class="mt-3 grid grid-cols-2 sm:grid-cols-5 gap-2 text-xs"><div class="rounded bg-slate-950/70 p-2"><span class="text-slate-500">Score</span><strong class="ml-2 text-white">${m.score} / ${test.maximumMarks}</strong></div><div class="rounded bg-slate-950/70 p-2"><span class="text-slate-500">Score %</span><strong class="ml-2 text-white">${m.percentage === null ? '—' : `${m.percentage}%`}</strong></div><div class="rounded bg-slate-950/70 p-2"><span class="text-slate-500">Accuracy</span><strong class="ml-2 text-white">${m.accuracy === null ? '—' : `${m.accuracy}%`}</strong></div><div class="rounded bg-slate-950/70 p-2"><span class="text-slate-500">Percentile</span><strong class="ml-2 ${test.percentile !== null ? 'text-blue-300' : 'text-slate-400'}">${test.percentile !== null ? `${test.percentile}%` : '—'}</strong></div><div class="rounded bg-slate-950/70 p-2"><span class="text-slate-500">Attempted</span><strong class="ml-2 text-white">${m.attempted} / ${test.totalQuestions}</strong></div></div><div class="mt-3 flex flex-wrap gap-2 border-t border-slate-800 pt-3"><button onclick="openTestDetail('${test.id}')" class="mistake-action">Details & Questions</button><button onclick="openBulkEntryModal('${test.id}')" class="mistake-action text-blue-300 font-medium">+ Bulk Results</button><button onclick="openTestForm('${test.id}')" class="mistake-action">Edit Test</button>${test.status === 'Planned' ? `<button onclick="setTestStatus('${test.id}','In Progress')" class="mistake-action">Start</button>` : ''}${test.status === 'In Progress' ? `<button onclick="setTestStatus('${test.id}','Completed')" class="mistake-action">Mark Completed</button>` : ''}${test.status === 'Completed' ? `<button onclick="analyzeTest('${test.id}')" class="mistake-action">Analyze</button>` : ''}${test.status !== 'Archived' ? `<button onclick="setTestStatus('${test.id}','Archived')" class="mistake-action">Archive</button>` : ''}<button onclick="openTestDelete('${test.id}')" class="mistake-action text-rose-300">Delete</button></div></article>`;
@@ -5787,7 +5795,7 @@ showToast(`Target achieved! "${goal.title}"`, 'success');
       }).join('');
       const questionCards = test.questions?.length ? test.questions.map(question => {
         const mark = testQuestionScore(test, question);
-        return `<article class="rounded-lg border border-slate-800 bg-slate-950/40 p-3"><div class="flex flex-wrap items-center justify-between gap-2"><div><span class="font-semibold text-white">Q${escapeHtml(question.questionNumber)} · ${testSubjectLabel(question.subject)}</span><span class="ml-2 text-[10px] text-slate-400">${escapeHtml(question.chapter || 'Chapter not set')}${question.topic ? ` · ${escapeHtml(question.topic)}` : ''}</span></div><span class="rounded bg-slate-800 px-2 py-1 text-[10px] text-slate-200">${escapeHtml(question.status)} · ${mark}/${question.maxMarks}</span></div><p class="mt-2 whitespace-pre-wrap text-xs text-slate-300">${escapeHtml(question.questionText || 'Question statement not recorded')}</p><div class="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-[10px] text-slate-400"><span>Your answer: ${escapeHtml(question.userAnswer || '—')}</span><span>Correct: ${escapeHtml(question.correctAnswer || '—')}</span><span>${question.timeSpentMinutes} min</span></div>${question.mistakeCategory || question.diagnosticType ? `<p class="mt-2 text-[10px] text-purple-300 font-semibold">Mistake: ${escapeHtml(question.mistakeCategory || question.diagnosticType)}</p>` : ''}${question.diagnostic ? `<p class="mt-1 text-xs text-amber-200">${escapeHtml(question.diagnostic)}</p>` : ''}${question.mistakeId ? `<p class="mt-2 text-[10px] text-rose-300">Linked mistake: ${escapeHtml(getMistakeById(question.mistakeId)?.topic || getMistakeById(question.mistakeId)?.chapter || question.mistakeId)}</p>` : ''}<div class="mt-2 flex flex-wrap gap-2"><button onclick="openQuestionForm('${test.id}','${question.id}')" class="mistake-action">Edit</button><button onclick="createMistakeFromQuestion('${test.id}','${question.id}')" class="mistake-action">${question.mistakeId ? 'Open Linked Mistake' : 'Create Mistake'}</button><button onclick="createRevisionFromQuestion('${test.id}','${question.id}')" class="mistake-action">Create Revision</button><button onclick="deleteQuestion('${test.id}','${question.id}')" class="mistake-action text-rose-300">Delete</button></div></article>`;
+        return `<article class="rounded-lg border border-slate-800 bg-slate-950/40 p-3"><div class="flex flex-wrap items-center justify-between gap-2"><div><span class="font-semibold text-white">Q${escapeHtml(question.questionNumber)} · ${testSubjectLabel(question.subject)}</span><span class="ml-2 text-[10px] text-slate-400">${escapeHtml(question.chapter || 'Chapter not set')}${question.topic ? ` · ${escapeHtml(question.topic)}` : ''}</span></div><span class="rounded bg-slate-800 px-2 py-1 text-[10px] text-slate-200">${escapeHtml(question.status)} · ${mark}/${question.maxMarks}</span></div><p class="mt-2 whitespace-pre-wrap text-xs text-slate-300">${escapeHtml(question.questionText || 'Question statement not recorded')}</p><div class="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-[10px] text-slate-400"><span>Type: ${escapeHtml(question.questionType || 'Single correct')}</span><span>Diff: ${escapeHtml(question.difficulty || 'Medium')}</span><span>Your answer: ${escapeHtml(question.userAnswer || '—')}</span><span>Correct: ${escapeHtml(question.correctAnswer || '—')}</span><span>${question.timeSpentMinutes} min</span></div>${question.mistakeCategory || question.diagnosticType ? `<p class="mt-2 text-[10px] text-purple-300 font-semibold">Mistake: ${escapeHtml(question.mistakeCategory || question.diagnosticType)}</p>` : ''}${question.diagnostic ? `<p class="mt-1 text-xs text-amber-200">${escapeHtml(question.diagnostic)}</p>` : ''}${question.mistakeId ? `<p class="mt-2 text-[10px] text-rose-300">Linked mistake: ${escapeHtml(getMistakeById(question.mistakeId)?.topic || getMistakeById(question.mistakeId)?.chapter || question.mistakeId)}</p>` : ''}<div class="mt-2 flex flex-wrap gap-2"><button onclick="openQuestionForm('${test.id}','${question.id}')" class="mistake-action">Edit</button><button onclick="createMistakeFromQuestion('${test.id}','${question.id}')" class="mistake-action">${question.mistakeId ? 'Open Linked Mistake' : 'Create Mistake'}</button><button onclick="createRevisionFromQuestion('${test.id}','${question.id}')" class="mistake-action">Create Revision</button><button onclick="deleteQuestion('${test.id}','${question.id}')" class="mistake-action text-rose-300">Delete</button></div></article>`;
       }).join('') : (isSummary ? `<div class="rounded-lg border border-indigo-800/60 bg-indigo-950/20 p-5 text-center text-xs text-indigo-300"><p class="font-semibold">This test has overall summary results recorded.</p><p class="mt-1 text-slate-400">Score: ${m.score}/${test.maximumMarks} · Correct: ${m.correct} · Wrong: ${m.incorrect} · Unattempted: ${m.unattempted}${test.percentile !== null ? ` · Percentile: ${test.percentile}%` : ''}.</p><button onclick="openBulkEntryModal('${test.id}')" class="mt-3 rounded-lg bg-blue-700 px-3 py-1.5 text-xs font-semibold text-white hover:bg-blue-600">Add Question-Level Analysis</button></div>` : '<div class="rounded border border-dashed border-slate-700 p-5 text-center text-xs text-slate-400">No question results logged yet. Add question rows or use Bulk Result Entry to calculate score, accuracy, time, and chapter patterns.</div>');
       const weakChapters = new Map(); (test.questions || []).forEach(question => { if (!question.chapter || question.status !== 'Incorrect') return; const key = `${question.subject}|${question.chapter}`; weakChapters.set(key, (weakChapters.get(key) || 0) + 1); });
       const linkedMistakes = (appState.mistakes || []).filter(mistake => mistake.linkedTestId === test.id || (test.questions || []).some(question => question.mistakeId === mistake.id));
@@ -5803,6 +5811,7 @@ showToast(`Target achieved! "${goal.title}"`, 'success');
     let bulkActiveMethod = 'grid'; // 'grid' | 'paste' | 'summary'
     let bulkWorkingQuestions = [];
     let bulkPasteParsedData = null;
+    let bulkExpandedRows = new Set();
 
     function openBulkEntryModal(testId) {
       bulkActiveTestId = testId;
@@ -5827,8 +5836,9 @@ showToast(`Target achieved! "${goal.title}"`, 'success');
       document.getElementById('bulk-paste-error-box').innerHTML = '';
       document.getElementById('bulk-paste-preview-box').classList.add('hidden');
       bulkPasteParsedData = null;
+      bulkExpandedRows.clear();
 
-      const isSummary = test.resultMode === 'summary' || (!test.questions?.length && (test.summaryScore !== null || test.summaryCorrect !== null));
+      const isSummary = test.resultMode === 'summary' || (!test.questions?.length && (test.summaryScore != null || test.summaryCorrect != null));
       if (isSummary && !test.questions?.length) {
         bulkWorkingQuestions = [];
         initBulkSummaryForm(test);
@@ -5841,13 +5851,20 @@ showToast(`Target achieved! "${goal.title}"`, 'success');
             id: q.id || `${test.id}-q-${idx + 1}`,
             questionNumber: String(q.questionNumber || idx + 1),
             subject: SUBJECT_KEYS.includes(q.subject) ? q.subject : subjects[0],
-            status: q.status === 'Correct' ? 'Correct' : q.status === 'Incorrect' ? 'Incorrect' : 'Unattempted',
+            status: QUESTION_STATUSES.includes(q.status) ? q.status : 'Unattempted',
+            questionType: QUESTION_TYPES.includes(q.questionType) ? q.questionType : 'Single correct',
+            difficulty: QUESTION_DIFFICULTIES.includes(q.difficulty) ? q.difficulty : 'Medium',
+            maxMarks: (q.maxMarks !== null && q.maxMarks !== undefined && Number.isFinite(Number(q.maxMarks))) ? Number(q.maxMarks) : (Number(test.markingScheme?.correctMarks) || 4),
+            marksAwarded: (q.marksAwarded !== null && q.marksAwarded !== undefined && Number.isFinite(Number(q.marksAwarded))) ? Number(q.marksAwarded) : null,
+            timeSpentMinutes: Math.max(0, Number(q.timeSpentMinutes) || 0),
             chapter: q.chapter || '',
             topic: q.topic || '',
             mistakeCategory: q.mistakeCategory || (MISTAKE_CATEGORIES.includes(q.diagnosticType) ? q.diagnosticType : ''),
             notes: q.diagnostic || q.questionText || '',
             mistakeId: q.mistakeId || null,
-            marksAwarded: (q.marksAwarded !== null && q.marksAwarded !== undefined && Number.isFinite(Number(q.marksAwarded))) ? Number(q.marksAwarded) : null
+            userAnswer: q.userAnswer || '',
+            correctAnswer: q.correctAnswer || '',
+            questionText: q.questionText || ''
           }));
           while (bulkWorkingQuestions.length < total) {
             const qNum = bulkWorkingQuestions.length + 1;
@@ -5857,12 +5874,19 @@ showToast(`Target achieved! "${goal.title}"`, 'success');
               questionNumber: String(qNum),
               subject: subjects[subIdx] || subjects[0],
               status: 'Unattempted',
+              questionType: 'Single correct',
+              difficulty: 'Medium',
+              maxMarks: Number(test.markingScheme?.correctMarks) || 4,
+              marksAwarded: null,
+              timeSpentMinutes: 0,
               chapter: '',
               topic: '',
               mistakeCategory: '',
               notes: '',
               mistakeId: null,
-              marksAwarded: null
+              userAnswer: '',
+              correctAnswer: '',
+              questionText: ''
             });
           }
         } else {
@@ -5874,12 +5898,19 @@ showToast(`Target achieved! "${goal.title}"`, 'success');
               questionNumber: String(i),
               subject: subjects[subIdx] || subjects[0],
               status: 'Unattempted',
+              questionType: 'Single correct',
+              difficulty: 'Medium',
+              maxMarks: Number(test.markingScheme?.correctMarks) || 4,
+              marksAwarded: null,
+              timeSpentMinutes: 0,
               chapter: '',
               topic: '',
               mistakeCategory: '',
               notes: '',
               mistakeId: null,
-              marksAwarded: null
+              userAnswer: '',
+              correctAnswer: '',
+              questionText: ''
             });
           }
         }
@@ -5900,6 +5931,7 @@ showToast(`Target achieved! "${goal.title}"`, 'success');
       bulkActiveTestId = null;
       bulkWorkingQuestions = [];
       bulkPasteParsedData = null;
+      bulkExpandedRows.clear();
     }
 
     function switchBulkMethod(method) {
@@ -5950,9 +5982,9 @@ showToast(`Target achieved! "${goal.title}"`, 'success');
         const rowBg = needsAttention ? 'bg-rose-950/20' : (idx % 2 === 0 ? 'bg-transparent' : 'bg-slate-900/20');
         const statusPills = `
           <div class="inline-flex rounded-lg border border-slate-700/80 p-0.5 bg-slate-900/90 text-[11px]">
-            <button type="button" onclick="setBulkQuestionStatus(${idx}, 'Correct')" class="px-2 py-0.5 rounded font-semibold transition ${q.status === 'Correct' ? 'bg-emerald-600 text-white shadow' : 'text-slate-400 hover:text-white'}">C</button>
-            <button type="button" onclick="setBulkQuestionStatus(${idx}, 'Incorrect')" class="px-2 py-0.5 rounded font-semibold transition ${q.status === 'Incorrect' ? 'bg-rose-600 text-white shadow' : 'text-slate-400 hover:text-white'}">W</button>
-            <button type="button" onclick="setBulkQuestionStatus(${idx}, 'Unattempted')" class="px-2 py-0.5 rounded font-semibold transition ${q.status === 'Unattempted' ? 'bg-slate-600 text-white shadow' : 'text-slate-400 hover:text-white'}">U</button>
+            <button type="button" onclick="setBulkQuestionStatus(${idx}, 'Correct')" class="px-2 py-0.5 rounded font-semibold transition ${q.status === 'Correct' ? 'bg-emerald-600 text-white shadow' : 'text-slate-400 hover:text-white'}" title="Correct">C</button>
+            <button type="button" onclick="setBulkQuestionStatus(${idx}, 'Incorrect')" class="px-2 py-0.5 rounded font-semibold transition ${q.status === 'Incorrect' ? 'bg-rose-600 text-white shadow' : 'text-slate-400 hover:text-white'}" title="Wrong">W</button>
+            <button type="button" onclick="setBulkQuestionStatus(${idx}, 'Unattempted')" class="px-2 py-0.5 rounded font-semibold transition ${q.status === 'Unattempted' ? 'bg-slate-600 text-white shadow' : 'text-slate-400 hover:text-white'}" title="Unattempted">U</button>
           </div>
         `;
 
@@ -5969,23 +6001,85 @@ showToast(`Target achieved! "${goal.title}"`, 'success');
           </select>
         `;
 
+        const typeSelect = `
+          <select onchange="updateBulkQuestionType(${idx}, this.value)" class="field-input text-xs py-1 px-1.5 w-full bg-slate-900">
+            ${QUESTION_TYPES.map(t => `<option value="${escapeHtml(t)}" ${t === (q.questionType || 'Single correct') ? 'selected' : ''}>${escapeHtml(t)}</option>`).join('')}
+          </select>
+        `;
+
+        const diffSelect = `
+          <select onchange="updateBulkQuestionDifficulty(${idx}, this.value)" class="field-input text-xs py-1 px-1.5 w-full bg-slate-900">
+            ${QUESTION_DIFFICULTIES.map(d => `<option value="${d}" ${d === (q.difficulty || 'Medium') ? 'selected' : ''}>${d}</option>`).join('')}
+          </select>
+        `;
+
+        const isExpanded = bulkExpandedRows.has(idx);
+        const hasDetail = Boolean(q.userAnswer || q.correctAnswer || q.questionText);
+
         rowsHtml += `
           <tr id="bulk-grid-row-${idx}" class="${rowBg} hover:bg-slate-800/40 transition" tabindex="0" onkeydown="handleBulkRowKeydown(event, ${idx})">
             <td class="p-2 text-center font-mono font-bold text-slate-300">Q${q.questionNumber}</td>
             <td class="p-2">${subjectSelect}</td>
-            <td class="p-2">${statusPills}</td>
+            <td class="p-2">${typeSelect}</td>
+            <td class="p-2">${diffSelect}</td>
+            <td class="p-2 text-center">${statusPills}</td>
+            <td class="p-2 text-center">
+              <input type="number" min="0" step="0.25" value="${q.maxMarks !== null && q.maxMarks !== undefined ? q.maxMarks : ''}" oninput="updateBulkQuestionMaxMarks(${idx}, this.value)" class="field-input text-xs py-1 px-1 text-center w-full" placeholder="${test.markingScheme?.correctMarks ?? 4}">
+            </td>
+            <td class="p-2 text-center">
+              <input type="number" step="0.25" value="${q.marksAwarded !== null && q.marksAwarded !== undefined ? q.marksAwarded : ''}" oninput="updateBulkQuestionMarksAwarded(${idx}, this.value)" class="field-input text-xs py-1 px-1 text-center w-full" placeholder="Auto" title="Leave blank for automatic scoring, or enter custom marks">
+            </td>
             <td class="p-2">
               <input type="text" list="bulk-syllabus-topics" value="${escapeHtml(q.topic || q.chapter || '')}" oninput="updateBulkQuestionTopic(${idx}, this.value)" class="field-input text-xs py-1 px-2 w-full" placeholder="e.g. Kinematics">
             </td>
             <td class="p-2">${mistakeSelect}</td>
+            <td class="p-2 text-center">
+              <input type="number" min="0" step="0.5" value="${q.timeSpentMinutes || 0}" oninput="updateBulkQuestionTime(${idx}, this.value)" class="field-input text-xs py-1 px-1 text-center w-full" placeholder="0">
+            </td>
             <td class="p-2">
               <input type="text" value="${escapeHtml(q.notes || '')}" oninput="updateBulkQuestionNotes(${idx}, this.value)" class="field-input text-xs py-1 px-2 w-full" placeholder="Optional notes">
+            </td>
+            <td class="p-2 text-center">
+              <button type="button" id="bulk-grid-toggle-btn-${idx}" onclick="toggleBulkRowDetail(${idx})" class="px-2 py-1 rounded text-[11px] font-semibold border ${hasDetail ? 'border-blue-500 bg-blue-950/70 text-blue-300' : 'border-slate-700 bg-slate-900 text-slate-400 hover:text-white'}" title="Toggle problem statement and answers">${isExpanded ? '▲' : '▼'}</button>
+            </td>
+          </tr>
+          <tr id="bulk-grid-detail-${idx}" class="bg-slate-900/60 border-b border-slate-800 ${isExpanded ? '' : 'hidden'}">
+            <td colspan="12" class="p-3">
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+                <div>
+                  <label class="block text-[11px] text-slate-400 mb-1">Your Answer (optional)</label>
+                  <input type="text" value="${escapeHtml(q.userAnswer || '')}" oninput="updateBulkQuestionUserAnswer(${idx}, this.value)" class="field-input text-xs py-1 px-2 w-full" placeholder="e.g. A, or 42">
+                </div>
+                <div>
+                  <label class="block text-[11px] text-slate-400 mb-1">Correct Answer (optional)</label>
+                  <input type="text" value="${escapeHtml(q.correctAnswer || '')}" oninput="updateBulkQuestionCorrectAnswer(${idx}, this.value)" class="field-input text-xs py-1 px-2 w-full" placeholder="e.g. B, or 42.5">
+                </div>
+                <div>
+                  <label class="block text-[11px] text-slate-400 mb-1">Question Statement / Problem (optional)</label>
+                  <input type="text" value="${escapeHtml(q.questionText || '')}" oninput="updateBulkQuestionText(${idx}, this.value)" class="field-input text-xs py-1 px-2 w-full" placeholder="Optional statement snippet">
+                </div>
+              </div>
             </td>
           </tr>
         `;
       });
 
-      tbody.innerHTML = rowsHtml || `<tr><td colspan="6" class="p-8 text-center text-xs text-slate-500">No questions match the current filters.</td></tr>`;
+      tbody.innerHTML = rowsHtml || `<tr><td colspan="12" class="p-8 text-center text-xs text-slate-500">No questions match the current filters.</td></tr>`;
+    }
+
+    function toggleBulkRowDetail(idx) {
+      const detailRow = document.getElementById(`bulk-grid-detail-${idx}`);
+      const btn = document.getElementById(`bulk-grid-toggle-btn-${idx}`);
+      if (!detailRow) return;
+      if (detailRow.classList.contains('hidden')) {
+        detailRow.classList.remove('hidden');
+        bulkExpandedRows.add(idx);
+        if (btn) btn.innerHTML = '▲';
+      } else {
+        detailRow.classList.add('hidden');
+        bulkExpandedRows.delete(idx);
+        if (btn) btn.innerHTML = '▼';
+      }
     }
 
     function setBulkQuestionStatus(idx, status) {
@@ -6012,6 +6106,35 @@ showToast(`Target achieved! "${goal.title}"`, 'success');
       if (bulkWorkingQuestions[idx]) bulkWorkingQuestions[idx].subject = subject;
     }
 
+    function updateBulkQuestionType(idx, val) {
+      if (bulkWorkingQuestions[idx]) bulkWorkingQuestions[idx].questionType = val;
+    }
+
+    function updateBulkQuestionDifficulty(idx, val) {
+      if (bulkWorkingQuestions[idx]) bulkWorkingQuestions[idx].difficulty = val;
+    }
+
+    function updateBulkQuestionMaxMarks(idx, val) {
+      if (bulkWorkingQuestions[idx]) {
+        const num = parseFloat(val);
+        bulkWorkingQuestions[idx].maxMarks = (!isNaN(num) && num >= 0) ? num : 0;
+        updateBulkLiveKPIs();
+      }
+    }
+
+    function updateBulkQuestionMarksAwarded(idx, val) {
+      if (bulkWorkingQuestions[idx]) {
+        const trimmed = String(val).trim();
+        if (trimmed === '') {
+          bulkWorkingQuestions[idx].marksAwarded = null;
+        } else {
+          const num = parseFloat(trimmed);
+          bulkWorkingQuestions[idx].marksAwarded = !isNaN(num) ? num : null;
+        }
+        updateBulkLiveKPIs();
+      }
+    }
+
     function updateBulkQuestionTopic(idx, val) {
       if (bulkWorkingQuestions[idx]) {
         bulkWorkingQuestions[idx].topic = val.trim();
@@ -6027,8 +6150,50 @@ showToast(`Target achieved! "${goal.title}"`, 'success');
       }
     }
 
+    function updateBulkQuestionTime(idx, val) {
+      if (bulkWorkingQuestions[idx]) {
+        const num = parseFloat(val);
+        bulkWorkingQuestions[idx].timeSpentMinutes = (!isNaN(num) && num >= 0) ? num : 0;
+      }
+    }
+
     function updateBulkQuestionNotes(idx, val) {
       if (bulkWorkingQuestions[idx]) bulkWorkingQuestions[idx].notes = val.trim();
+    }
+
+    function updateBulkQuestionUserAnswer(idx, val) {
+      if (bulkWorkingQuestions[idx]) {
+        bulkWorkingQuestions[idx].userAnswer = val;
+        updateBulkDetailBtnState(idx);
+      }
+    }
+
+    function updateBulkQuestionCorrectAnswer(idx, val) {
+      if (bulkWorkingQuestions[idx]) {
+        bulkWorkingQuestions[idx].correctAnswer = val;
+        updateBulkDetailBtnState(idx);
+      }
+    }
+
+    function updateBulkQuestionText(idx, val) {
+      if (bulkWorkingQuestions[idx]) {
+        bulkWorkingQuestions[idx].questionText = val;
+        updateBulkDetailBtnState(idx);
+      }
+    }
+
+    function updateBulkDetailBtnState(idx) {
+      const q = bulkWorkingQuestions[idx];
+      const btn = document.getElementById(`bulk-grid-toggle-btn-${idx}`);
+      if (!btn || !q) return;
+      const hasDetail = Boolean(q.userAnswer || q.correctAnswer || q.questionText);
+      if (hasDetail) {
+        btn.classList.add('border-blue-500', 'bg-blue-950/70', 'text-blue-300');
+        btn.classList.remove('border-slate-700', 'bg-slate-900', 'text-slate-400');
+      } else {
+        btn.classList.remove('border-blue-500', 'bg-blue-950/70', 'text-blue-300');
+        btn.classList.add('border-slate-700', 'bg-slate-900', 'text-slate-400');
+      }
     }
 
     function handleBulkRowKeydown(event, idx) {
@@ -6217,11 +6382,19 @@ showToast(`Target achieved! "${goal.title}"`, 'success');
             questionNumber: String(qNum),
             subject: subjects[subIdx] || subjects[0],
             status: status || 'Unattempted',
+            questionType: 'Single correct',
+            difficulty: 'Medium',
+            maxMarks: Number(test.markingScheme?.correctMarks) || 4,
+            marksAwarded: null,
+            timeSpentMinutes: 0,
             chapter: '',
             topic: '',
             mistakeCategory: '',
             notes: '',
-            mistakeId: null
+            mistakeId: null,
+            userAnswer: '',
+            correctAnswer: '',
+            questionText: ''
           });
         });
         if (errors.length) return { success: false, errors };
@@ -6249,9 +6422,9 @@ showToast(`Target achieved! "${goal.title}"`, 'success');
       }
 
       let startRow = 0;
-      let colQ = 0, colSub = -1, colStatus = 1, colTopic = -1, colMistake = -1, colNotes = -1;
+      let colQ = 0, colSub = -1, colStatus = 1, colType = -1, colDiff = -1, colMax = -1, colMarks = -1, colTopic = -1, colMistake = -1, colTime = -1, colNotes = -1;
       const firstRowCols = splitRow(lines[0], delimiter).map(c => c.toLowerCase());
-      const hasHeader = firstRowCols.some(c => /^(q|question|#|number|status|result|subject|topic|chapter)$/i.test(c));
+      const hasHeader = firstRowCols.some(c => /^(q|question|#|number|qno|status|result|outcome|ans|subject|sub|topic|chapter|type|diff|difficulty|marks|score|time)$/i.test(c));
 
       if (hasHeader) {
         startRow = 1;
@@ -6259,8 +6432,13 @@ showToast(`Target achieved! "${goal.title}"`, 'success');
           if (/^(q|question|#|number|qno)$/i.test(col)) colQ = idx;
           else if (/^(subject|sub)$/i.test(col)) colSub = idx;
           else if (/^(status|result|outcome|ans)$/i.test(col)) colStatus = idx;
-          else if (/^(topic|chapter|topic \/ chapter)$/i.test(col)) colTopic = idx;
-          else if (/^(mistake|mistake type|category|error type)$/i.test(col)) colMistake = idx;
+          else if (/^(type|question\s*type|qtype)$/i.test(col)) colType = idx;
+          else if (/^(diff|difficulty|level)$/i.test(col)) colDiff = idx;
+          else if (/^(max|maximum|max\s*marks|total\s*marks)$/i.test(col)) colMax = idx;
+          else if (/^(marks|score|awarded|marks\s*awarded|obt|obtained)$/i.test(col)) colMarks = idx;
+          else if (/^(topic|chapter|topic\s*\/\s*chapter)$/i.test(col)) colTopic = idx;
+          else if (/^(mistake|mistake\s*type|category|error\s*type)$/i.test(col)) colMistake = idx;
+          else if (/^(time|time\s*spent|duration|min|mins)$/i.test(col)) colTime = idx;
           else if (/^(note|notes|comment|diagnostic)$/i.test(col)) colNotes = idx;
         });
       } else {
@@ -6325,6 +6503,44 @@ showToast(`Target achieved! "${goal.title}"`, 'success');
           subject = subjects[subIdx] || subjects[0];
         }
 
+        let questionType = 'Single correct';
+        if (colType >= 0 && cols[colType]) {
+          const rawT = cols[colType].trim();
+          const matched = QUESTION_TYPES.find(t => t.toLowerCase() === rawT.toLowerCase());
+          if (matched) questionType = matched;
+          else if (/matrix/i.test(rawT)) questionType = 'Matrix Match';
+          else if (/multi/i.test(rawT)) questionType = 'Multiple correct';
+          else if (/single/i.test(rawT)) questionType = 'Single correct';
+          else if (/num/i.test(rawT)) questionType = 'Numerical';
+          else if (/int/i.test(rawT)) questionType = 'Integer';
+          else if (/subj/i.test(rawT)) questionType = 'Subjective';
+        }
+
+        let difficulty = 'Medium';
+        if (colDiff >= 0 && cols[colDiff]) {
+          const rawD = cols[colDiff].trim();
+          const matched = QUESTION_DIFFICULTIES.find(d => d.toLowerCase() === rawD.toLowerCase());
+          if (matched) difficulty = matched;
+        }
+
+        let maxMarks = Number(test.markingScheme?.correctMarks ?? 4);
+        if (colMax >= 0 && cols[colMax] !== undefined && cols[colMax].trim() !== '') {
+          const mm = parseFloat(cols[colMax].trim());
+          if (!isNaN(mm) && mm >= 0) maxMarks = mm;
+        }
+
+        let marksAwarded = null;
+        if (colMarks >= 0 && cols[colMarks] !== undefined && cols[colMarks].trim() !== '') {
+          const ma = parseFloat(cols[colMarks].trim());
+          if (!isNaN(ma)) marksAwarded = ma;
+        }
+
+        let timeSpentMinutes = 0;
+        if (colTime >= 0 && cols[colTime] !== undefined && cols[colTime].trim() !== '') {
+          const tm = parseFloat(cols[colTime].trim());
+          if (!isNaN(tm) && tm >= 0) timeSpentMinutes = tm;
+        }
+
         const topic = colTopic >= 0 && cols[colTopic] ? cols[colTopic].trim() : '';
         let mistakeCategory = '';
         if (colMistake >= 0 && cols[colMistake]) {
@@ -6339,12 +6555,20 @@ showToast(`Target achieved! "${goal.title}"`, 'success');
           id: `${test.id}-q-${qNum}`,
           questionNumber: String(qNum),
           subject: subject || 'physics',
+          questionType,
+          difficulty,
           status: status || 'Unattempted',
+          maxMarks,
+          marksAwarded,
+          timeSpentMinutes,
           chapter: topic,
           topic,
           mistakeCategory,
           notes,
-          mistakeId: null
+          mistakeId: null,
+          userAnswer: '',
+          correctAnswer: '',
+          questionText: ''
         });
       });
 
@@ -6388,7 +6612,7 @@ showToast(`Target achieved! "${goal.title}"`, 'success');
       const wrong = result.questions.filter(q => q.status === 'Incorrect').length;
       const unattempted = result.questions.filter(q => q.status === 'Unattempted').length;
       const mistakes = result.questions.filter(q => q.status === 'Incorrect' && q.mistakeCategory).length;
-      const score = roundTestNumber(correct * Number(test.markingScheme?.correctMarks ?? 4) - wrong * Number(test.markingScheme?.negativeMarks ?? 1) + unattempted * Number(test.markingScheme?.unattemptedMarks ?? 0));
+      const score = roundTestNumber(result.questions.reduce((sum, q) => sum + testQuestionScore(test, q), 0));
 
       const kpiEl = document.getElementById('bulk-paste-preview-kpi');
       kpiEl.innerHTML = `<span class="font-bold">✓ Successfully Validated:</span> ${total} questions (${correct} Correct, ${wrong} Wrong, ${unattempted} Unattempted). Projected Score: <b>${score} / ${test.maximumMarks}</b> (${mistakes} mistake${mistakes === 1 ? '' : 's'} classified).`;
@@ -6398,7 +6622,9 @@ showToast(`Target achieved! "${goal.title}"`, 'success');
         <tr class="hover:bg-slate-800/30">
           <td class="p-2 font-mono font-bold text-slate-300">Q${q.questionNumber}</td>
           <td class="p-2">${testSubjectLabel(q.subject)}</td>
+          <td class="p-2 text-slate-400">${escapeHtml(q.questionType || 'Single correct')}</td>
           <td class="p-2"><span class="px-2 py-0.5 rounded text-[10px] font-semibold ${q.status === 'Correct' ? 'bg-emerald-950 text-emerald-300 border border-emerald-800' : q.status === 'Incorrect' ? 'bg-rose-950 text-rose-300 border border-rose-800' : 'bg-slate-800 text-slate-400'}">${q.status}</span></td>
+          <td class="p-2">${q.marksAwarded !== null && q.marksAwarded !== undefined ? `${q.marksAwarded} / ${q.maxMarks}` : `Auto (${q.maxMarks})`}</td>
           <td class="p-2">${escapeHtml(q.topic || '—')}</td>
           <td class="p-2">${q.mistakeCategory ? `<span class="text-purple-300 font-medium">${escapeHtml(q.mistakeCategory)}</span>` : '—'}</td>
           <td class="p-2 text-slate-400 truncate max-w-xs">${escapeHtml(q.notes || '—')}</td>
@@ -6422,7 +6648,26 @@ showToast(`Target achieved! "${goal.title}"`, 'success');
 
     function applyBulkPasteToGrid() {
       if (!bulkPasteParsedData) return;
-      bulkWorkingQuestions = JSON.parse(JSON.stringify(bulkPasteParsedData));
+      bulkPasteParsedData.forEach(parsedQ => {
+        const existing = bulkWorkingQuestions.find(q => String(q.questionNumber) === String(parsedQ.questionNumber));
+        if (existing) {
+          existing.subject = parsedQ.subject || existing.subject;
+          existing.status = parsedQ.status || existing.status;
+          if (parsedQ.chapter || parsedQ.topic) {
+            existing.chapter = parsedQ.chapter || existing.chapter;
+            existing.topic = parsedQ.topic || existing.topic;
+          }
+          if (parsedQ.mistakeCategory) existing.mistakeCategory = parsedQ.mistakeCategory;
+          if (parsedQ.notes) existing.notes = parsedQ.notes;
+          if (parsedQ.questionType) existing.questionType = parsedQ.questionType;
+          if (parsedQ.difficulty) existing.difficulty = parsedQ.difficulty;
+          if (parsedQ.maxMarks !== undefined && parsedQ.maxMarks !== null) existing.maxMarks = parsedQ.maxMarks;
+          if (parsedQ.marksAwarded !== undefined && parsedQ.marksAwarded !== null) existing.marksAwarded = parsedQ.marksAwarded;
+          if (parsedQ.timeSpentMinutes !== undefined && parsedQ.timeSpentMinutes !== null) existing.timeSpentMinutes = parsedQ.timeSpentMinutes;
+        } else {
+          bulkWorkingQuestions.push(parsedQ);
+        }
+      });
       switchBulkMethod('grid');
       renderBulkGrid();
       updateBulkLiveKPIs();
@@ -6431,8 +6676,7 @@ showToast(`Target achieved! "${goal.title}"`, 'success');
 
     function proceedToConfirmFromPaste() {
       if (!bulkPasteParsedData) return;
-      bulkWorkingQuestions = JSON.parse(JSON.stringify(bulkPasteParsedData));
-      bulkActiveMethod = 'grid';
+      applyBulkPasteToGrid();
       prepareBulkConfirmation();
     }
 
@@ -6582,6 +6826,9 @@ showToast(`Target achieved! "${goal.title}"`, 'success');
               mistake.topic = q.topic || q.chapter || mistake.topic;
               mistake.category = q.mistakeCategory;
               mistake.notes = q.notes || mistake.notes;
+              if (q.questionText) mistake.questionText = q.questionText;
+              if (q.userAnswer) mistake.userAnswer = q.userAnswer;
+              if (q.correctAnswer) mistake.correctAnswer = q.correctAnswer;
               mistake.mistakeDescription = [q.mistakeCategory, q.notes].filter(Boolean).join(' — ') || `Question ${qNumStr} was incorrect in ${test.title}.`;
               mistake.updatedAt = now;
               mistakeId = mistake.id;
@@ -6594,11 +6841,11 @@ showToast(`Target achieved! "${goal.title}"`, 'success');
                 topic: q.topic || q.chapter || '',
                 category: q.mistakeCategory,
                 severity: 'High',
-                questionText: '',
+                questionText: q.questionText || existingQ?.questionText || '',
                 questionSource: 'Mock Test',
                 questionNumber: qNumStr,
-                userAnswer: '',
-                correctAnswer: '',
+                userAnswer: q.userAnswer || existingQ?.userAnswer || '',
+                correctAnswer: q.correctAnswer || existingQ?.correctAnswer || '',
                 mistakeDescription: [q.mistakeCategory, q.notes].filter(Boolean).join(' — ') || `Question ${qNumStr} was incorrect in ${test.title}.`,
                 rootCause: '',
                 correctApproach: '',
@@ -6639,19 +6886,23 @@ showToast(`Target achieved! "${goal.title}"`, 'success');
             subject: q.subject,
             chapter: q.chapter || q.topic || '',
             topic: q.topic || q.chapter || '',
-            questionType: existingQ?.questionType || 'Single correct',
-            difficulty: existingQ?.difficulty || 'Medium',
-            questionText: existingQ?.questionText || '',
-            userAnswer: existingQ?.userAnswer || '',
-            correctAnswer: existingQ?.correctAnswer || '',
+            questionType: q.questionType || existingQ?.questionType || 'Single correct',
+            difficulty: q.difficulty || existingQ?.difficulty || 'Medium',
+            questionText: q.questionText !== undefined && q.questionText !== null ? q.questionText : (existingQ?.questionText || ''),
+            userAnswer: q.userAnswer !== undefined && q.userAnswer !== null ? q.userAnswer : (existingQ?.userAnswer || ''),
+            correctAnswer: q.correctAnswer !== undefined && q.correctAnswer !== null ? q.correctAnswer : (existingQ?.correctAnswer || ''),
             status: q.status,
-            maxMarks: existingQ?.maxMarks ?? Number(test.markingScheme?.correctMarks ?? 4),
+            maxMarks: (q.maxMarks !== null && q.maxMarks !== undefined && Number.isFinite(Number(q.maxMarks)))
+              ? Number(q.maxMarks)
+              : (existingQ?.maxMarks ?? Number(test.markingScheme?.correctMarks ?? 4)),
             marksAwarded: (q.marksAwarded !== null && q.marksAwarded !== undefined && Number.isFinite(Number(q.marksAwarded)))
               ? Number(q.marksAwarded)
               : (existingQ?.marksAwarded !== null && existingQ?.marksAwarded !== undefined && Number.isFinite(Number(existingQ?.marksAwarded)))
                 ? Number(existingQ.marksAwarded)
                 : null,
-            timeSpentMinutes: existingQ?.timeSpentMinutes || 0,
+            timeSpentMinutes: (q.timeSpentMinutes !== null && q.timeSpentMinutes !== undefined && Number.isFinite(Number(q.timeSpentMinutes)))
+              ? Math.max(0, Number(q.timeSpentMinutes))
+              : (existingQ?.timeSpentMinutes || 0),
             diagnosticType: q.mistakeCategory || existingQ?.diagnosticType || '',
             diagnostic: q.notes || existingQ?.diagnostic || '',
             mistakeCategory: q.mistakeCategory || '',
