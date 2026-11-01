@@ -5622,7 +5622,7 @@ showToast(`Target achieved! "${goal.title}"`, 'success');
       if (!test) return { score: 0, accuracy: null, percentage: null, attempted: 0, correct: 0, incorrect: 0, partial: 0, unattempted: 0, time: 0, averageTime: null, marksLost: 0, questions: 0, isSummaryOnly: false, percentile: null };
       const rawPct = test.percentile;
       const percentile = (rawPct !== null && rawPct !== undefined && rawPct !== '' && Number.isFinite(Number(rawPct))) ? Number(rawPct) : null;
-      if (test.resultMode === 'summary' || (!test.questions?.length && (test.summaryScore !== null || test.summaryCorrect !== null))) {
+      if (test.resultMode === 'summary' || (!test.questions?.length && (test.summaryScore != null || test.summaryCorrect != null))) {
         const totalQ = Math.max(1, Number(test.totalQuestions) || 1);
         const correct = Math.max(0, Number(test.summaryCorrect) || 0);
         const incorrect = Math.max(0, Number(test.summaryIncorrect) || 0);
@@ -5767,7 +5767,7 @@ showToast(`Target achieved! "${goal.title}"`, 'success');
       list.innerHTML = visible.map(test => {
         const m = calculateTestMetrics(test);
         const tone = test.status === 'Analyzed' ? 'text-emerald-300' : test.status === 'Completed' ? 'text-amber-300' : 'text-slate-300';
-        const modeBadge = test.resultMode === 'summary' || (!test.questions?.length && (test.summaryScore !== null || test.summaryCorrect !== null))
+        const modeBadge = test.resultMode === 'summary' || (!test.questions?.length && (test.summaryScore != null || test.summaryCorrect != null))
           ? '<span class="rounded bg-indigo-950/80 border border-indigo-700/50 px-2 py-0.5 text-[10px] text-indigo-300">Summary Only</span>'
           : (test.questions?.length ? `<span class="rounded bg-cyan-950/80 border border-cyan-700/50 px-2 py-0.5 text-[10px] text-cyan-300">${test.questions.length} Qs Logged</span>` : '');
         return `<article class="rounded-xl border border-slate-700 bg-slate-900/50 p-4"><div class="flex items-start justify-between gap-3"><button onclick="openTestDetail('${test.id}')" class="min-w-0 text-left"><div class="flex items-center gap-2 flex-wrap"><span class="text-[10px] uppercase tracking-wide text-blue-300">${escapeHtml(test.testType)} · ${escapeHtml(test.testDate)}</span>${modeBadge}</div><h3 class="mt-1 truncate font-semibold text-white">${escapeHtml(test.title)}</h3><p class="mt-1 text-xs text-slate-400">${test.subjects.map(testSubjectLabel).join(' · ')} · ${test.totalQuestions} questions · ${test.durationMinutes} min</p></button><span class="rounded bg-slate-800 px-2 py-1 text-[10px] ${tone}">${escapeHtml(test.status)}</span></div><div class="mt-3 grid grid-cols-2 sm:grid-cols-5 gap-2 text-xs"><div class="rounded bg-slate-950/70 p-2"><span class="text-slate-500">Score</span><strong class="ml-2 text-white">${m.score} / ${test.maximumMarks}</strong></div><div class="rounded bg-slate-950/70 p-2"><span class="text-slate-500">Score %</span><strong class="ml-2 text-white">${m.percentage === null ? '—' : `${m.percentage}%`}</strong></div><div class="rounded bg-slate-950/70 p-2"><span class="text-slate-500">Accuracy</span><strong class="ml-2 text-white">${m.accuracy === null ? '—' : `${m.accuracy}%`}</strong></div><div class="rounded bg-slate-950/70 p-2"><span class="text-slate-500">Percentile</span><strong class="ml-2 ${test.percentile !== null ? 'text-blue-300' : 'text-slate-400'}">${test.percentile !== null ? `${test.percentile}%` : '—'}</strong></div><div class="rounded bg-slate-950/70 p-2"><span class="text-slate-500">Attempted</span><strong class="ml-2 text-white">${m.attempted} / ${test.totalQuestions}</strong></div></div><div class="mt-3 flex flex-wrap gap-2 border-t border-slate-800 pt-3"><button onclick="openTestDetail('${test.id}')" class="mistake-action">Details & Questions</button><button onclick="openBulkEntryModal('${test.id}')" class="mistake-action text-blue-300 font-medium">+ Bulk Results</button><button onclick="openTestForm('${test.id}')" class="mistake-action">Edit Test</button>${test.status === 'Planned' ? `<button onclick="setTestStatus('${test.id}','In Progress')" class="mistake-action">Start</button>` : ''}${test.status === 'In Progress' ? `<button onclick="setTestStatus('${test.id}','Completed')" class="mistake-action">Mark Completed</button>` : ''}${test.status === 'Completed' ? `<button onclick="analyzeTest('${test.id}')" class="mistake-action">Analyze</button>` : ''}${test.status !== 'Archived' ? `<button onclick="setTestStatus('${test.id}','Archived')" class="mistake-action">Archive</button>` : ''}<button onclick="openTestDelete('${test.id}')" class="mistake-action text-rose-300">Delete</button></div></article>`;
@@ -5838,7 +5838,7 @@ showToast(`Target achieved! "${goal.title}"`, 'success');
       bulkPasteParsedData = null;
       bulkExpandedRows.clear();
 
-      const isSummary = test.resultMode === 'summary' || (!test.questions?.length && (test.summaryScore !== null || test.summaryCorrect !== null));
+      const isSummary = test.resultMode === 'summary' || (!test.questions?.length && (test.summaryScore != null || test.summaryCorrect != null));
       if (isSummary && !test.questions?.length) {
         bulkWorkingQuestions = [];
         initBulkSummaryForm(test);

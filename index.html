@@ -1061,21 +1061,64 @@
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#24344D] pb-4">
           <div>
             <h2 class="text-xl font-bold text-white">Test Center</h2>
-            <p class="text-xs text-slate-400">Record tests, mark questions, and turn results into targeted practice.</p>
+            <p class="text-xs text-slate-400">Prepare upcoming tests, track syllabi, and analyze test performance.</p>
           </div>
-          <button onclick="openTestForm()" class="rounded-lg bg-blue-700 hover:bg-blue-600 px-4 py-2 text-sm font-semibold text-white">+ Add Test</button>
+          <div class="flex items-center gap-2">
+            <button onclick="openUpcomingTestForm()" class="rounded-lg bg-blue-600 hover:bg-blue-500 px-3.5 py-2 text-xs font-semibold text-white flex items-center gap-1.5 shadow-sm transition">
+              <i data-lucide="calendar-plus" class="w-4 h-4"></i>
+              <span>+ Schedule Upcoming Test</span>
+            </button>
+            <button onclick="openTestForm()" class="rounded-lg bg-slate-800 hover:bg-slate-700 px-3.5 py-2 text-xs font-semibold text-slate-200 border border-slate-700 flex items-center gap-1.5 transition">
+              <i data-lucide="plus-circle" class="w-4 h-4"></i>
+              <span>+ Record Test Result</span>
+            </button>
+          </div>
         </div>
-        <div id="test-summary" class="grid grid-cols-2 lg:grid-cols-5 gap-3"></div>
-        <div class="card-base p-4 sm:p-5 space-y-4">
-          <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-3">
-            <input id="test-search" oninput="renderTests()" class="field-input" placeholder="Search tests" aria-label="Search tests">
-            <select id="test-filter-type" onchange="renderTests()" class="field-input"><option value="all">All test types</option><option>JEE Main Mock</option><option>JEE Advanced Mock</option><option>JEE Main</option><option>JEE Advanced</option><option>Coaching Test</option><option>Chapter Test</option><option>Subject Test</option><option>Part Test</option><option>PYQ Test</option><option>Full Mock</option><option>School Test</option><option>Custom Test</option><option>Other</option></select>
-            <select id="test-filter-subject" onchange="renderTests()" class="field-input"><option value="all">All subjects</option><option value="physics">Physics</option><option value="chemistry">Chemistry</option><option value="maths">Mathematics</option></select>
-            <select id="test-filter-status" onchange="renderTests()" class="field-input"><option value="all">All statuses</option><option>Planned</option><option>In Progress</option><option>Completed</option><option>Analyzed</option><option>Archived</option></select>
-            <label class="text-xs text-slate-400">On or after<input id="test-filter-date" type="date" onchange="renderTests()" class="field-input mt-1" aria-label="Filter tests on or after date"></label>
-            <select id="test-sort" onchange="renderTests()" class="field-input"><option value="newest">Newest</option><option value="oldest">Oldest</option><option value="score">Highest score</option><option value="accuracy">Highest accuracy</option></select>
+
+        <!-- UPCOMING TESTS SECTION -->
+        <div class="card-base p-4 sm:p-5 space-y-4 border border-blue-900/40 bg-gradient-to-b from-[#0e1628]/80 to-[#0a0f1d]">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800 pb-3">
+            <div class="flex items-center gap-2.5">
+              <h3 class="text-base font-bold text-white flex items-center gap-2">
+                <i data-lucide="calendar" class="w-4 h-4 text-blue-400"></i>
+                <span>Upcoming Tests</span>
+              </h3>
+              <span id="upcoming-tests-count-badge" class="rounded-full bg-blue-950 px-2 py-0.5 text-[11px] font-semibold text-blue-300 border border-blue-800">0</span>
+            </div>
+            <div class="flex items-center gap-2 text-xs">
+              <select id="upcoming-test-filter-status" onchange="renderUpcomingTests()" class="field-input py-1 text-xs">
+                <option value="Upcoming">Active Upcoming</option>
+                <option value="all">All Statuses</option>
+                <option value="Completed">Completed</option>
+                <option value="Cancelled">Cancelled</option>
+              </select>
+            </div>
           </div>
-          <div id="test-list" class="grid grid-cols-1 xl:grid-cols-2 gap-4"></div>
+          <div id="upcoming-tests-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+            <!-- Populated by renderUpcomingTests() -->
+          </div>
+        </div>
+
+        <!-- TEST RESULTS SECTION -->
+        <div class="space-y-4">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+            <h3 class="text-sm font-bold uppercase tracking-wider text-slate-300 flex items-center gap-2">
+              <i data-lucide="bar-chart-2" class="w-4 h-4 text-emerald-400"></i>
+              <span>Completed Tests & Result History</span>
+            </h3>
+          </div>
+          <div id="test-summary" class="grid grid-cols-2 lg:grid-cols-5 gap-3"></div>
+          <div class="card-base p-4 sm:p-5 space-y-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-3">
+              <input id="test-search" oninput="renderTests()" class="field-input" placeholder="Search tests" aria-label="Search tests">
+              <select id="test-filter-type" onchange="renderTests()" class="field-input"><option value="all">All test types</option><option>JEE Main Mock</option><option>JEE Advanced Mock</option><option>JEE Main</option><option>JEE Advanced</option><option>Coaching Test</option><option>Chapter Test</option><option>Subject Test</option><option>Part Test</option><option>PYQ Test</option><option>Full Mock</option><option>School Test</option><option>Custom Test</option><option>Other</option></select>
+              <select id="test-filter-subject" onchange="renderTests()" class="field-input"><option value="all">All subjects</option><option value="physics">Physics</option><option value="chemistry">Chemistry</option><option value="maths">Mathematics</option></select>
+              <select id="test-filter-status" onchange="renderTests()" class="field-input"><option value="all">All statuses</option><option>Planned</option><option>In Progress</option><option>Completed</option><option>Analyzed</option><option>Archived</option></select>
+              <label class="text-xs text-slate-400">On or after<input id="test-filter-date" type="date" onchange="renderTests()" class="field-input mt-1" aria-label="Filter tests on or after date"></label>
+              <select id="test-sort" onchange="renderTests()" class="field-input"><option value="newest">Newest</option><option value="oldest">Oldest</option><option value="score">Highest score</option><option value="accuracy">Highest accuracy</option></select>
+            </div>
+            <div id="test-list" class="grid grid-cols-1 xl:grid-cols-2 gap-4"></div>
+          </div>
         </div>
       </section>
 
@@ -1296,7 +1339,7 @@
           </div>
           <div>
             <label class="block text-slate-300 mb-1 font-medium">Subject <span class="text-rose-400">*</span></label>
-            <select id="task-input-subject" required class="w-full bg-[#0E1524] border border-[#24344D] rounded-lg px-3 py-2 text-white text-xs focus:border-blue-500 focus:outline-none">
+            <select id="task-input-subject" onchange="onTaskSubjectOrChapterChange()" required class="w-full bg-[#0E1524] border border-[#24344D] rounded-lg px-3 py-2 text-white text-xs focus:border-blue-500 focus:outline-none">
               <option value="physics">Physics</option>
               <option value="chemistry">Chemistry</option>
               <option value="maths">Mathematics</option>
@@ -1361,7 +1404,7 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
             <label class="block text-slate-400 mb-1 font-medium">Chapter (Optional)</label>
-            <input type="text" id="task-input-chapter" placeholder="e.g. Rotational Motion" class="w-full bg-[#0E1524] border border-[#24344D] rounded-lg px-3 py-2 text-white text-xs focus:border-blue-500 focus:outline-none">
+            <input type="text" id="task-input-chapter" oninput="onTaskSubjectOrChapterChange()" placeholder="e.g. Rotational Motion" class="w-full bg-[#0E1524] border border-[#24344D] rounded-lg px-3 py-2 text-white text-xs focus:border-blue-500 focus:outline-none">
           </div>
           <div>
             <label class="block text-slate-400 mb-1 font-medium">Topic (Optional)</label>
@@ -1373,6 +1416,41 @@
         <div>
           <label class="block text-slate-400 mb-1 font-medium">Notes & Reference (Optional)</label>
           <textarea id="task-input-notes" rows="2" placeholder="e.g. Focus on questions 15 to 30 from coaching sheet..." class="w-full bg-[#0E1524] border border-[#24344D] rounded-lg px-3 py-2 text-white text-xs focus:border-blue-500 focus:outline-none"></textarea>
+        </div>
+
+        <!-- Prepare for Upcoming Test (Optional) -->
+        <div class="border-t border-[#24344D] pt-3 space-y-2">
+          <div class="flex items-center justify-between">
+            <label class="block text-slate-300 font-medium">Prepare for Upcoming Test (Optional)</label>
+            <span class="text-[10px] text-slate-400">Target a scheduled test syllabus</span>
+          </div>
+
+          <!-- Intelligent Suggestion Banner -->
+          <div id="task-test-suggestion-box" class="hidden rounded-lg border border-blue-600/50 bg-blue-950/40 p-2.5 text-xs">
+            <div class="flex items-start justify-between gap-2">
+              <div id="task-test-suggestion-text" class="text-blue-200"></div>
+              <div class="flex items-center gap-1.5 shrink-0">
+                <button type="button" id="task-test-suggestion-accept-btn" class="px-2 py-0.5 rounded bg-blue-600 hover:bg-blue-500 text-white font-medium text-[11px]">Link to this test</button>
+                <button type="button" id="task-test-suggestion-dismiss-btn" class="px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px]">Dismiss</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="block text-[11px] text-slate-400 mb-1">Upcoming Test</label>
+              <select id="task-input-upcoming-test" onchange="onTaskUpcomingTestChange()" class="w-full bg-[#0E1524] border border-[#24344D] rounded-lg px-3 py-2 text-white text-xs focus:border-blue-500 focus:outline-none">
+                <option value="">-- No Test Linked --</option>
+              </select>
+            </div>
+            <div id="task-upcoming-test-chapter-container" class="hidden">
+              <label class="block text-[11px] text-slate-400 mb-1">Test Syllabus Chapter</label>
+              <select id="task-input-test-chapter" class="w-full bg-[#0E1524] border border-[#24344D] rounded-lg px-3 py-2 text-white text-xs focus:border-blue-500 focus:outline-none">
+                <option value="">-- All Test Syllabus / General --</option>
+              </select>
+            </div>
+          </div>
+          <p id="task-upcoming-test-info" class="text-[10px] text-slate-400 hidden"></p>
         </div>
 
         <!-- Modal Footer Actions -->
@@ -1906,6 +1984,13 @@
   <div id="test-form-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-3 sm:p-5">
     <div class="card-base w-full max-w-2xl max-h-[92vh] overflow-y-auto p-4 sm:p-6 bg-[#111827]"><div class="mb-4 flex items-center justify-between border-b border-slate-700 pb-3"><h3 id="test-form-title" class="font-bold text-white">Add Test</h3><button type="button" onclick="closeTestForm()" class="rounded p-2 text-slate-400" aria-label="Close test form">✕</button></div>
       <form id="test-form" onsubmit="saveTest(event)" class="space-y-3 text-xs"><input id="test-input-id" type="hidden">
+        <div class="rounded border border-slate-700 bg-slate-900/60 p-2.5">
+          <label class="block text-slate-300 font-medium">Link to Upcoming Test (Optional)</label>
+          <select id="test-input-upcoming-test" onchange="onTestUpcomingTestSelect()" class="field-input mt-1">
+            <option value="">-- Standalone Test (Not Linked to Upcoming Test) --</option>
+          </select>
+          <p id="test-input-upcoming-test-hint" class="text-[10px] text-slate-400 mt-1">Selecting an upcoming test automatically links its defined syllabus for question chapter selection and marks the upcoming test completed when saved.</p>
+        </div>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3"><label class="text-slate-300">Test title *<input id="test-input-title" required maxlength="120" class="field-input mt-1" placeholder="e.g. Full Mock 04"></label><label class="text-slate-300">Test type<select id="test-input-type" class="field-input mt-1"><option>JEE Main Mock</option><option>JEE Advanced Mock</option><option>JEE Main</option><option>JEE Advanced</option><option>Coaching Test</option><option>Chapter Test</option><option>Subject Test</option><option>Part Test</option><option>PYQ Test</option><option>Full Mock</option><option>School Test</option><option>Custom Test</option><option>Other</option></select></label>
         <label class="text-slate-300">Test date<input id="test-input-date" type="date" required class="field-input mt-1"></label><label class="text-slate-300">Duration (minutes)<input id="test-input-duration" type="number" min="1" max="1440" value="180" class="field-input mt-1"></label>
         <label class="text-slate-300">Number of questions<input id="test-input-count" type="number" min="1" max="1000" value="90" required class="field-input mt-1"></label><label class="text-slate-300">Maximum marks<input id="test-input-max-marks" type="number" min="1" step="0.25" value="300" required class="field-input mt-1"></label></div>
@@ -1921,10 +2006,186 @@
   </div>
   <div id="question-form-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[60] hidden flex items-center justify-center p-3 sm:p-5">
     <div class="card-base w-full max-w-2xl max-h-[92vh] overflow-y-auto p-4 sm:p-6 bg-[#111827]"><div class="mb-4 flex items-center justify-between border-b border-slate-700 pb-3"><h3 id="question-form-title" class="font-bold text-white">Add Question Result</h3><button type="button" onclick="closeQuestionForm()" class="rounded p-2 text-slate-400" aria-label="Close question form">✕</button></div>
-      <form onsubmit="saveQuestion(event)" class="space-y-3 text-xs"><input id="question-input-id" type="hidden"><div class="grid grid-cols-1 sm:grid-cols-3 gap-3"><label class="text-slate-300">Question number<input id="question-input-number" class="field-input mt-1" required></label><label class="text-slate-300">Subject<select id="question-input-subject" class="field-input mt-1"><option value="physics">Physics</option><option value="chemistry">Chemistry</option><option value="maths">Mathematics</option></select></label><label class="text-slate-300">Difficulty<select id="question-input-difficulty" class="field-input mt-1"><option>Medium</option><option>Easy</option><option>Hard</option></select></label><label class="text-slate-300">Chapter<input id="question-input-chapter" class="field-input mt-1"></label><label class="text-slate-300">Topic<input id="question-input-topic" class="field-input mt-1"></label><label class="text-slate-300">Question type<select id="question-input-type" class="field-input mt-1"><option>Single correct</option><option>Multiple correct</option><option>Numerical</option><option>Integer</option><option>Matrix Match</option><option>Subjective</option><option>Other</option></select></label><label class="text-slate-300">Question maximum marks<input id="question-input-max" type="number" min="0" step="0.25" value="4" class="field-input mt-1"></label><label class="text-slate-300">Result<select id="question-input-status" class="field-input mt-1"><option>Correct</option><option>Incorrect</option><option>Unattempted</option><option>Partially Correct</option><option>Bonus / Not Counted</option></select></label><label class="text-slate-300">Time spent (minutes)<input id="question-input-time" type="number" min="0" step="0.5" value="0" class="field-input mt-1"></label><label class="text-slate-300">Marks awarded (optional override)<input id="question-input-marks" type="number" step="0.25" class="field-input mt-1" placeholder="Use marking scheme"></label><label class="text-slate-300">Your answer<input id="question-input-answer" class="field-input mt-1"></label><label class="text-slate-300">Correct answer<input id="question-input-correct" class="field-input mt-1"></label></div><label class="block text-slate-300">Question / problem<textarea id="question-input-text" rows="2" class="field-input mt-1"></textarea></label><label class="block text-slate-300">Diagnostic classification<select id="question-input-diagnostic-type" class="field-input mt-1"><option value="">Not classified</option><option>Correct but Slow</option><option>Conceptual Mistake</option><option>Formula Mistake</option><option>Calculation Mistake</option><option>Silly Mistake</option><option>Misread Question</option><option>Wrong Approach</option><option>Time Pressure</option><option>Guessing Error</option><option>Knowledge Gap</option><option>Unattempted Due to Time</option><option>Unattempted Due to Difficulty</option></select></label><label class="block text-slate-300">Diagnostic note<textarea id="question-input-diagnostic" rows="2" class="field-input mt-1" placeholder="What affected the result?"></textarea></label><div id="question-form-error" class="hidden rounded border border-rose-800 bg-rose-950/40 p-2 text-rose-200" role="alert"></div><div class="flex justify-end gap-2 border-t border-slate-800 pt-3"><button type="button" onclick="closeQuestionForm()" class="rounded-lg bg-slate-800 px-4 py-2 text-slate-300">Cancel</button><button type="submit" class="rounded-lg bg-blue-700 px-4 py-2 font-semibold text-white">Save Question</button></div></form>
+      <form onsubmit="saveQuestion(event)" class="space-y-3 text-xs"><input id="question-input-id" type="hidden"><div class="grid grid-cols-1 sm:grid-cols-3 gap-3"><label class="text-slate-300">Question number<input id="question-input-number" class="field-input mt-1" required></label><label class="text-slate-300">Subject<select id="question-input-subject" onchange="onQuestionFormSubjectChange()" class="field-input mt-1"><option value="physics">Physics</option><option value="chemistry">Chemistry</option><option value="maths">Mathematics</option></select></label><label class="text-slate-300">Difficulty<select id="question-input-difficulty" class="field-input mt-1"><option>Medium</option><option>Easy</option><option>Hard</option></select></label><label class="text-slate-300">Chapter<div id="question-chapter-field-wrap"><input id="question-input-chapter" class="field-input mt-1"></div><span id="question-chapter-syllabus-badge" class="block text-[10px] text-slate-400 mt-0.5"></span></label><label class="text-slate-300">Topic<input id="question-input-topic" class="field-input mt-1"></label><label class="text-slate-300">Question type<select id="question-input-type" class="field-input mt-1"><option>Single correct</option><option>Multiple correct</option><option>Numerical</option><option>Integer</option><option>Matrix Match</option><option>Subjective</option><option>Other</option></select></label><label class="text-slate-300">Question maximum marks<input id="question-input-max" type="number" min="0" step="0.25" value="4" class="field-input mt-1"></label><label class="text-slate-300">Result<select id="question-input-status" class="field-input mt-1"><option>Correct</option><option>Incorrect</option><option>Unattempted</option><option>Partially Correct</option><option>Bonus / Not Counted</option></select></label><label class="text-slate-300">Time spent (minutes)<input id="question-input-time" type="number" min="0" step="0.5" value="0" class="field-input mt-1"></label><label class="text-slate-300">Marks awarded (optional override)<input id="question-input-marks" type="number" step="0.25" class="field-input mt-1" placeholder="Use marking scheme"></label><label class="text-slate-300">Your answer<input id="question-input-answer" class="field-input mt-1"></label><label class="text-slate-300">Correct answer<input id="question-input-correct" class="field-input mt-1"></label></div><label class="block text-slate-300">Question / problem<textarea id="question-input-text" rows="2" class="field-input mt-1"></textarea></label><label class="block text-slate-300">Diagnostic classification<select id="question-input-diagnostic-type" class="field-input mt-1"><option value="">Not classified</option><option>Correct but Slow</option><option>Conceptual Mistake</option><option>Formula Mistake</option><option>Calculation Mistake</option><option>Silly Mistake</option><option>Misread Question</option><option>Wrong Approach</option><option>Time Pressure</option><option>Guessing Error</option><option>Knowledge Gap</option><option>Unattempted Due to Time</option><option>Unattempted Due to Difficulty</option></select></label><label class="block text-slate-300">Diagnostic note<textarea id="question-input-diagnostic" rows="2" class="field-input mt-1" placeholder="What affected the result?"></textarea></label><div id="question-form-error" class="hidden rounded border border-rose-800 bg-rose-950/40 p-2 text-rose-200" role="alert"></div><div class="flex justify-end gap-2 border-t border-slate-800 pt-3"><button type="button" onclick="closeQuestionForm()" class="rounded-lg bg-slate-800 px-4 py-2 text-slate-300">Cancel</button><button type="submit" class="rounded-lg bg-blue-700 px-4 py-2 font-semibold text-white">Save Question</button></div></form>
     </div>
   </div>
   <div id="test-delete-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[70] hidden flex items-center justify-center p-4"><div class="card-base w-full max-w-md p-5 bg-[#111827]"><h3 class="font-bold text-white">Delete this test?</h3><p id="test-delete-copy" class="mt-2 text-sm text-slate-300"></p><div class="mt-5 flex justify-end gap-2"><button onclick="closeTestDelete()" class="rounded bg-slate-800 px-3 py-2 text-xs">Cancel</button><button onclick="confirmTestDelete()" class="rounded bg-rose-700 px-3 py-2 text-xs font-semibold">Delete test</button></div></div></div>
+
+  <!-- Upcoming Test Create / Edit Modal -->
+  <div id="upcoming-test-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-3 sm:p-5">
+    <div class="card-base w-full max-w-3xl max-h-[92vh] overflow-y-auto p-4 sm:p-6 bg-[#111827] border border-slate-700 shadow-2xl flex flex-col">
+      <div class="mb-4 flex items-center justify-between border-b border-slate-700 pb-3 shrink-0">
+        <h3 id="upcoming-test-modal-title" class="font-bold text-white text-base flex items-center gap-2">
+          <i data-lucide="calendar" class="w-4 h-4 text-blue-400"></i>
+          <span>Schedule Upcoming Test</span>
+        </h3>
+        <button type="button" onclick="closeUpcomingTestForm()" class="rounded p-2 text-slate-400 hover:text-white" aria-label="Close upcoming test form">✕</button>
+      </div>
+
+      <form id="upcoming-test-form" onsubmit="saveUpcomingTest(event)" class="space-y-4 text-xs overflow-y-auto flex-1 pr-1">
+        <input id="upcoming-test-input-id" type="hidden">
+        
+        <!-- Basic Info -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div class="sm:col-span-2">
+            <label class="text-slate-300 font-medium">Test Name / Title <span class="text-rose-400">*</span></label>
+            <input id="upcoming-test-input-name" required maxlength="120" class="field-input mt-1" placeholder="e.g. Milestone 10">
+          </div>
+          <div>
+            <label class="text-slate-300 font-medium">Test Date <span class="text-rose-400">*</span></label>
+            <input id="upcoming-test-input-date" type="date" required class="field-input mt-1">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div>
+            <label class="text-slate-300 font-medium">Exam Type / Category</label>
+            <select id="upcoming-test-input-type" class="field-input mt-1">
+              <option>JEE Main Mock</option><option>JEE Advanced Mock</option><option>JEE Main</option>
+              <option>JEE Advanced</option><option>Coaching Test</option><option>Chapter Test</option>
+              <option>Subject Test</option><option>Part Test</option><option>PYQ Test</option>
+              <option>Full Mock</option><option>School Test</option><option>Custom Test</option><option>Other</option>
+            </select>
+          </div>
+          <div>
+            <label class="text-slate-300 font-medium">Maximum Marks</label>
+            <input id="upcoming-test-input-max-marks" type="number" min="1" step="1" value="300" class="field-input mt-1 font-mono">
+          </div>
+          <div>
+            <label class="text-slate-300 font-medium">Lifecycle Status</label>
+            <select id="upcoming-test-input-status" class="field-input mt-1">
+              <option value="Upcoming">Upcoming</option>
+              <option value="Completed">Completed</option>
+              <option value="Cancelled">Cancelled</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="text-slate-300 font-medium">Test Description / Notes (Optional)</label>
+          <textarea id="upcoming-test-input-notes" rows="2" class="field-input mt-1" placeholder="e.g. Milestone test syllabus and targets..."></textarea>
+        </div>
+
+        <!-- Test Syllabus Section -->
+        <div class="rounded-lg border border-slate-700 bg-slate-900/60 p-3.5 space-y-3">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800 pb-2">
+            <div>
+              <h4 class="font-bold text-white flex items-center gap-1.5">
+                <i data-lucide="book-open" class="w-3.5 h-3.5 text-blue-400"></i>
+                <span>Test Syllabus (Authoritative Tracker Chapters)</span>
+              </h4>
+              <p class="text-[11px] text-slate-400 mt-0.5">Select the exact syllabus chapters included in this upcoming test.</p>
+            </div>
+            <div id="upcoming-test-syllabus-count" class="text-[11px] font-mono text-blue-300 bg-blue-950/80 px-2 py-0.5 rounded border border-blue-800/60">
+              0 chapters selected
+            </div>
+          </div>
+
+          <!-- Syllabus search & filter -->
+          <div class="flex items-center gap-2">
+            <input id="upcoming-test-syllabus-search" oninput="filterUpcomingTestSyllabusUI()" class="field-input py-1 text-xs w-full" placeholder="Filter chapters by name or unit...">
+          </div>
+
+          <!-- Subject columns -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3 max-h-64 overflow-y-auto pr-1">
+            <!-- Physics -->
+            <div class="rounded border border-slate-800 bg-slate-950/60 p-2.5 space-y-2">
+              <div class="flex items-center justify-between border-b border-slate-800 pb-1">
+                <span class="font-bold text-blue-400 text-xs">Physics</span>
+                <div class="flex items-center gap-1 text-[10px]">
+                  <button type="button" onclick="toggleSubjectSyllabusAll('physics', true)" class="text-slate-400 hover:text-white">All</button>
+                  <span class="text-slate-600">|</span>
+                  <button type="button" onclick="toggleSubjectSyllabusAll('physics', false)" class="text-slate-400 hover:text-white">None</button>
+                </div>
+              </div>
+              <div id="upcoming-test-syllabus-list-physics" class="space-y-1"></div>
+            </div>
+
+            <!-- Chemistry -->
+            <div class="rounded border border-slate-800 bg-slate-950/60 p-2.5 space-y-2">
+              <div class="flex items-center justify-between border-b border-slate-800 pb-1">
+                <span class="font-bold text-emerald-400 text-xs">Chemistry</span>
+                <div class="flex items-center gap-1 text-[10px]">
+                  <button type="button" onclick="toggleSubjectSyllabusAll('chemistry', true)" class="text-slate-400 hover:text-white">All</button>
+                  <span class="text-slate-600">|</span>
+                  <button type="button" onclick="toggleSubjectSyllabusAll('chemistry', false)" class="text-slate-400 hover:text-white">None</button>
+                </div>
+              </div>
+              <div id="upcoming-test-syllabus-list-chemistry" class="space-y-1"></div>
+            </div>
+
+            <!-- Mathematics -->
+            <div class="rounded border border-slate-800 bg-slate-950/60 p-2.5 space-y-2">
+              <div class="flex items-center justify-between border-b border-slate-800 pb-1">
+                <span class="font-bold text-amber-400 text-xs">Mathematics</span>
+                <div class="flex items-center gap-1 text-[10px]">
+                  <button type="button" onclick="toggleSubjectSyllabusAll('maths', true)" class="text-slate-400 hover:text-white">All</button>
+                  <span class="text-slate-600">|</span>
+                  <button type="button" onclick="toggleSubjectSyllabusAll('maths', false)" class="text-slate-400 hover:text-white">None</button>
+                </div>
+              </div>
+              <div id="upcoming-test-syllabus-list-maths" class="space-y-1"></div>
+            </div>
+          </div>
+        </div>
+
+        <div id="upcoming-test-form-error" class="hidden rounded border border-rose-800 bg-rose-950/40 p-2 text-rose-200" role="alert"></div>
+
+        <div class="flex justify-end gap-2 border-t border-slate-800 pt-3 shrink-0">
+          <button type="button" onclick="closeUpcomingTestForm()" class="rounded-lg bg-slate-800 px-4 py-2 text-slate-300 hover:bg-slate-700">Cancel</button>
+          <button type="submit" class="rounded-lg bg-blue-600 hover:bg-blue-500 px-4 py-2 font-semibold text-white shadow-sm">Save Upcoming Test</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Upcoming Test Detail & Preparation Overview Modal -->
+  <div id="upcoming-test-detail-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-3 sm:p-5">
+    <div class="card-base w-full max-w-3xl max-h-[92vh] overflow-y-auto p-4 sm:p-6 bg-[#111827] border border-slate-700 shadow-2xl flex flex-col space-y-4">
+      <div class="flex items-start justify-between border-b border-slate-700 pb-3 shrink-0">
+        <div>
+          <div class="flex items-center gap-2 flex-wrap">
+            <span id="utest-detail-type" class="badge text-[10px] bg-indigo-950 text-indigo-300 border-indigo-800"></span>
+            <span id="utest-detail-countdown" class="badge text-[10px] bg-blue-950 text-blue-300 border-blue-800"></span>
+            <span id="utest-detail-status" class="badge text-[10px] bg-slate-800 text-slate-300"></span>
+          </div>
+          <h3 id="utest-detail-title" class="text-lg font-bold text-white mt-1.5"></h3>
+          <p id="utest-detail-date" class="text-xs text-slate-400 mt-0.5"></p>
+        </div>
+        <button type="button" onclick="closeUpcomingTestDetail()" class="rounded p-2 text-slate-400 hover:text-white" aria-label="Close test detail">✕</button>
+      </div>
+
+      <div id="utest-detail-content" class="space-y-4 overflow-y-auto flex-1 pr-1 text-xs">
+        <!-- Dynamically rendered by renderUpcomingTestDetailView() -->
+      </div>
+
+      <div class="flex flex-wrap justify-between items-center gap-2 border-t border-slate-800 pt-3 shrink-0">
+        <div class="flex items-center gap-2">
+          <button type="button" id="utest-detail-record-btn" class="rounded-lg bg-blue-600 hover:bg-blue-500 px-3.5 py-2 font-semibold text-white text-xs flex items-center gap-1.5 shadow">
+            <i data-lucide="upload" class="w-3.5 h-3.5"></i>
+            <span>Upload / Record Result</span>
+          </button>
+          <button type="button" id="utest-detail-edit-btn" class="rounded-lg bg-slate-800 hover:bg-slate-700 px-3.5 py-2 text-slate-200 text-xs border border-slate-700">
+            Edit Test / Syllabus
+          </button>
+        </div>
+        <button type="button" onclick="closeUpcomingTestDetail()" class="rounded-lg bg-slate-800 px-4 py-2 text-slate-300 hover:bg-slate-700 text-xs">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Upcoming Test Delete / Cancel Modal -->
+  <div id="upcoming-test-delete-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[70] hidden flex items-center justify-center p-4">
+    <div class="card-base w-full max-w-md p-5 bg-[#111827]">
+      <h3 class="font-bold text-white">Cancel or Delete Upcoming Test?</h3>
+      <p id="upcoming-test-delete-copy" class="mt-2 text-sm text-slate-300"></p>
+      <div class="mt-5 flex justify-end gap-2">
+        <button onclick="closeUpcomingTestDelete()" class="rounded bg-slate-800 px-3 py-2 text-xs text-slate-300 hover:bg-slate-700">Keep Test</button>
+        <button onclick="cancelUpcomingTestConfirmed()" class="rounded bg-amber-700 hover:bg-amber-600 px-3 py-2 text-xs font-semibold text-white">Mark Cancelled</button>
+        <button onclick="confirmUpcomingTestDelete()" class="rounded bg-rose-700 hover:bg-rose-600 px-3 py-2 text-xs font-semibold text-white">Delete Permanently</button>
+      </div>
+    </div>
+  </div>
 
   <!-- Bulk Test Result Entry Modal -->
   <div id="test-bulk-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[60] hidden flex items-center justify-center p-2 sm:p-4">
@@ -1940,6 +2201,9 @@
         </div>
         <div class="flex items-center justify-between gap-2">
           <p id="bulk-modal-subtitle" class="text-[11px] sm:text-xs text-slate-400 truncate min-w-0 flex-1"></p>
+          <div class="flex items-center gap-2 shrink-0">
+            <span id="bulk-modal-syllabus-badge" class="hidden text-[10px] py-0.5 px-2 rounded"></span>
+          </div>
           <div class="flex items-center gap-1.5 bg-slate-900 border border-slate-700 rounded-lg px-2 py-0.5 shrink-0">
             <label for="bulk-input-percentile" class="text-[10px] sm:text-[11px] text-slate-300 font-medium whitespace-nowrap">Percentile (%):</label>
             <input id="bulk-input-percentile" type="number" min="0" max="100" step="0.01" oninput="updateBulkLiveKPIs()" class="w-16 sm:w-20 bg-slate-950 border border-slate-700 rounded px-1.5 py-0.5 text-xs text-white text-right focus:border-blue-500 focus:outline-none" placeholder="0.00">
@@ -2333,6 +2597,7 @@
         revisions: [],
         mistakes: [],
         tests: [],
+        upcomingTests: [],
         goals: [],
         weeklyProgress: {
           physics: { name: "Physics", targetHours: 12.0 },
@@ -2420,7 +2685,9 @@
           confidence: ['Low', 'Medium', 'High'].includes(t.confidence) ? t.confidence : '',
           completionQuality: ['Complete', 'Partial'].includes(t.completionQuality) ? t.completionQuality : '',
           executionCount: Math.max(0, Math.floor(Number(t.executionCount) || 0)),
-          lastExecutionAt: t.lastExecutionAt ? String(t.lastExecutionAt) : null
+          lastExecutionAt: t.lastExecutionAt ? String(t.lastExecutionAt) : null,
+          linkedUpcomingTestId: t.linkedUpcomingTestId ? String(t.linkedUpcomingTestId) : null,
+          linkedSyllabusChapterIds: Array.isArray(t.linkedSyllabusChapterIds) ? t.linkedSyllabusChapterIds.map(String) : []
         };
       }) : defaults.tasks;
 
@@ -2612,9 +2879,30 @@
           percentile, resultMode, summaryScore, summaryCorrect, summaryIncorrect, summaryUnattempted,
           notes: String(test.notes || ''), questions, createdAt, updatedAt: String(test.updatedAt || createdAt), completedAt: test.completedAt ? String(test.completedAt) : null, analyzedAt: test.analyzedAt ? String(test.analyzedAt) : null,
           archivedAt: test.status === 'Archived' && test.archivedAt ? String(test.archivedAt) : null,
-          archivedFromStatus: TEST_STATUSES.includes(test.archivedFromStatus) && test.archivedFromStatus !== 'Archived' ? test.archivedFromStatus : null
+          archivedFromStatus: TEST_STATUSES.includes(test.archivedFromStatus) && test.archivedFromStatus !== 'Archived' ? test.archivedFromStatus : null,
+          linkedUpcomingTestId: test.linkedUpcomingTestId ? String(test.linkedUpcomingTestId) : null,
+          syllabusChapterIds: Array.isArray(test.syllabusChapterIds) ? test.syllabusChapterIds.map(String) : []
         };
       }) : defaults.tests;
+
+      const upcomingTests = Array.isArray(raw.upcomingTests) ? raw.upcomingTests.filter(t => t && typeof t === 'object').map((t, index) => {
+        const createdAt = String(t.createdAt || new Date().toISOString());
+        const id = String(t.id || `utest-${index}-${Math.random().toString(36).slice(2, 7)}`);
+        const name = String(t.name || t.title || 'Untitled Upcoming Test');
+        const rawDate = String(t.date || t.testDate || '').trim();
+        const date = /^\d{4}-\d{2}-\d{2}$/.test(rawDate) ? rawDate : getTodayLocalDate();
+        const examType = TEST_TYPES.includes(t.examType || t.testType) ? (t.examType || t.testType) : 'JEE Main Mock';
+        const notes = String(t.notes || t.description || '');
+        const maximumMarks = Math.max(1, Number(t.maximumMarks || t.maxMarks) || 300);
+        const status = ['Upcoming', 'Completed', 'Cancelled'].includes(t.status) ? t.status : 'Upcoming';
+        const syllabusChapterIds = Array.isArray(t.syllabusChapterIds) ? [...new Set(t.syllabusChapterIds.map(String))] : [];
+        const linkedResultId = t.linkedResultId ? String(t.linkedResultId) : null;
+        return {
+          id, name, title: name, date, testDate: date, examType, testType: examType,
+          notes, maximumMarks, status, syllabusChapterIds, linkedResultId,
+          createdAt, updatedAt: String(t.updatedAt || createdAt)
+        };
+      }) : [];
 
       // Migrate the former dashboard test card into Test Center once, preserving its user-entered details.
       const legacyUpcomingTest = raw.upcomingTest && typeof raw.upcomingTest === 'object' ? raw.upcomingTest : null;
@@ -2788,6 +3076,7 @@
         revisions,
         mistakes,
         tests,
+        upcomingTests,
         // Weekly targets remain user state; completed hours are derived from Planner tasks.
         weeklyProgress: {
           physics: {
@@ -3823,7 +4112,20 @@
       if (!container) return;
 
       const today = getTodayLocalDate();
-      const test = (appState.tests || []).filter(item => ['Planned', 'In Progress'].includes(item.status) && item.testDate >= today).slice().sort((a, b) => a.testDate.localeCompare(b.testDate))[0];
+      const upcomingList = (appState?.upcomingTests || []).filter(item => item.status === 'Upcoming' && item.date >= today).map(t => ({
+        id: t.id,
+        title: t.name,
+        testType: t.examType,
+        testDate: t.date,
+        maximumMarks: t.maximumMarks,
+        notes: t.notes,
+        syllabusChapterIds: t.syllabusChapterIds || [],
+        isUpcomingRecord: true
+      }));
+      const legacyPlanned = (appState?.tests || []).filter(item => ['Planned', 'In Progress'].includes(item.status) && item.testDate >= today);
+      const allUpcoming = [...upcomingList, ...legacyPlanned].sort((a, b) => a.testDate.localeCompare(b.testDate));
+      const test = allUpcoming[0];
+
       if (!test) {
         container.innerHTML = `<div class="p-6 rounded-lg bg-[#0E1524] border border-[#24344D] text-center text-xs text-slate-400"><span>No upcoming tests scheduled.</span></div>`;
         if (badge) badge.textContent = "None Scheduled";
@@ -3835,7 +4137,13 @@
 
       const [year, month, day] = test.testDate.split('-').map(Number);
       const formattedDate = new Date(year, month - 1, day).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
-      const portion = test.notes || (test.subjects || []).map(testSubjectLabel).join(', ') || 'Portion not specified';
+      let portion = test.notes;
+      if (test.syllabusChapterIds && test.syllabusChapterIds.length) {
+        const chNames = (appState.syllabus || []).filter(c => test.syllabusChapterIds.includes(c.id)).map(c => `${testSubjectLabel(c.subject)}: ${c.chapter}`);
+        portion = chNames.length ? chNames.join(' • ') : (test.notes || 'Portion not specified');
+      } else if (!portion && test.subjects) {
+        portion = test.subjects.map(testSubjectLabel).join(', ');
+      }
 
       container.innerHTML = `
         <div class="p-3.5 rounded-lg bg-[#0E1524] border border-[#24344D] space-y-2.5">
@@ -3856,9 +4164,12 @@
           </div>
 
           <div class="pt-1">
-            <span class="text-slate-500 block text-[10px] uppercase font-mono mb-1">Portion / Syllabus</span>
-            <p class="text-xs text-slate-300 bg-slate-900/60 p-2 rounded border border-slate-800">
-              ${escapeHtml(portion)}
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-slate-500 text-[10px] uppercase font-mono">Portion / Syllabus</span>
+              ${test.isUpcomingRecord ? `<button onclick="openUpcomingTestDetail('${test.id}')" class="text-[10px] text-blue-400 hover:text-blue-300 font-medium">Preparation Overview →</button>` : ''}
+            </div>
+            <p class="text-xs text-slate-300 bg-slate-900/60 p-2 rounded border border-slate-800 break-words">
+              ${escapeHtml(portion || 'Portion not specified')}
             </p>
           </div>
         </div>
@@ -5066,6 +5377,10 @@ showToast(`Target achieved! "${goal.title}"`, 'success');
 
                   <div class="flex items-center gap-2 mt-1.5 flex-wrap text-[11px] text-slate-400">
                     <span class="font-mono text-slate-300 font-medium">${escapeHtml(task.taskType || task.type || 'Practice')}</span>
+                    ${task.linkedUpcomingTestId ? (() => {
+                      const ut = (appState?.upcomingTests || []).find(t => t.id === task.linkedUpcomingTestId) || (appState?.tests || []).find(t => t.id === task.linkedUpcomingTestId);
+                      return ut ? `<span class="badge bg-indigo-950 text-indigo-300 border-indigo-800 text-[10px] py-0 px-1.5 flex items-center gap-1">🎯 ${escapeHtml(ut.name || ut.title)}</span>` : '';
+                    })() : ''}
                     <span>•</span>
                     <span class="font-mono">${task.durationMinutes} mins</span>
                     <span>•</span>
@@ -5266,6 +5581,8 @@ showToast(`Target achieved! "${goal.title}"`, 'success');
       if (typeof renderExecutionCenter === 'function') renderExecutionCenter();
     }
 
+    let taskSuggestionDismissed = false;
+
     function openTaskModal(taskId = null, defaultDate = null) {
       const modal = document.getElementById('planner-task-modal');
       const titleElem = document.getElementById('task-modal-title');
@@ -5284,6 +5601,8 @@ showToast(`Target achieved! "${goal.title}"`, 'success');
       const notesInput = document.getElementById('task-input-notes');
 
       if (!modal) return;
+      taskSuggestionDismissed = false;
+      populateTaskUpcomingTestDropdown();
 
       if (taskId) {
         const task = (appState?.tasks || []).find(t => t.id === taskId);
@@ -5303,6 +5622,12 @@ showToast(`Target achieved! "${goal.title}"`, 'success');
         chapterInput.value = task.chapter || '';
         topicInput.value = task.topic || '';
         notesInput.value = task.notes || '';
+
+        const upcomingSelect = document.getElementById('task-input-upcoming-test');
+        if (upcomingSelect) {
+          upcomingSelect.value = task.linkedUpcomingTestId || '';
+          onTaskUpcomingTestChange(task.linkedSyllabusChapterIds?.[0] || '');
+        }
       } else {
         titleElem.innerHTML = `<i data-lucide="calendar-plus" class="w-4 h-4 text-blue-400"></i><span>Create Study Task</span>`;
         saveBtn.textContent = 'Add Task';
@@ -5318,10 +5643,109 @@ showToast(`Target achieved! "${goal.title}"`, 'success');
         chapterInput.value = '';
         topicInput.value = '';
         notesInput.value = '';
+
+        const upcomingSelect = document.getElementById('task-input-upcoming-test');
+        if (upcomingSelect) {
+          upcomingSelect.value = '';
+          onTaskUpcomingTestChange();
+        }
       }
 
+      document.getElementById('task-test-suggestion-box')?.classList.add('hidden');
       modal.classList.remove('hidden');
-      lucide.createIcons();
+      if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
+    }
+
+    function populateTaskUpcomingTestDropdown() {
+      const select = document.getElementById('task-input-upcoming-test');
+      if (!select) return;
+      const tests = (appState?.upcomingTests || []).filter(t => t.status === 'Upcoming');
+      select.innerHTML = '<option value="">-- No Test Linked --</option>' +
+        tests.map(t => `<option value="${t.id}">${escapeHtml(t.name)} (${t.date})</option>`).join('');
+    }
+
+    function onTaskUpcomingTestChange(preferredChapterId = '') {
+      const select = document.getElementById('task-input-upcoming-test');
+      const chContainer = document.getElementById('task-upcoming-test-chapter-container');
+      const chSelect = document.getElementById('task-input-test-chapter');
+      const infoEl = document.getElementById('task-upcoming-test-info');
+      const suggestBox = document.getElementById('task-test-suggestion-box');
+      if (!select || !chContainer || !chSelect) return;
+
+      const testId = select.value;
+      if (!testId) {
+        chContainer.classList.add('hidden');
+        chSelect.innerHTML = '<option value="">-- All Test Syllabus / General --</option>';
+        if (infoEl) infoEl.classList.add('hidden');
+        checkTaskTestSuggestion();
+        return;
+      }
+
+      if (suggestBox) suggestBox.classList.add('hidden');
+      const test = getUpcomingTestById(testId);
+      if (!test) return;
+
+      const chapters = (appState?.syllabus || []).filter(c => (test.syllabusChapterIds || []).includes(c.id));
+      chSelect.innerHTML = '<option value="">-- All Test Syllabus / General --</option>' +
+        chapters.map(c => `<option value="${c.id}" ${c.id === preferredChapterId ? 'selected' : ''}>${testSubjectLabel(c.subject)}: ${escapeHtml(c.chapter)}</option>`).join('');
+      chContainer.classList.remove('hidden');
+
+      if (infoEl) {
+        infoEl.textContent = `Linked to ${test.name} (${test.date}) · ${chapters.length} chapters defined in test syllabus.`;
+        infoEl.classList.remove('hidden');
+      }
+    }
+
+    function onTaskSubjectOrChapterChange() {
+      checkTaskTestSuggestion();
+    }
+
+    function checkTaskTestSuggestion() {
+      const select = document.getElementById('task-input-upcoming-test');
+      const suggestBox = document.getElementById('task-test-suggestion-box');
+      const suggestText = document.getElementById('task-test-suggestion-text');
+      const acceptBtn = document.getElementById('task-test-suggestion-accept-btn');
+      const dismissBtn = document.getElementById('task-test-suggestion-dismiss-btn');
+      if (!suggestBox || !suggestText || taskSuggestionDismissed) return;
+      if (select && select.value) { suggestBox.classList.add('hidden'); return; }
+
+      const chapterVal = (document.getElementById('task-input-chapter')?.value || '').trim().toLowerCase();
+      const subjectVal = document.getElementById('task-input-subject')?.value || '';
+      if (!chapterVal) { suggestBox.classList.add('hidden'); return; }
+
+      const today = getTodayLocalDate();
+      const activeUpcoming = (appState?.upcomingTests || []).filter(t => t.status === 'Upcoming' && t.date >= today);
+      let match = null;
+
+      for (const t of activeUpcoming) {
+        const matchingChapter = (appState?.syllabus || []).find(c =>
+          (t.syllabusChapterIds || []).includes(c.id) &&
+          (!subjectVal || c.subject === subjectVal) &&
+          c.chapter.trim().toLowerCase() === chapterVal
+        );
+        if (matchingChapter) {
+          match = { test: t, chapter: matchingChapter };
+          break;
+        }
+      }
+
+      if (match) {
+        suggestText.innerHTML = `Possible preparation for <b>${escapeHtml(match.test.name)}</b> — ${testSubjectLabel(match.chapter.subject)}: ${escapeHtml(match.chapter.chapter)}`;
+        acceptBtn.onclick = () => {
+          if (select) {
+            select.value = match.test.id;
+            onTaskUpcomingTestChange(match.chapter.id);
+          }
+          suggestBox.classList.add('hidden');
+        };
+        dismissBtn.onclick = () => {
+          taskSuggestionDismissed = true;
+          suggestBox.classList.add('hidden');
+        };
+        suggestBox.classList.remove('hidden');
+      } else {
+        suggestBox.classList.add('hidden');
+      }
     }
 
     function closeTaskModal() {
@@ -5370,6 +5794,8 @@ showToast(`Target achieved! "${goal.title}"`, 'success');
           task.chapter = chapter;
           task.topic = topic;
           task.notes = notes;
+          task.linkedUpcomingTestId = document.getElementById('task-input-upcoming-test')?.value || null;
+          task.linkedSyllabusChapterIds = document.getElementById('task-input-test-chapter')?.value ? [document.getElementById('task-input-test-chapter').value] : [];
           task.completed = isCompleted && !completionNeedsFeedback;
           task.updatedAt = nowIso;
           if (completionNeedsFeedback) { task.completedAt = null; feedbackAfterSave = task.id; }
@@ -5395,6 +5821,8 @@ showToast(`Target achieved! "${goal.title}"`, 'success');
           durationMinutes: duration,
           status: isCompleted ? 'Planned' : status,
           notes,
+          linkedUpcomingTestId: document.getElementById('task-input-upcoming-test')?.value || null,
+          linkedSyllabusChapterIds: document.getElementById('task-input-test-chapter')?.value ? [document.getElementById('task-input-test-chapter').value] : [],
           completed: false,
           createdAt: nowIso,
           updatedAt: nowIso,
@@ -5655,8 +6083,42 @@ showToast(`Target achieved! "${goal.title}"`, 'success');
       const marksLost = roundTestNumber(Math.max(0, Number(test.maximumMarks) - score));
       return { score, accuracy, percentage, attempted: attempted.length, correct, incorrect, partial, unattempted: Math.max(0, Number(test.totalQuestions) - attempted.length - notCounted), time, averageTime: attempted.length ? roundTestNumber(time / attempted.length) : null, marksLost, questions: questions.length, isSummaryOnly: false, percentile };
     }
+    function populateTestFormUpcomingDropdown(selectedId = '') {
+      const select = document.getElementById('test-input-upcoming-test');
+      if (!select) return;
+      const tests = appState?.upcomingTests || [];
+      select.innerHTML = '<option value="">-- Standalone Test (Not Linked to Upcoming Test) --</option>' +
+        tests.map(t => `<option value="${t.id}" ${t.id === selectedId ? 'selected' : ''}>${escapeHtml(t.name)} (${t.date}) · ${t.status}</option>`).join('');
+    }
+
+    function onTestUpcomingTestSelect() {
+      const select = document.getElementById('test-input-upcoming-test');
+      const uTest = getUpcomingTestById(select?.value);
+      if (!uTest) return;
+
+      const titleInput = document.getElementById('test-input-title');
+      if (!titleInput.value || titleInput.value === 'Untitled Test') titleInput.value = uTest.name;
+      const dateInput = document.getElementById('test-input-date');
+      if (dateInput) dateInput.value = uTest.date;
+      const typeInput = document.getElementById('test-input-type');
+      if (typeInput) typeInput.value = uTest.examType;
+      const maxInput = document.getElementById('test-input-max-marks');
+      if (maxInput && uTest.maximumMarks) maxInput.value = uTest.maximumMarks;
+      const notesInput = document.getElementById('test-input-notes');
+      if (notesInput && !notesInput.value && uTest.notes) notesInput.value = uTest.notes;
+
+      const chapters = (appState?.syllabus || []).filter(c => (uTest.syllabusChapterIds || []).includes(c.id));
+      const testSubjects = [...new Set(chapters.map(c => c.subject))];
+      if (testSubjects.length) {
+        document.querySelectorAll('[name="test-subject"]').forEach(box => {
+          box.checked = testSubjects.includes(box.value);
+        });
+      }
+    }
+
     function openTestForm(id = null) {
       const test = id ? appState.tests.find(item => item.id === id) : null;
+      populateTestFormUpcomingDropdown(test?.linkedUpcomingTestId || '');
       const fields = {
         'test-input-id': test?.id || '',
         'test-input-title': test?.title || '',
@@ -5706,6 +6168,10 @@ showToast(`Target achieved! "${goal.title}"`, 'success');
 
       const now = new Date().toISOString();
       const status = TEST_STATUSES.includes(document.getElementById('test-input-status').value) ? document.getElementById('test-input-status').value : 'Planned';
+      const linkedUpcomingTestId = document.getElementById('test-input-upcoming-test')?.value || existing?.linkedUpcomingTestId || null;
+      const uTest = linkedUpcomingTestId ? getUpcomingTestById(linkedUpcomingTestId) : null;
+      const syllabusChapterIds = uTest?.syllabusChapterIds || existing?.syllabusChapterIds || [];
+
       const record = {
         id: existing?.id || `test-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
         title,
@@ -5730,11 +6196,21 @@ showToast(`Target achieved! "${goal.title}"`, 'success');
         summaryUnattempted: existing?.summaryUnattempted ?? null,
         notes: document.getElementById('test-input-notes').value.trim(),
         questions: existing?.questions || [],
+        linkedUpcomingTestId,
+        syllabusChapterIds,
         createdAt: existing?.createdAt || now,
         updatedAt: now,
         completedAt: status === 'Completed' || status === 'Analyzed' ? (existing?.completedAt || now) : null,
         analyzedAt: status === 'Analyzed' ? (existing?.analyzedAt || now) : null
       };
+
+      if (uTest) {
+        uTest.linkedResultId = record.id;
+        if (status === 'Completed' || status === 'Analyzed') {
+          uTest.status = 'Completed';
+          uTest.updatedAt = now;
+        }
+      }
       if (status === 'Archived') { record.archivedFromStatus = existing?.status && existing.status !== 'Archived' ? existing.status : existing?.archivedFromStatus || 'Planned'; record.archivedAt = existing?.archivedAt || now; }
       else { record.archivedFromStatus = null; record.archivedAt = null; }
       if (existing) Object.assign(existing, record); else appState.tests.unshift(record);
@@ -5746,6 +6222,7 @@ showToast(`Target achieved! "${goal.title}"`, 'success');
     }
     function renderTests() {
       if (!appState) return;
+      renderUpcomingTests();
       const tests = appState.tests || [];
       const search = (document.getElementById('test-search')?.value || '').trim().toLowerCase();
       const type = document.getElementById('test-filter-type')?.value || 'all';
@@ -5775,6 +6252,543 @@ showToast(`Target achieved! "${goal.title}"`, 'success');
       if (currentTestDetailId && !document.getElementById('test-detail-modal')?.classList.contains('hidden')) renderTestDetail(currentTestDetailId);
     }
     function getTestById(id) { return (appState?.tests || []).find(test => test.id === id); }
+    function getUpcomingTestById(id) { return (appState?.upcomingTests || []).find(test => test.id === id); }
+
+    function getTestSyllabusChapters(test) {
+      if (!test) return null;
+      let chapterIds = [];
+      if (test.linkedUpcomingTestId) {
+        const ut = getUpcomingTestById(test.linkedUpcomingTestId);
+        if (ut?.syllabusChapterIds?.length) chapterIds = ut.syllabusChapterIds;
+      }
+      if (!chapterIds.length && test.syllabusChapterIds?.length) {
+        chapterIds = test.syllabusChapterIds;
+      }
+      if (!chapterIds.length) {
+        const ut = (appState?.upcomingTests || []).find(u => u.linkedResultId === test.id);
+        if (ut?.syllabusChapterIds?.length) chapterIds = ut.syllabusChapterIds;
+      }
+      if (!chapterIds.length) return null;
+      const chapters = (appState?.syllabus || []).filter(c => chapterIds.includes(c.id));
+      return chapters.length ? chapters : null;
+    }
+
+    function getAvailableChaptersForTestSubject(test, subject) {
+      const testSyllabus = getTestSyllabusChapters(test);
+      if (testSyllabus) {
+        return testSyllabus.filter(c => c.subject === subject).map(c => c.chapter);
+      }
+      return (appState?.syllabus || []).filter(c => c.subject === subject).map(c => c.chapter);
+    }
+
+    let upcomingTestPendingDeleteId = null;
+
+    function renderUpcomingTests() {
+      const grid = document.getElementById('upcoming-tests-grid');
+      const countBadge = document.getElementById('upcoming-tests-count-badge');
+      if (!grid) return;
+
+      const filterStatus = document.getElementById('upcoming-test-filter-status')?.value || 'Upcoming';
+      const allUpcoming = appState?.upcomingTests || [];
+      const visible = allUpcoming.filter(t => {
+        if (filterStatus === 'all') return true;
+        return t.status === filterStatus;
+      }).sort((a, b) => a.date.localeCompare(b.date));
+
+      if (countBadge) {
+        const activeCount = allUpcoming.filter(t => t.status === 'Upcoming').length;
+        countBadge.textContent = activeCount;
+      }
+
+      if (!visible.length) {
+        grid.innerHTML = `
+          <div class="col-span-full rounded-lg border border-dashed border-slate-700 p-8 text-center text-xs text-slate-400 space-y-2">
+            <p class="font-semibold text-slate-300">No upcoming tests scheduled.</p>
+            <p class="text-slate-400">Schedule your upcoming mock or coaching tests to organize preparation syllabi and link daily Planner tasks.</p>
+            <button onclick="openUpcomingTestForm()" class="mt-2 rounded-lg bg-blue-600 px-3.5 py-1.5 font-semibold text-white hover:bg-blue-500 transition">
+              + Schedule Upcoming Test
+            </button>
+          </div>
+        `;
+        return;
+      }
+
+      grid.innerHTML = visible.map(test => {
+        const countdown = calculateUpcomingTestCountdown(test.date);
+        const statusClass = test.status === 'Completed' ? 'text-emerald-300 bg-emerald-950/60 border-emerald-800' :
+                            test.status === 'Cancelled' ? 'text-rose-400 bg-rose-950/60 border-rose-800' :
+                            'text-blue-300 bg-blue-950/60 border-blue-800';
+
+        const syllabusChapters = (appState?.syllabus || []).filter(c => (test.syllabusChapterIds || []).includes(c.id));
+        const phyCount = syllabusChapters.filter(c => c.subject === 'physics').length;
+        const chemCount = syllabusChapters.filter(c => c.subject === 'chemistry').length;
+        const mathCount = syllabusChapters.filter(c => c.subject === 'maths').length;
+
+        const linkedTasks = (appState?.tasks || []).filter(t => t.linkedUpcomingTestId === test.id);
+        const completedTasks = linkedTasks.filter(t => t.completed || t.status === 'Completed').length;
+        const prepPercent = linkedTasks.length ? Math.round((completedTasks / linkedTasks.length) * 100) : null;
+
+        const [y, m, d] = test.date.split('-').map(Number);
+        const formattedDate = new Date(y, m - 1, d).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
+
+        return `
+          <article class="rounded-xl border border-slate-700 bg-slate-900/60 p-4 space-y-3 flex flex-col justify-between hover:border-slate-600 transition">
+            <div class="space-y-2">
+              <div class="flex items-start justify-between gap-2">
+                <div class="min-w-0">
+                  <div class="flex items-center gap-1.5 flex-wrap">
+                    <span class="badge text-[10px] bg-indigo-950 text-indigo-300 border-indigo-800">${escapeHtml(test.examType)}</span>
+                    <span class="badge text-[10px] ${statusClass}">${escapeHtml(test.status)}</span>
+                  </div>
+                  <h4 class="mt-1 text-base font-bold text-white truncate cursor-pointer hover:text-blue-400" onclick="openUpcomingTestDetail('${test.id}')">${escapeHtml(test.name)}</h4>
+                </div>
+                <span class="badge text-[10px] bg-blue-950 text-blue-300 border-blue-800 shrink-0 font-mono">${countdown.badge}</span>
+              </div>
+
+              <div class="grid grid-cols-2 gap-2 text-[11px] text-slate-400 font-mono bg-slate-950/50 p-2 rounded border border-slate-800">
+                <div>
+                  <span class="text-slate-500 block text-[9px] uppercase">Date</span>
+                  <span class="text-slate-200 font-medium">${formattedDate}</span>
+                </div>
+                <div>
+                  <span class="text-slate-500 block text-[9px] uppercase">Max Marks</span>
+                  <span class="text-slate-200 font-medium">${test.maximumMarks || 300}</span>
+                </div>
+              </div>
+
+              <!-- Syllabus Summary -->
+              <div class="text-[11px]">
+                <div class="flex items-center justify-between text-slate-400 mb-1">
+                  <span>Syllabus: <b>${syllabusChapters.length} chapter${syllabusChapters.length === 1 ? '' : 's'}</b></span>
+                  <span class="text-[10px] font-mono text-slate-500">${phyCount}P · ${chemCount}C · ${mathCount}M</span>
+                </div>
+                ${syllabusChapters.length ? `
+                  <div class="flex flex-wrap gap-1 max-h-16 overflow-hidden">
+                    ${syllabusChapters.slice(0, 4).map(c => `<span class="badge text-[9px] py-0 px-1.5 ${c.subject === 'physics' ? 'badge-physics' : c.subject === 'chemistry' ? 'badge-chemistry' : 'badge-maths'}">${escapeHtml(c.chapter)}</span>`).join('')}
+                    ${syllabusChapters.length > 4 ? `<span class="text-[10px] text-slate-400 self-center">+${syllabusChapters.length - 4} more</span>` : ''}
+                  </div>
+                ` : `<span class="text-[10px] text-slate-500 italic">No syllabus chapters linked</span>`}
+              </div>
+
+              <!-- Preparation Progress -->
+              <div class="pt-1 border-t border-slate-800 text-[11px]">
+                <div class="flex items-center justify-between text-slate-400 mb-1">
+                  <span>Preparation Tasks:</span>
+                  ${prepPercent !== null ? `<span class="font-bold text-white font-mono">${completedTasks}/${linkedTasks.length} (${prepPercent}%)</span>` : `<span class="text-slate-500 italic">None linked</span>`}
+                </div>
+                ${prepPercent !== null ? `
+                  <div class="h-1.5 rounded-full bg-slate-800 overflow-hidden">
+                    <div class="h-full bg-blue-500 rounded-full transition-all" style="width: ${prepPercent}%"></div>
+                  </div>
+                ` : ''}
+              </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="pt-2 border-t border-slate-800 flex flex-wrap gap-1.5">
+              <button onclick="openUpcomingTestDetail('${test.id}')" class="mistake-action text-blue-300 font-medium">Preparation Overview</button>
+              ${test.status === 'Upcoming' ? `<button onclick="recordResultForUpcomingTest('${test.id}')" class="mistake-action text-emerald-300 font-medium">+ Upload Result</button>` : ''}
+              <button onclick="openUpcomingTestForm('${test.id}')" class="mistake-action">Edit</button>
+              <button onclick="promptDeleteUpcomingTest('${test.id}')" class="mistake-action text-rose-300">Manage</button>
+            </div>
+          </article>
+        `;
+      }).join('');
+      if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
+    }
+
+    function openUpcomingTestForm(id = null) {
+      const modal = document.getElementById('upcoming-test-modal');
+      const titleElem = document.getElementById('upcoming-test-modal-title');
+      const errorBox = document.getElementById('upcoming-test-form-error');
+      if (!modal) return;
+
+      errorBox?.classList.add('hidden');
+      const test = id ? getUpcomingTestById(id) : null;
+
+      document.getElementById('upcoming-test-input-id').value = test?.id || '';
+      document.getElementById('upcoming-test-input-name').value = test?.name || '';
+      document.getElementById('upcoming-test-input-date').value = test?.date || getTodayLocalDate();
+      document.getElementById('upcoming-test-input-type').value = test?.examType || 'JEE Main Mock';
+      document.getElementById('upcoming-test-input-max-marks').value = test?.maximumMarks || 300;
+      document.getElementById('upcoming-test-input-status').value = test?.status || 'Upcoming';
+      document.getElementById('upcoming-test-input-notes').value = test?.notes || '';
+
+      if (titleElem) {
+        titleElem.innerHTML = `<i data-lucide="calendar" class="w-4 h-4 text-blue-400"></i><span>${test ? 'Edit Upcoming Test' : 'Schedule Upcoming Test'}</span>`;
+      }
+
+      renderUpcomingTestSyllabusCheckboxes(test?.syllabusChapterIds || []);
+      modal.classList.remove('hidden');
+      if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
+      document.getElementById('upcoming-test-input-name')?.focus();
+    }
+
+    function closeUpcomingTestForm() {
+      document.getElementById('upcoming-test-modal')?.classList.add('hidden');
+    }
+
+    function renderUpcomingTestSyllabusCheckboxes(selectedIds = []) {
+      const selectedSet = new Set(selectedIds.map(String));
+      const syllabus = appState?.syllabus || [];
+
+      ['physics', 'chemistry', 'maths'].forEach(subject => {
+        const container = document.getElementById(`upcoming-test-syllabus-list-${subject}`);
+        if (!container) return;
+        const chapters = syllabus.filter(c => c.subject === subject).sort((a, b) => (Number(a.order) || 0) - (Number(b.order) || 0) || a.chapter.localeCompare(b.chapter));
+
+        if (!chapters.length) {
+          container.innerHTML = `<div class="text-[11px] text-slate-500 italic p-1.5">No ${testSubjectLabel(subject)} chapters in Syllabus Tracker.</div>`;
+          return;
+        }
+
+        container.innerHTML = chapters.map(c => {
+          const isChecked = selectedSet.has(String(c.id));
+          return `
+            <label class="upcoming-test-ch-row flex items-start gap-2 p-1.5 rounded hover:bg-slate-900 cursor-pointer text-[11px] transition" data-chapter="${escapeHtml(c.chapter.toLowerCase())}" data-unit="${escapeHtml((c.unit || '').toLowerCase())}">
+              <input type="checkbox" class="upcoming-test-syllabus-cb mt-0.5 rounded bg-slate-900 border-slate-700 text-blue-600 focus:ring-0 shrink-0" value="${c.id}" data-subject="${subject}" ${isChecked ? 'checked' : ''} onchange="updateUpcomingTestSyllabusCount()">
+              <span class="text-slate-200 leading-tight">${escapeHtml(c.chapter)}${c.unit ? ` <span class="text-slate-500 text-[10px]">(${escapeHtml(c.unit)})</span>` : ''}</span>
+            </label>
+          `;
+        }).join('');
+      });
+
+      updateUpcomingTestSyllabusCount();
+    }
+
+    function toggleSubjectSyllabusAll(subject, selectAll) {
+      const container = document.getElementById(`upcoming-test-syllabus-list-${subject}`);
+      if (!container) return;
+      container.querySelectorAll('.upcoming-test-syllabus-cb').forEach(cb => {
+        const row = cb.closest('.upcoming-test-ch-row');
+        if (!row || row.style.display !== 'none') {
+          cb.checked = selectAll;
+        }
+      });
+      updateUpcomingTestSyllabusCount();
+    }
+
+    function updateUpcomingTestSyllabusCount() {
+      const countEl = document.getElementById('upcoming-test-syllabus-count');
+      if (!countEl) return;
+      const checked = [...document.querySelectorAll('.upcoming-test-syllabus-cb:checked')];
+      const phy = checked.filter(cb => cb.dataset.subject === 'physics').length;
+      const chem = checked.filter(cb => cb.dataset.subject === 'chemistry').length;
+      const math = checked.filter(cb => cb.dataset.subject === 'maths').length;
+      countEl.textContent = `${checked.length} chapter${checked.length === 1 ? '' : 's'} selected (${phy}P, ${chem}C, ${math}M)`;
+    }
+
+    function filterUpcomingTestSyllabusUI() {
+      const query = (document.getElementById('upcoming-test-syllabus-search')?.value || '').trim().toLowerCase();
+      document.querySelectorAll('.upcoming-test-ch-row').forEach(row => {
+        const chapter = row.dataset.chapter || '';
+        const unit = row.dataset.unit || '';
+        if (!query || chapter.includes(query) || unit.includes(query)) {
+          row.style.display = '';
+        } else {
+          row.style.display = 'none';
+        }
+      });
+    }
+
+    function saveUpcomingTest(e) {
+      if (e) e.preventDefault();
+      if (!appState) loadAppState();
+
+      const id = document.getElementById('upcoming-test-input-id').value;
+      const name = document.getElementById('upcoming-test-input-name').value.trim();
+      const date = document.getElementById('upcoming-test-input-date').value;
+      const examType = document.getElementById('upcoming-test-input-type').value;
+      const maxMarks = Math.max(1, Number(document.getElementById('upcoming-test-input-max-marks').value) || 300);
+      const status = document.getElementById('upcoming-test-input-status').value;
+      const notes = document.getElementById('upcoming-test-input-notes').value.trim();
+      const errorBox = document.getElementById('upcoming-test-form-error');
+
+      if (!name || !date) {
+        if (errorBox) {
+          errorBox.textContent = 'Please enter both a test title and date.';
+          errorBox.classList.remove('hidden');
+        }
+        return;
+      }
+
+      const selectedChapterIds = [...document.querySelectorAll('.upcoming-test-syllabus-cb:checked')].map(cb => cb.value);
+      const nowIso = new Date().toISOString();
+      const existing = (appState.upcomingTests || []).find(t => t.id === id);
+
+      const record = {
+        id: existing?.id || `utest-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+        name,
+        title: name,
+        date,
+        testDate: date,
+        examType,
+        testType: examType,
+        notes,
+        maximumMarks: maxMarks,
+        status,
+        syllabusChapterIds: selectedChapterIds,
+        linkedResultId: existing?.linkedResultId || null,
+        createdAt: existing?.createdAt || nowIso,
+        updatedAt: nowIso
+      };
+
+      if (existing) {
+        Object.assign(existing, record);
+      } else {
+        if (!Array.isArray(appState.upcomingTests)) appState.upcomingTests = [];
+        appState.upcomingTests.push(record);
+      }
+
+      appendHistoryEvent({
+        module: 'Tests',
+        action: existing ? 'updated' : 'created',
+        entityType: 'test',
+        entityId: record.id,
+        title: `${existing ? 'Updated' : 'Scheduled'} upcoming test: ${record.name}`,
+        description: `${record.examType} on ${record.date} (${record.syllabusChapterIds.length} syllabus chapters)`,
+        subject: 'general'
+      });
+
+      saveAppState(false);
+      closeUpcomingTestForm();
+      renderUpcomingTests();
+      renderUpcomingTest();
+      showToast(existing ? 'Upcoming test updated.' : 'Upcoming test scheduled.', 'success');
+    }
+
+    function openUpcomingTestDetail(id) {
+      const test = getUpcomingTestById(id);
+      if (!test) return;
+      const modal = document.getElementById('upcoming-test-detail-modal');
+      const content = document.getElementById('utest-detail-content');
+      if (!modal || !content) return;
+
+      const countdown = calculateUpcomingTestCountdown(test.date);
+      document.getElementById('utest-detail-title').textContent = test.name;
+      document.getElementById('utest-detail-type').textContent = test.examType;
+      document.getElementById('utest-detail-countdown').textContent = countdown.badge;
+      document.getElementById('utest-detail-status').textContent = test.status;
+
+      const [y, m, d] = test.date.split('-').map(Number);
+      const formattedDate = new Date(y, m - 1, d).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+      document.getElementById('utest-detail-date').textContent = `${formattedDate} · Max Marks: ${test.maximumMarks || 300}`;
+
+      const chapters = (appState?.syllabus || []).filter(c => (test.syllabusChapterIds || []).includes(c.id));
+      const linkedTasks = (appState?.tasks || []).filter(t => t.linkedUpcomingTestId === test.id);
+      const completedTasks = linkedTasks.filter(t => t.completed || t.status === 'Completed');
+      const pendingTasks = linkedTasks.filter(t => !t.completed && t.status !== 'Completed');
+      const prepPct = linkedTasks.length ? Math.round((completedTasks.length / linkedTasks.length) * 100) : null;
+
+      let syllabusHtml = '';
+      if (!chapters.length) {
+        syllabusHtml = '<p class="text-slate-500 italic">No syllabus chapters linked to this test.</p>';
+      } else {
+        syllabusHtml = ['physics', 'chemistry', 'maths'].map(sub => {
+          const subChs = chapters.filter(c => c.subject === sub);
+          if (!subChs.length) return '';
+          return `
+            <div class="space-y-1">
+              <span class="font-bold text-[11px] ${sub === 'physics' ? 'text-blue-400' : sub === 'chemistry' ? 'text-emerald-400' : 'text-amber-400'} uppercase font-mono">${testSubjectLabel(sub)} (${subChs.length}):</span>
+              <div class="flex flex-wrap gap-1.5">
+                ${subChs.map(c => `<span class="badge text-[10px] py-0.5 px-2 ${sub === 'physics' ? 'badge-physics' : sub === 'chemistry' ? 'badge-chemistry' : 'badge-maths'}">${escapeHtml(c.chapter)}</span>`).join('')}
+              </div>
+            </div>
+          `;
+        }).filter(Boolean).join('');
+      }
+
+      let prepTasksHtml = '';
+      if (!linkedTasks.length) {
+        prepTasksHtml = `
+          <div class="rounded-lg border border-dashed border-slate-700 p-6 text-center text-xs text-slate-400 space-y-2">
+            <p class="font-semibold text-slate-300">No preparation tasks linked yet.</p>
+            <p class="text-slate-400">Link Planner tasks to this test using "Prepare for Upcoming Test" in the task form to measure your test preparation progress.</p>
+            <button onclick="closeUpcomingTestDetail(); openTaskModal(null, '${test.date}')" class="mt-2 rounded-lg bg-blue-600 hover:bg-blue-500 px-3 py-1.5 text-white font-medium text-xs transition">
+              + Add Preparation Task in Planner
+            </button>
+          </div>
+        `;
+      } else {
+        prepTasksHtml = `
+          <div class="space-y-3">
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center font-mono">
+              <div class="rounded bg-slate-900 p-2 border border-slate-800">
+                <span class="text-[9px] uppercase text-slate-500 block">Total Linked</span>
+                <span class="text-base font-bold text-white">${linkedTasks.length}</span>
+              </div>
+              <div class="rounded bg-slate-900 p-2 border border-slate-800">
+                <span class="text-[9px] uppercase text-slate-500 block">Completed</span>
+                <span class="text-base font-bold text-emerald-400">${completedTasks.length}</span>
+              </div>
+              <div class="rounded bg-slate-900 p-2 border border-slate-800">
+                <span class="text-[9px] uppercase text-slate-500 block">Pending</span>
+                <span class="text-base font-bold text-amber-400">${pendingTasks.length}</span>
+              </div>
+              <div class="rounded bg-slate-900 p-2 border border-slate-800">
+                <span class="text-[9px] uppercase text-slate-500 block">Progress</span>
+                <span class="text-base font-bold text-blue-400">${prepPct}%</span>
+              </div>
+            </div>
+
+            <div class="h-2 rounded-full bg-slate-800 overflow-hidden">
+              <div class="h-full bg-blue-500 rounded-full transition-all" style="width: ${prepPct}%"></div>
+            </div>
+
+            <div class="space-y-1.5 max-h-56 overflow-y-auto pr-1">
+              ${linkedTasks.map(task => {
+                const isTaskDone = Boolean(task.completed) || task.status === 'Completed';
+                return `
+                  <div class="flex items-center justify-between gap-2 p-2 rounded bg-slate-900/60 border border-slate-800 hover:border-slate-700 transition">
+                    <div class="min-w-0 flex items-center gap-2">
+                      <span class="w-2 h-2 rounded-full ${isTaskDone ? 'bg-emerald-400' : 'bg-amber-400'} shrink-0"></span>
+                      <span class="truncate font-medium ${isTaskDone ? 'line-through text-slate-500' : 'text-slate-200'}">${escapeHtml(task.title)}</span>
+                      <span class="badge text-[9px] py-0 px-1.5 ${task.subject === 'physics' ? 'badge-physics' : task.subject === 'chemistry' ? 'badge-chemistry' : 'badge-maths'}">${testSubjectLabel(task.subject)}</span>
+                    </div>
+                    <div class="flex items-center gap-2 shrink-0">
+                      <span class="text-[10px] text-slate-400 font-mono">${task.date}</span>
+                      <button onclick="closeUpcomingTestDetail(); openExecutionTask('${task.id}')" class="px-2 py-0.5 rounded bg-slate-800 text-[10px] text-slate-300 hover:text-white">Open</button>
+                    </div>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          </div>
+        `;
+      }
+
+      content.innerHTML = `
+        <!-- Syllabus Coverage -->
+        <section class="rounded-lg border border-slate-800 bg-slate-950/40 p-3.5 space-y-2.5">
+          <h4 class="text-xs font-bold text-white flex items-center gap-1.5">
+            <i data-lucide="book-open" class="w-3.5 h-3.5 text-blue-400"></i>
+            <span>Defined Test Syllabus (${chapters.length} Chapters)</span>
+          </h4>
+          <div class="space-y-2 pt-1">
+            ${syllabusHtml}
+          </div>
+        </section>
+
+        <!-- Preparation Overview -->
+        <section class="rounded-lg border border-slate-800 bg-slate-950/40 p-3.5 space-y-2.5">
+          <div class="flex items-center justify-between">
+            <h4 class="text-xs font-bold text-white flex items-center gap-1.5">
+              <i data-lucide="target" class="w-3.5 h-3.5 text-emerald-400"></i>
+              <span>Preparation Tasks & Completion</span>
+            </h4>
+            <button onclick="closeUpcomingTestDetail(); openTaskModal(null, '${test.date}')" class="text-[11px] text-blue-400 hover:text-blue-300 font-medium">+ Add Task</button>
+          </div>
+          ${prepTasksHtml}
+        </section>
+
+        ${test.notes ? `
+          <section class="rounded-lg border border-slate-800 p-3 text-slate-400">
+            <h5 class="text-[10px] uppercase font-mono text-slate-500 mb-1">Notes</h5>
+            <p class="whitespace-pre-wrap">${escapeHtml(test.notes)}</p>
+          </section>
+        ` : ''}
+      `;
+
+      const recordBtn = document.getElementById('utest-detail-record-btn');
+      if (recordBtn) {
+        recordBtn.onclick = () => { closeUpcomingTestDetail(); recordResultForUpcomingTest(test.id); };
+      }
+      const editBtn = document.getElementById('utest-detail-edit-btn');
+      if (editBtn) {
+        editBtn.onclick = () => { closeUpcomingTestDetail(); openUpcomingTestForm(test.id); };
+      }
+
+      modal.classList.remove('hidden');
+      if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
+    }
+
+    function closeUpcomingTestDetail() {
+      document.getElementById('upcoming-test-detail-modal')?.classList.add('hidden');
+    }
+
+    function promptDeleteUpcomingTest(id) {
+      upcomingTestPendingDeleteId = id;
+      const test = getUpcomingTestById(id);
+      if (!test) return;
+      const copy = document.getElementById('upcoming-test-delete-copy');
+      if (copy) {
+        copy.textContent = `Are you sure you want to delete or cancel "${test.name}"? Linked Planner tasks and completed test results will be safely preserved without corruption.`;
+      }
+      document.getElementById('upcoming-test-delete-modal')?.classList.remove('hidden');
+    }
+
+    function closeUpcomingTestDelete() {
+      document.getElementById('upcoming-test-delete-modal')?.classList.add('hidden');
+      upcomingTestPendingDeleteId = null;
+    }
+
+    function cancelUpcomingTestConfirmed() {
+      const id = upcomingTestPendingDeleteId;
+      if (!id) return;
+      const test = getUpcomingTestById(id);
+      if (test) {
+        test.status = 'Cancelled';
+        test.updatedAt = new Date().toISOString();
+        appendHistoryEvent({ module: 'Tests', action: 'cancelled', entityType: 'test', entityId: id, title: `Cancelled upcoming test: ${test.name}`, description: 'Marked as cancelled.', subject: 'general' });
+        saveAppState(false);
+        renderUpcomingTests();
+        renderUpcomingTest();
+        showToast('Upcoming test marked cancelled.', 'info');
+      }
+      closeUpcomingTestDelete();
+    }
+
+    function confirmUpcomingTestDelete() {
+      const id = upcomingTestPendingDeleteId;
+      if (!id) return;
+      const test = getUpcomingTestById(id);
+      if (test) {
+        appendHistoryEvent({ module: 'Tests', action: 'deleted', entityType: 'test', entityId: id, title: `Deleted upcoming test: ${test.name}`, description: 'The upcoming test schedule was deleted.', subject: 'general' });
+        appState.upcomingTests = (appState.upcomingTests || []).filter(t => t.id !== id);
+        // Safely unlink from Planner tasks and completed tests without corrupting them
+        (appState.tasks || []).forEach(task => {
+          if (task.linkedUpcomingTestId === id) {
+            task.linkedUpcomingTestId = null;
+            task.linkedSyllabusChapterIds = [];
+          }
+        });
+        (appState.tests || []).forEach(res => {
+          if (res.linkedUpcomingTestId === id) {
+            res.linkedUpcomingTestId = null;
+          }
+        });
+        saveAppState(false);
+        renderUpcomingTests();
+        renderUpcomingTest();
+        showToast('Upcoming test deleted.', 'success');
+      }
+      closeUpcomingTestDelete();
+    }
+
+    function recordResultForUpcomingTest(upcomingTestId) {
+      const uTest = getUpcomingTestById(upcomingTestId);
+      if (!uTest) return;
+
+      openTestForm();
+      const upcomingSelect = document.getElementById('test-input-upcoming-test');
+      if (upcomingSelect) upcomingSelect.value = uTest.id;
+
+      document.getElementById('test-input-title').value = uTest.name;
+      document.getElementById('test-input-date').value = uTest.date;
+      document.getElementById('test-input-type').value = uTest.examType;
+      document.getElementById('test-input-max-marks').value = uTest.maximumMarks || 300;
+      document.getElementById('test-input-notes').value = uTest.notes || '';
+
+      const chapters = (appState?.syllabus || []).filter(c => (uTest.syllabusChapterIds || []).includes(c.id));
+      const testSubjects = [...new Set(chapters.map(c => c.subject))];
+      if (testSubjects.length) {
+        document.querySelectorAll('[name="test-subject"]').forEach(box => {
+          box.checked = testSubjects.includes(box.value);
+        });
+      }
+
+      showToast(`Pre-loaded upcoming test "${uTest.name}". Enter question results to save.`, 'info');
+    }
     function openTestDetail(id) { currentTestDetailId = id; renderTestDetail(id); document.getElementById('test-detail-modal')?.classList.remove('hidden'); }
     function closeTestDetail() { document.getElementById('test-detail-modal')?.classList.add('hidden'); currentTestDetailId = null; }
     function renderTestDetail(id) {
@@ -5827,6 +6841,19 @@ showToast(`Target achieved! "${goal.title}"`, 'success');
 
       document.getElementById('bulk-modal-title').textContent = `Bulk Result Entry · ${test.title}`;
       document.getElementById('bulk-modal-badge').textContent = `${test.testType} · +${test.markingScheme.correctMarks}/-${test.markingScheme.negativeMarks}`;
+      const testSyllabus = getTestSyllabusChapters(test);
+      const sylBadge = document.getElementById('bulk-modal-syllabus-badge');
+      if (sylBadge) {
+        if (testSyllabus && testSyllabus.length > 0) {
+          sylBadge.className = 'rounded bg-blue-950/80 border border-blue-600/70 px-2 py-0.5 text-[10px] text-blue-200 font-medium';
+          sylBadge.textContent = `🎯 Test Syllabus Restricted: ${testSyllabus.length} chapters`;
+          sylBadge.classList.remove('hidden');
+        } else {
+          sylBadge.className = 'rounded bg-slate-800 border border-slate-700 px-2 py-0.5 text-[10px] text-slate-400';
+          sylBadge.textContent = 'ℹ️ No test-specific syllabus linked (showing general syllabus)';
+          sylBadge.classList.remove('hidden');
+        }
+      }
       document.getElementById('bulk-modal-subtitle').textContent = `${test.testDate} · Configured ${test.totalQuestions} questions · Max ${test.maximumMarks} marks · Subjects: ${test.subjects.map(testSubjectLabel).join(', ')}`;
       document.getElementById('bulk-input-percentile').value = test.percentile !== null && test.percentile !== undefined ? test.percentile : '';
 
@@ -6030,7 +7057,23 @@ showToast(`Target achieved! "${goal.title}"`, 'success');
               <input type="number" step="0.25" value="${q.marksAwarded !== null && q.marksAwarded !== undefined ? q.marksAwarded : ''}" oninput="updateBulkQuestionMarksAwarded(${idx}, this.value)" class="field-input text-xs py-1 px-1 text-center w-full" placeholder="Auto" title="Leave blank for automatic scoring, or enter custom marks">
             </td>
             <td class="p-2">
-              <input type="text" list="bulk-syllabus-topics" value="${escapeHtml(q.topic || q.chapter || '')}" oninput="updateBulkQuestionTopic(${idx}, this.value)" class="field-input text-xs py-1 px-2 w-full" placeholder="e.g. Kinematics">
+              ${(() => {
+                const testSyl = getTestSyllabusChapters(test);
+                if (testSyl && testSyl.length > 0) {
+                  const allowed = getAvailableChaptersForTestSubject(test, q.subject);
+                  if (allowed.length > 0) {
+                    return `
+                      <select onchange="updateBulkQuestionTopic(${idx}, this.value)" class="field-input text-xs py-1 px-1.5 w-full bg-slate-900 border-blue-500/60 text-blue-200">
+                        <option value="">-- Select Chapter (${testSubjectLabel(q.subject)}) --</option>
+                        ${allowed.map(ch => `<option value="${escapeHtml(ch)}" ${(q.chapter === ch || q.topic === ch) ? 'selected' : ''}>${escapeHtml(ch)}</option>`).join('')}
+                      </select>
+                    `;
+                  } else {
+                    return `<span class="text-[10px] text-amber-400 italic">No ${testSubjectLabel(q.subject)} chapters in test syllabus</span>`;
+                  }
+                }
+                return `<input type="text" list="bulk-syllabus-topics" value="${escapeHtml(q.topic || q.chapter || '')}" oninput="updateBulkQuestionTopic(${idx}, this.value)" class="field-input text-xs py-1 px-2 w-full" placeholder="e.g. Kinematics">`;
+              })()}
             </td>
             <td class="p-2">${mistakeSelect}</td>
             <td class="p-2 text-center">
@@ -6103,7 +7146,19 @@ showToast(`Target achieved! "${goal.title}"`, 'success');
     }
 
     function updateBulkQuestionSubject(idx, subject) {
-      if (bulkWorkingQuestions[idx]) bulkWorkingQuestions[idx].subject = subject;
+      if (bulkWorkingQuestions[idx]) {
+        bulkWorkingQuestions[idx].subject = subject;
+        const test = getTestById(bulkActiveTestId);
+        const testSyl = getTestSyllabusChapters(test);
+        if (testSyl && testSyl.length > 0) {
+          const allowed = getAvailableChaptersForTestSubject(test, subject);
+          if (!allowed.includes(bulkWorkingQuestions[idx].chapter)) {
+            bulkWorkingQuestions[idx].chapter = allowed[0] || '';
+            bulkWorkingQuestions[idx].topic = bulkWorkingQuestions[idx].chapter;
+          }
+          renderBulkGrid();
+        }
+      }
     }
 
     function updateBulkQuestionType(idx, val) {
@@ -6541,7 +7596,17 @@ showToast(`Target achieved! "${goal.title}"`, 'success');
           if (!isNaN(tm) && tm >= 0) timeSpentMinutes = tm;
         }
 
-        const topic = colTopic >= 0 && cols[colTopic] ? cols[colTopic].trim() : '';
+        let topic = colTopic >= 0 && cols[colTopic] ? cols[colTopic].trim() : '';
+        const testSyl = getTestSyllabusChapters(test);
+        if (testSyl && testSyl.length > 0 && topic) {
+          const allowed = getAvailableChaptersForTestSubject(test, subject);
+          const matched = allowed.find(c => c.toLowerCase() === topic.toLowerCase());
+          if (matched) {
+            topic = matched;
+          } else if (allowed.length > 0) {
+            errors.push(`Row ${lineNum} (Q${qNum}): "${topic}" is not part of the ${testSubjectLabel(subject)} syllabus for this test. Allowed chapters: ${allowed.join(', ')}`);
+          }
+        }
         let mistakeCategory = '';
         if (colMistake >= 0 && cols[colMistake]) {
           const rawMistake = cols[colMistake].trim();
@@ -6950,10 +8015,53 @@ showToast(`Target achieved! "${goal.title}"`, 'success');
       saveAppState(false); renderTests(); renderDashboard(); showToast(`Test marked ${status.toLowerCase()}.`, 'success');
     }
     function analyzeTest(id) { setTestStatus(id, 'Analyzed'); }
+    function updateQuestionFormChapterOptions(selectedChapter = '') {
+      const test = getTestById(currentQuestionTestId);
+      const wrap = document.getElementById('question-chapter-field-wrap');
+      const badge = document.getElementById('question-chapter-syllabus-badge');
+      if (!wrap) return;
+
+      const subject = document.getElementById('question-input-subject')?.value || 'physics';
+      const testSyl = getTestSyllabusChapters(test);
+
+      if (testSyl && testSyl.length > 0) {
+        const allowed = getAvailableChaptersForTestSubject(test, subject);
+        if (allowed.length > 0) {
+          wrap.innerHTML = `
+            <select id="question-input-chapter" class="field-input mt-1 border-blue-500/60 bg-slate-900 text-blue-200">
+              <option value="">-- Select Chapter (${testSubjectLabel(subject)}) --</option>
+              ${allowed.map(ch => `<option value="${escapeHtml(ch)}" ${ch === selectedChapter ? 'selected' : ''}>${escapeHtml(ch)}</option>`).join('')}
+            </select>
+          `;
+          if (badge) {
+            badge.textContent = `🎯 Test syllabus restricted (${allowed.length} chapters for ${testSubjectLabel(subject)})`;
+            badge.className = 'block text-[10px] text-blue-300 mt-0.5';
+          }
+        } else {
+          wrap.innerHTML = `<span class="text-[10px] text-amber-400 italic block mt-2">No ${testSubjectLabel(subject)} chapters in test syllabus.</span><input id="question-input-chapter" type="hidden" value="">`;
+          if (badge) badge.textContent = '';
+        }
+      } else {
+        wrap.innerHTML = `
+          <input id="question-input-chapter" list="bulk-syllabus-topics" value="${escapeHtml(selectedChapter)}" class="field-input mt-1" placeholder="e.g. Rotational Motion">
+        `;
+        if (badge) {
+          badge.textContent = 'ℹ️ No test-specific syllabus linked (showing general syllabus)';
+          badge.className = 'block text-[10px] text-slate-400 mt-0.5';
+        }
+      }
+    }
+
+    function onQuestionFormSubjectChange() {
+      updateQuestionFormChapterOptions('');
+    }
+
     function openQuestionForm(testId, questionId = null) {
       const test = getTestById(testId), question = test?.questions.find(item => item.id === questionId); if (!test) return;
-      currentQuestionTestId = testId; const fields = { 'question-input-id': question?.id || '', 'question-input-number': question?.questionNumber || test.questions.length + 1, 'question-input-subject': question?.subject || test.subjects[0] || 'physics', 'question-input-difficulty': question?.difficulty || 'Medium', 'question-input-chapter': question?.chapter || '', 'question-input-topic': question?.topic || '', 'question-input-type': question?.questionType || 'Single correct', 'question-input-max': question?.maxMarks ?? test.markingScheme.correctMarks, 'question-input-status': question?.status || 'Correct', 'question-input-time': question?.timeSpentMinutes || 0, 'question-input-marks': question?.marksAwarded ?? '', 'question-input-answer': question?.userAnswer || '', 'question-input-correct': question?.correctAnswer || '', 'question-input-text': question?.questionText || '', 'question-input-diagnostic-type': question?.diagnosticType || '', 'question-input-diagnostic': question?.diagnostic || '' };
-      Object.entries(fields).forEach(([key, value]) => { document.getElementById(key).value = value; }); document.getElementById('question-form-title').textContent = question ? `Edit Question ${question.questionNumber}` : 'Add Question Result'; document.getElementById('question-form-error').classList.add('hidden'); document.getElementById('question-form-modal').classList.remove('hidden');
+      currentQuestionTestId = testId; const fields = { 'question-input-id': question?.id || '', 'question-input-number': question?.questionNumber || test.questions.length + 1, 'question-input-subject': question?.subject || test.subjects[0] || 'physics', 'question-input-difficulty': question?.difficulty || 'Medium', 'question-input-topic': question?.topic || '', 'question-input-type': question?.questionType || 'Single correct', 'question-input-max': question?.maxMarks ?? test.markingScheme.correctMarks, 'question-input-status': question?.status || 'Correct', 'question-input-time': question?.timeSpentMinutes || 0, 'question-input-marks': question?.marksAwarded ?? '', 'question-input-answer': question?.userAnswer || '', 'question-input-correct': question?.correctAnswer || '', 'question-input-text': question?.questionText || '', 'question-input-diagnostic-type': question?.diagnosticType || '', 'question-input-diagnostic': question?.diagnostic || '' };
+      Object.entries(fields).forEach(([key, value]) => { document.getElementById(key).value = value; });
+      updateQuestionFormChapterOptions(question?.chapter || question?.topic || '');
+      document.getElementById('question-form-title').textContent = question ? `Edit Question ${question.questionNumber}` : 'Add Question Result'; document.getElementById('question-form-error').classList.add('hidden'); document.getElementById('question-form-modal').classList.remove('hidden');
     }
     function closeQuestionForm() { document.getElementById('question-form-modal')?.classList.add('hidden'); currentQuestionTestId = null; }
     function saveQuestion(event) {
@@ -7338,8 +8446,24 @@ showToast(`Target achieved! "${goal.title}"`, 'success');
       if (relatedMistakes.length) { const severe = relatedMistakes.some(item => ['High', 'Critical'].includes(item.severity)); const recurring = relatedMistakes.some(item => Number(item.occurrenceCount) > 1); score += weights.mistakeRisk + (severe || recurring ? 5 : 0); reasons.push(`${relatedMistakes.length} unresolved related mistake${relatedMistakes.length === 1 ? '' : 's'}${recurring ? ', including a recurring one' : ''}`); sources.push('Mistake Notebook'); }
       const weakArea = intelligence.weakAreas.find(item => item.subject === task.subject && (matchesChapter(item) || (!task.chapter && text.includes(item.chapter.toLowerCase()))));
       if (weakArea) { score += weights.testWeakness; reasons.push(`Matches a multi-signal weak area: ${weakArea.chapter}`); sources.push('Test Center + preparation evidence'); }
-      const upcomingTest = appState.tests.find(test => ['Planned', 'In Progress'].includes(test.status) && test.testDate >= today && test.testDate <= getOffsetDateFrom(today, 7) && (test.subjects?.includes(task.subject) || `${test.title} ${test.notes}`.toLowerCase().includes(task.chapter?.toLowerCase() || task.topic?.toLowerCase() || '\u0000')));
-      if (upcomingTest) { score += weights.upcomingTest; reasons.push(`Supports preparation for ${upcomingTest.title}, scheduled ${upcomingTest.testDate}`); sources.push('Test Center'); }
+      // A test-related priority bonus and reason must ONLY be based on an actual, confirmed relationship (task.linkedUpcomingTestId).
+      if (task.linkedUpcomingTestId) {
+        const confirmedTest = (appState.upcomingTests || []).find(t => t.id === task.linkedUpcomingTestId && t.status === 'Upcoming')
+          || (appState.tests || []).find(t => t.id === task.linkedUpcomingTestId && ['Planned', 'In Progress'].includes(t.status));
+        if (confirmedTest) {
+          score += weights.upcomingTest;
+          let testChapterDesc = '';
+          if (task.chapter) {
+            testChapterDesc = ` — ${intelligenceSubjectLabel(task.subject)}: ${task.chapter}`;
+          } else if (task.linkedSyllabusChapterIds?.length) {
+            const ch = (appState.syllabus || []).find(c => task.linkedSyllabusChapterIds.includes(c.id));
+            if (ch) testChapterDesc = ` — ${intelligenceSubjectLabel(ch.subject)}: ${ch.chapter}`;
+          }
+          const testTitle = confirmedTest.name || confirmedTest.title;
+          reasons.push(`Linked to ${testTitle}${testChapterDesc}`);
+          sources.push('Test Center');
+        }
+      }
       const atRiskGoal = intelligence.goalRisk.find(item => item.status === 'At Risk' && (item.goal.subject === task.subject || item.goal.subject === 'general') && (!task.chapter || `${item.goal.title} ${item.goal.description}`.toLowerCase().includes(task.chapter.toLowerCase())));
       if (atRiskGoal) { score += weights.goalRisk; reasons.push(`Supports an at-risk goal: ${atRiskGoal.goal.title}`); sources.push('Goals'); }
       const syllabusEntry = appState.syllabus.find(item => item.subject === task.subject && matchesChapter(item));
