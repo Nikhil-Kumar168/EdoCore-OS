@@ -157,6 +157,11 @@
       color: #fde047;
       border-color: rgba(234, 179, 8, 0.3);
     }
+    .badge-general {
+      background-color: rgba(148, 163, 184, 0.12);
+      color: #cbd5e1;
+      border-color: rgba(148, 163, 184, 0.3);
+    }
 
     /* Status Badges */
     .badge-planned {
@@ -758,6 +763,7 @@
                 <button onclick="setPlannerFilter('physics')" id="filter-physics" class="planner-filter-btn px-2.5 py-1.5 rounded-lg bg-slate-800 text-blue-400 hover:text-white transition">Physics</button>
                 <button onclick="setPlannerFilter('chemistry')" id="filter-chemistry" class="planner-filter-btn px-2.5 py-1.5 rounded-lg bg-slate-800 text-green-400 hover:text-white transition">Chemistry</button>
                 <button onclick="setPlannerFilter('maths')" id="filter-maths" class="planner-filter-btn px-2.5 py-1.5 rounded-lg bg-slate-800 text-yellow-400 hover:text-white transition">Maths</button>
+                <button onclick="setPlannerFilter('general')" id="filter-general" class="planner-filter-btn px-2.5 py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:text-white transition">General</button>
               </div>
             </div>
           </div>
@@ -1022,7 +1028,7 @@
         </div>
         <div class="card-base p-4 sm:p-5 space-y-4">
           <div id="backlog-metrics" class="grid grid-cols-2 lg:grid-cols-6 gap-3"></div>
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3"><input id="backlog-search" oninput="renderBacklog()" class="field-input" placeholder="Search backlog" aria-label="Search backlog"><select id="backlog-subject-filter" onchange="renderBacklog()" class="field-input"><option value="all">All subjects</option><option value="physics">Physics</option><option value="chemistry">Chemistry</option><option value="maths">Mathematics</option></select><select id="backlog-priority-filter" onchange="renderBacklog()" class="field-input"><option value="all">All priorities</option><option value="High">High</option><option value="Medium">Medium</option><option value="Low">Low</option></select><select id="backlog-age-filter" onchange="renderBacklog()" class="field-input"><option value="all">All ages</option><option value="1">1 day</option><option value="2-3">2–3 days</option><option value="4-7">4–7 days</option><option value="7+">7+ days</option></select></div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3"><input id="backlog-search" oninput="renderBacklog()" class="field-input" placeholder="Search backlog" aria-label="Search backlog"><select id="backlog-subject-filter" onchange="renderBacklog()" class="field-input"><option value="all">All subjects</option><option value="physics">Physics</option><option value="chemistry">Chemistry</option><option value="maths">Mathematics</option><option value="general">General</option></select><select id="backlog-priority-filter" onchange="renderBacklog()" class="field-input"><option value="all">All priorities</option><option value="High">High</option><option value="Medium">Medium</option><option value="Low">Low</option></select><select id="backlog-age-filter" onchange="renderBacklog()" class="field-input"><option value="all">All ages</option><option value="1">1 day</option><option value="2-3">2–3 days</option><option value="4-7">4–7 days</option><option value="7+">7+ days</option></select></div>
           <div id="backlog-list" class="space-y-3"></div>
         </div>
       </section>
@@ -1343,6 +1349,7 @@
               <option value="physics">Physics</option>
               <option value="chemistry">Chemistry</option>
               <option value="maths">Mathematics</option>
+              <option value="general">All Subjects (General)</option>
             </select>
           </div>
         </div>
@@ -2439,7 +2446,7 @@
     let currentPlannerDate = '';   // 'YYYY-MM-DD'
     let currentWeekOffset = 0;     // integer week offset from currentPlannerDate
     let currentWeeklyPlannerWeekStart = ''; // Active Monday of Weekly Planner (§1)
-    let currentPlannerFilter = 'all'; // 'all' | 'pending' | 'completed' | 'high' | 'physics' | 'chemistry' | 'maths'
+    let currentPlannerFilter = 'all'; // 'all' | 'pending' | 'completed' | 'high' | 'physics' | 'chemistry' | 'maths' | 'general'
     let currentPlannerSearch = '';
 
     // Active Goal View State (§6, §7, §8, §21)
@@ -2665,7 +2672,7 @@
           id: taskId,
           date: taskDate,
           title: String(t.title || 'Untitled Task'),
-          subject: ['physics', 'chemistry', 'maths'].includes(t.subject) ? t.subject : 'physics',
+          subject: ['physics', 'chemistry', 'maths', 'general'].includes(t.subject) ? t.subject : 'physics',
           taskType: taskType,
           type: taskType,
           chapter: String(t.chapter || t.topic || ''),
@@ -3490,7 +3497,7 @@
       if (!appState) return;
       const list = document.getElementById('backlog-list'); if (!list) return;
       const backlog = getBacklogTasks(); const metrics = document.getElementById('backlog-metrics');
-      if (metrics) metrics.innerHTML = [['Total', backlog.length], ['High priority', backlog.filter(task => task.priority === 'High').length], ['Physics', backlog.filter(task => task.subject === 'physics').length], ['Chemistry', backlog.filter(task => task.subject === 'chemistry').length], ['Mathematics', backlog.filter(task => task.subject === 'maths').length]].map(([label, value]) => `<div class="rounded-lg border border-slate-700 bg-slate-900/60 p-3"><div class="text-[10px] uppercase tracking-wide text-slate-500">${label}</div><div class="mt-1 text-lg font-bold text-white">${value}</div></div>`).join('');
+      if (metrics) metrics.innerHTML = [['Total', backlog.length], ['High priority', backlog.filter(task => task.priority === 'High').length], ['Physics', backlog.filter(task => task.subject === 'physics').length], ['Chemistry', backlog.filter(task => task.subject === 'chemistry').length], ['Mathematics', backlog.filter(task => task.subject === 'maths').length], ['General', backlog.filter(task => task.subject === 'general').length]].map(([label, value]) => `<div class="rounded-lg border border-slate-700 bg-slate-900/60 p-3"><div class="text-[10px] uppercase tracking-wide text-slate-500">${label}</div><div class="mt-1 text-lg font-bold text-white">${value}</div></div>`).join('');
       const query = (document.getElementById('backlog-search')?.value || '').trim().toLowerCase(); const subject = document.getElementById('backlog-subject-filter')?.value || 'all'; const priority = document.getElementById('backlog-priority-filter')?.value || 'all'; const ageFilter = document.getElementById('backlog-age-filter')?.value || 'all';
       const visible = backlog.filter(task => { const age = getBacklogAge(task); const ageMatch = ageFilter === 'all' || (ageFilter === '1' ? age === 1 : ageFilter === '2-3' ? age >= 2 && age <= 3 : ageFilter === '4-7' ? age >= 4 && age <= 7 : age >= 8); return (subject === 'all' || task.subject === subject) && (priority === 'all' || task.priority === priority) && ageMatch && (!query || `${task.title} ${task.chapter} ${task.topic} ${task.notes}`.toLowerCase().includes(query)); });
       if (!visible.length) { list.innerHTML = `<div class="rounded-lg border border-dashed border-slate-700 p-8 text-center text-sm text-slate-400">${backlog.length ? 'No backlog tasks match these filters.' : 'Your backlog is clear. Past incomplete Planner tasks will appear here automatically.'}</div>`; return; }
@@ -3961,8 +3968,8 @@
 
       container.innerHTML = todayTasks.map(task => {
         const isDone = Boolean(task.completed) || task.status === 'Completed';
-        const subjectClass = task.subject === 'physics' ? 'badge-physics' : task.subject === 'chemistry' ? 'badge-chemistry' : 'badge-maths';
-        const subjectLabel = task.subject === 'physics' ? 'Physics' : task.subject === 'chemistry' ? 'Chemistry' : 'Mathematics';
+        const subjectClass = task.subject === 'physics' ? 'badge-physics' : task.subject === 'chemistry' ? 'badge-chemistry' : task.subject === 'maths' ? 'badge-maths' : 'badge-general';
+        const subjectLabel = task.subject === 'physics' ? 'Physics' : task.subject === 'chemistry' ? 'Chemistry' : task.subject === 'maths' ? 'Mathematics' : 'General';
         const priorityColor = task.priority === 'High' ? 'text-rose-400 bg-rose-950/50 border-rose-800/80' : 'text-amber-400 bg-amber-950/50 border-amber-800/80';
 
         return `
@@ -5280,7 +5287,7 @@ showToast(`Target achieved! "${goal.title}"`, 'success');
         filtered = filtered.filter(t => Boolean(t.completed) || t.status === 'Completed');
       } else if (currentPlannerFilter === 'high') {
         filtered = filtered.filter(t => t.priority === 'High');
-      } else if (['physics', 'chemistry', 'maths'].includes(currentPlannerFilter)) {
+      } else if (['physics', 'chemistry', 'maths', 'general'].includes(currentPlannerFilter)) {
         filtered = filtered.filter(t => t.subject === currentPlannerFilter);
       }
 
@@ -5340,8 +5347,8 @@ showToast(`Target achieved! "${goal.title}"`, 'success');
 
       container.innerHTML = filtered.map(task => {
         const isDone = Boolean(task.completed) || task.status === 'Completed';
-        const subjectClass = task.subject === 'physics' ? 'badge-physics' : task.subject === 'chemistry' ? 'badge-chemistry' : 'badge-maths';
-        const subjectLabel = task.subject === 'physics' ? 'Physics' : task.subject === 'chemistry' ? 'Chemistry' : 'Mathematics';
+        const subjectClass = task.subject === 'physics' ? 'badge-physics' : task.subject === 'chemistry' ? 'badge-chemistry' : task.subject === 'maths' ? 'badge-maths' : 'badge-general';
+        const subjectLabel = task.subject === 'physics' ? 'Physics' : task.subject === 'chemistry' ? 'Chemistry' : task.subject === 'maths' ? 'Mathematics' : 'General';
         const priorityColor = task.priority === 'High' ? 'text-rose-400 bg-rose-950/50 border-rose-800/80' : task.priority === 'Medium' ? 'text-amber-400 bg-amber-950/50 border-amber-800/80' : 'text-slate-400 bg-slate-800 border-slate-700';
 
         const statusBadgeClass = isDone ? 'badge-completed' :
@@ -5525,7 +5532,7 @@ showToast(`Target achieved! "${goal.title}"`, 'success');
                     <div class="text-[10px] text-slate-500 italic py-2">No tasks</div>
                   ` : daysTasks.map(t => {
                     const isDone = Boolean(t.completed) || t.status === 'Completed';
-                    const dotColor = t.subject === 'physics' ? 'bg-[#2563EB]' : t.subject === 'chemistry' ? 'bg-[#16A34A]' : 'bg-[#CA8A04]';
+                    const dotColor = t.subject === 'physics' ? 'bg-[#2563EB]' : t.subject === 'chemistry' ? 'bg-[#16A34A]' : t.subject === 'maths' ? 'bg-[#CA8A04]' : 'bg-[#64748B]';
                     return `
                       <div class="p-1.5 rounded bg-[#0E1524] border border-[#24344D] text-[11px] flex items-center gap-1.5 truncate">
                         <span class="w-1.5 h-1.5 rounded-full ${dotColor} shrink-0"></span>
@@ -5615,6 +5622,7 @@ showToast(`Target achieved! "${goal.title}"`, 'success');
         dateInput.value = task.date;
         titleInput.value = task.title;
         subjectInput.value = task.subject;
+        onTaskSubjectOrChapterChange();
         typeInput.value = task.taskType || task.type || 'Practice';
         durationInput.value = task.durationMinutes;
         priorityInput.value = task.priority;
@@ -5636,6 +5644,7 @@ showToast(`Target achieved! "${goal.title}"`, 'success');
         dateInput.value = defaultDate || currentPlannerDate || getTodayLocalDate();
         titleInput.value = '';
         subjectInput.value = 'physics';
+        onTaskSubjectOrChapterChange();
         typeInput.value = 'Practice';
         durationInput.value = 60;
         priorityInput.value = 'Medium';
@@ -5697,6 +5706,19 @@ showToast(`Target achieved! "${goal.title}"`, 'success');
     }
 
     function onTaskSubjectOrChapterChange() {
+      const subjectVal = document.getElementById('task-input-subject')?.value || '';
+      const chapterInput = document.getElementById('task-input-chapter');
+      if (chapterInput) {
+        if (subjectVal === 'general') {
+          chapterInput.placeholder = 'Optional (e.g. Mock Test, Strategy, Review)';
+        } else if (subjectVal === 'physics') {
+          chapterInput.placeholder = 'e.g. Rotational Motion';
+        } else if (subjectVal === 'chemistry') {
+          chapterInput.placeholder = 'e.g. Chemical Bonding';
+        } else if (subjectVal === 'maths') {
+          chapterInput.placeholder = 'e.g. Definite Integration';
+        }
+      }
       checkTaskTestSuggestion();
     }
 
@@ -5711,7 +5733,7 @@ showToast(`Target achieved! "${goal.title}"`, 'success');
 
       const chapterVal = (document.getElementById('task-input-chapter')?.value || '').trim().toLowerCase();
       const subjectVal = document.getElementById('task-input-subject')?.value || '';
-      if (!chapterVal) { suggestBox.classList.add('hidden'); return; }
+      if (!chapterVal || subjectVal === 'general') { suggestBox.classList.add('hidden'); return; }
 
       const today = getTodayLocalDate();
       const activeUpcoming = (appState?.upcomingTests || []).filter(t => t.status === 'Upcoming' && t.date >= today);
@@ -6037,7 +6059,7 @@ showToast(`Target achieved! "${goal.title}"`, 'success');
 
     // Phase 7: Test Center and question-level performance records.
     function roundTestNumber(value) { return Math.round((Number(value) || 0) * 100) / 100; }
-    function testSubjectLabel(subject) { return subject === 'maths' ? 'Mathematics' : subject === 'chemistry' ? 'Chemistry' : 'Physics'; }
+    function testSubjectLabel(subject) { return subject === 'maths' ? 'Mathematics' : subject === 'chemistry' ? 'Chemistry' : subject === 'general' ? 'General' : 'Physics'; }
     function testQuestionScore(test, question) {
       if (question.status === 'Bonus / Not Counted') return 0;
       if (Number.isFinite(question.marksAwarded)) return roundTestNumber(question.marksAwarded);
@@ -6643,7 +6665,7 @@ showToast(`Target achieved! "${goal.title}"`, 'success');
                     <div class="min-w-0 flex items-center gap-2">
                       <span class="w-2 h-2 rounded-full ${isTaskDone ? 'bg-emerald-400' : 'bg-amber-400'} shrink-0"></span>
                       <span class="truncate font-medium ${isTaskDone ? 'line-through text-slate-500' : 'text-slate-200'}">${escapeHtml(task.title)}</span>
-                      <span class="badge text-[9px] py-0 px-1.5 ${task.subject === 'physics' ? 'badge-physics' : task.subject === 'chemistry' ? 'badge-chemistry' : 'badge-maths'}">${testSubjectLabel(task.subject)}</span>
+                      <span class="badge text-[9px] py-0 px-1.5 ${task.subject === 'physics' ? 'badge-physics' : task.subject === 'chemistry' ? 'badge-chemistry' : task.subject === 'maths' ? 'badge-maths' : 'badge-general'}">${testSubjectLabel(task.subject)}</span>
                     </div>
                     <div class="flex items-center gap-2 shrink-0">
                       <span class="text-[10px] text-slate-400 font-mono">${task.date}</span>
@@ -8440,12 +8462,14 @@ showToast(`Target achieved! "${goal.title}"`, 'success');
       else if (task.priority === 'Medium') score += weights.taskMedium;
       if (task.status === 'In Progress') { score += weights.inProgress; reasons.push('Already in progress'); }
       const matchesChapter = (record) => Boolean(task.chapter && record.chapter && task.chapter.trim().toLowerCase() === record.chapter.trim().toLowerCase());
-      const relatedRevision = intelligence.overdueRevisions.find(item => item.subject === task.subject && (matchesChapter(item) || (!task.chapter && item.topic && text.includes(item.topic.toLowerCase()))));
-      if (relatedRevision) { score += weights.revisionRisk; reasons.push(`Related revision is ${relatedRevision.overdueDays} day${relatedRevision.overdueDays === 1 ? '' : 's'} overdue`); sources.push('Revision Tracker'); }
-      const relatedMistakes = intelligence.unresolvedMistakes.filter(item => item.subject === task.subject && (matchesChapter(item) || (!task.chapter && [item.topic, item.chapter].some(part => part && text.includes(part.toLowerCase())))));
-      if (relatedMistakes.length) { const severe = relatedMistakes.some(item => ['High', 'Critical'].includes(item.severity)); const recurring = relatedMistakes.some(item => Number(item.occurrenceCount) > 1); score += weights.mistakeRisk + (severe || recurring ? 5 : 0); reasons.push(`${relatedMistakes.length} unresolved related mistake${relatedMistakes.length === 1 ? '' : 's'}${recurring ? ', including a recurring one' : ''}`); sources.push('Mistake Notebook'); }
-      const weakArea = intelligence.weakAreas.find(item => item.subject === task.subject && (matchesChapter(item) || (!task.chapter && text.includes(item.chapter.toLowerCase()))));
-      if (weakArea) { score += weights.testWeakness; reasons.push(`Matches a multi-signal weak area: ${weakArea.chapter}`); sources.push('Test Center + preparation evidence'); }
+      if (task.subject !== 'general') {
+        const relatedRevision = intelligence.overdueRevisions.find(item => item.subject === task.subject && (matchesChapter(item) || (!task.chapter && item.topic && text.includes(item.topic.toLowerCase()))));
+        if (relatedRevision) { score += weights.revisionRisk; reasons.push(`Related revision is ${relatedRevision.overdueDays} day${relatedRevision.overdueDays === 1 ? '' : 's'} overdue`); sources.push('Revision Tracker'); }
+        const relatedMistakes = intelligence.unresolvedMistakes.filter(item => item.subject === task.subject && (matchesChapter(item) || (!task.chapter && [item.topic, item.chapter].some(part => part && text.includes(part.toLowerCase())))));
+        if (relatedMistakes.length) { const severe = relatedMistakes.some(item => ['High', 'Critical'].includes(item.severity)); const recurring = relatedMistakes.some(item => Number(item.occurrenceCount) > 1); score += weights.mistakeRisk + (severe || recurring ? 5 : 0); reasons.push(`${relatedMistakes.length} unresolved related mistake${relatedMistakes.length === 1 ? '' : 's'}${recurring ? ', including a recurring one' : ''}`); sources.push('Mistake Notebook'); }
+        const weakArea = intelligence.weakAreas.find(item => item.subject === task.subject && (matchesChapter(item) || (!task.chapter && text.includes(item.chapter.toLowerCase()))));
+        if (weakArea) { score += weights.testWeakness; reasons.push(`Matches a multi-signal weak area: ${weakArea.chapter}`); sources.push('Test Center + preparation evidence'); }
+      }
       // A test-related priority bonus and reason must ONLY be based on an actual, confirmed relationship (task.linkedUpcomingTestId).
       if (task.linkedUpcomingTestId) {
         const confirmedTest = (appState.upcomingTests || []).find(t => t.id === task.linkedUpcomingTestId && t.status === 'Upcoming')
@@ -8453,7 +8477,7 @@ showToast(`Target achieved! "${goal.title}"`, 'success');
         if (confirmedTest) {
           score += weights.upcomingTest;
           let testChapterDesc = '';
-          if (task.chapter) {
+          if (task.subject !== 'general' && task.chapter) {
             testChapterDesc = ` — ${intelligenceSubjectLabel(task.subject)}: ${task.chapter}`;
           } else if (task.linkedSyllabusChapterIds?.length) {
             const ch = (appState.syllabus || []).find(c => task.linkedSyllabusChapterIds.includes(c.id));
@@ -8466,8 +8490,10 @@ showToast(`Target achieved! "${goal.title}"`, 'success');
       }
       const atRiskGoal = intelligence.goalRisk.find(item => item.status === 'At Risk' && (item.goal.subject === task.subject || item.goal.subject === 'general') && (!task.chapter || `${item.goal.title} ${item.goal.description}`.toLowerCase().includes(task.chapter.toLowerCase())));
       if (atRiskGoal) { score += weights.goalRisk; reasons.push(`Supports an at-risk goal: ${atRiskGoal.goal.title}`); sources.push('Goals'); }
-      const syllabusEntry = appState.syllabus.find(item => item.subject === task.subject && matchesChapter(item));
-      if (syllabusEntry && getSyllabusProgress(syllabusEntry).percent < 100) { score += weights.syllabusGap; reasons.push(`Syllabus chapter is ${getSyllabusProgress(syllabusEntry).percent}% complete`); sources.push('Syllabus Tracker'); }
+      if (task.subject !== 'general') {
+        const syllabusEntry = appState.syllabus.find(item => item.subject === task.subject && matchesChapter(item));
+        if (syllabusEntry && getSyllabusProgress(syllabusEntry).percent < 100) { score += weights.syllabusGap; reasons.push(`Syllabus chapter is ${getSyllabusProgress(syllabusEntry).percent}% complete`); sources.push('Syllabus Tracker'); }
+      }
       const carryCount = appState.history.filter(event => event.entityType === 'task' && event.entityId === task.id && event.action === 'carried forward').length;
       if (carryCount >= 2) { score += weights.repeatedCarry; reasons.push(`Carried forward ${carryCount} times`); sources.push('History'); }
       const duplicates = allActionable.filter(other => other.id !== task.id && other.subject === task.subject && other.date === task.date && other.title.trim().toLowerCase() === task.title.trim().toLowerCase()).length;
@@ -8516,7 +8542,7 @@ showToast(`Target achieved! "${goal.title}"`, 'success');
       const neglected = subjectBalance.find(item => item.minutes === 0);
       const imbalance = totalSubjectMinutes && dominant.share >= 70 && neglected ? `${intelligenceSubjectLabel(dominant.subject)} holds ${dominant.share}% of today’s planned minutes; ${intelligenceSubjectLabel(neglected.subject)} has no task today. Priority still takes precedence over balancing.` : 'Today’s task load has no strong subject concentration, or there is not enough planned work to compare.';
       const workedToday = tasks.filter(task => executionDate(task.lastExecutionAt) === today || (task.completed && executionDate(task.completedAt) === today));
-      const mainSubject = SUBJECT_KEYS.map(subject => ({ subject, count: workedToday.filter(task => task.subject === subject).length })).sort((a, b) => b.count - a.count)[0];
+      const mainSubject = [...SUBJECT_KEYS, 'general'].map(subject => ({ subject, count: workedToday.filter(task => task.subject === subject).length })).sort((a, b) => b.count - a.count)[0];
       const nextDayTask = tasks.filter(task => task.date === getOffsetDateFrom(today, 1) && !task.completed && task.status !== 'Skipped').sort((a, b) => ['High', 'Medium', 'Low'].indexOf(a.priority) - ['High', 'Medium', 'Low'].indexOf(b.priority))[0];
       const nextAction = candidates[0];
       const streak = typeof calculateCurrentStreak === 'function' ? calculateCurrentStreak().count : 0;
