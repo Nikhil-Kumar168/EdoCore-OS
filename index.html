@@ -1715,11 +1715,11 @@
         <div class="grid grid-cols-2 gap-3">
           <div>
             <label class="block text-slate-300 mb-1 font-medium">Target Value <span class="text-rose-400">*</span></label>
-            <input type="number" id="goal-input-target" min="1" required placeholder="e.g. 50" class="w-full bg-[#0E1524] border border-[#24344D] rounded-lg px-3 py-2 text-white text-xs focus:border-amber-500 focus:outline-none font-mono">
+            <input type="number" id="goal-input-target" min="1" step="any" required placeholder="e.g. 50" class="w-full bg-[#0E1524] border border-[#24344D] rounded-lg px-3 py-2 text-white text-xs focus:border-amber-500 focus:outline-none font-mono">
           </div>
           <div>
             <label class="block text-slate-300 mb-1 font-medium">Current Progress</label>
-            <input type="number" id="goal-input-current" min="0" required value="0" class="w-full bg-[#0E1524] border border-[#24344D] rounded-lg px-3 py-2 text-white text-xs focus:border-amber-500 focus:outline-none font-mono">
+            <input type="number" id="goal-input-current" min="0" step="any" required value="0" class="w-full bg-[#0E1524] border border-[#24344D] rounded-lg px-3 py-2 text-white text-xs focus:border-amber-500 focus:outline-none font-mono">
           </div>
         </div>
 
@@ -1750,6 +1750,24 @@
               <option value="medium" selected>Medium Priority</option>
               <option value="low">Low Priority</option>
             </select>
+          </div>
+        </div>
+
+        <!-- Quick Progress Buttons -->
+        <div class="rounded-lg border border-[#24344D] bg-[#0B1220] p-3 space-y-2">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <label class="block text-slate-300 font-medium">Quick Progress Buttons</label>
+            <span class="text-[10px] font-mono text-slate-400">Supports decimals &amp; fractions (e.g. 0.5, 1/2, &#188;)</span>
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label for="goal-input-inc1" class="block text-[11px] text-slate-400 mb-1">First Increment (+)</label>
+              <input type="text" inputmode="decimal" id="goal-input-inc1" required value="1" placeholder="e.g. 1 or 5" class="w-full bg-[#0E1524] border border-[#24344D] rounded-lg px-3 py-2 text-white text-xs focus:border-amber-500 focus:outline-none font-mono">
+            </div>
+            <div>
+              <label for="goal-input-inc2" class="block text-[11px] text-slate-400 mb-1">Second Increment (+)</label>
+              <input type="text" inputmode="decimal" id="goal-input-inc2" required value="5" placeholder="e.g. 5 or 0.5" class="w-full bg-[#0E1524] border border-[#24344D] rounded-lg px-3 py-2 text-white text-xs focus:border-amber-500 focus:outline-none font-mono">
+            </div>
           </div>
         </div>
 
@@ -2533,6 +2551,7 @@
 
     const STORAGE_KEY = 'JEE_STUDY_OS_STATE';
     const CURRENT_SCHEMA_VERSION = '11.1.0';
+    const DEFAULT_GOAL_QUICK_INCREMENTS = [1, 5];
     const SYLLABUS_COMPONENTS = [
       'Theory / Concept Learning', 'Notes', 'DPP / Practice', 'JEE Main PYQs',
       'JEE Advanced PYQs', 'Formula / Reaction Revision', 'Revision', 'Mastery / Final Consolidation'
@@ -2819,8 +2838,8 @@
       if (Array.isArray(raw.goals)) {
         // Legitimate empty array preserved verbatim (§26)
         goals = raw.goals.filter(g => !SEED_GOAL_IDS.has(g?.id)).map(g => {
-          const target = Math.max(1, Number(g.targetValue) || 10);
-          const current = Math.max(0, Number(g.currentValue) || 0);
+          const target = Math.max(1, roundGoalNumber(Number(g.targetValue) || 10));
+          const current = Math.max(0, roundGoalNumber(Number(g.currentValue) || 0));
 
           // Phase 4.0.2: Authoritative status normalization (§3)
           const rawStatus = String(g.status || '').toLowerCase().trim();
@@ -2860,6 +2879,12 @@
             targetValue: target,
             currentValue: current,
             unit: unitStr,
+            ...(Array.isArray(g.quickIncrements) ? {
+              quickIncrements: [
+                parseGoalIncrementValue(g.quickIncrements[0]) ?? DEFAULT_GOAL_QUICK_INCREMENTS[0],
+                parseGoalIncrementValue(g.quickIncrements[1]) ?? DEFAULT_GOAL_QUICK_INCREMENTS[1]
+              ]
+            } : {}),
             deadline: String(g.deadline || ''),
             startDate: startDate,
             weekStart: weekStart,
@@ -4040,7 +4065,7 @@
 
             <div>
               <div class="flex justify-between text-[11px] font-mono text-slate-400 mb-1">
-                <span>${goal.currentValue} / ${goal.targetValue} ${escapeHtml(goal.unit)}</span>
+                <span>${formatGoalNumber(goal.currentValue)} / ${formatGoalNumber(goal.targetValue)} ${escapeHtml(goal.unit)}</span>
                 <span class="${overdue ? 'text-rose-400 font-bold' : 'text-amber-400 font-bold'}">${pct}%</span>
               </div>
               <div class="w-full bg-slate-800 rounded-full h-1.5 overflow-hidden">
@@ -4492,6 +4517,76 @@
      * ============================================================
      */
 
+    function roundGoalNumber(value) {
+      const num = Number(value);
+      if (!Number.isFinite(num)) return 0;
+      return Math.round((num + Number.EPSILON) * 1e6) / 1e6;
+    }
+
+    function formatGoalNumber(value) {
+      const num = roundGoalNumber(value);
+      return Number.isFinite(num) ? String(num) : '0';
+    }
+
+    function parseGoalIncrementValue(raw) {
+      if (raw === null || raw === undefined) return null;
+      if (typeof raw === 'number') {
+        if (!Number.isFinite(raw) || raw <= 0) return null;
+        const rounded = roundGoalNumber(raw);
+        return rounded > 0 ? rounded : null;
+      }
+
+      let str = String(raw).trim();
+      if (!str || str.startsWith('-')) return null;
+      if (str.startsWith('+')) str = str.slice(1).trim();
+      if (!str || str.startsWith('-')) return null;
+
+      const vulgarMap = {
+        '\u00BC': '1/4', '\u00BD': '1/2', '\u00BE': '3/4',
+        '\u2150': '1/7', '\u2151': '1/9', '\u2152': '1/10',
+        '\u2153': '1/3', '\u2154': '2/3',
+        '\u2155': '1/5', '\u2156': '2/5', '\u2157': '3/5', '\u2158': '4/5',
+        '\u2159': '1/6', '\u215A': '5/6',
+        '\u215B': '1/8', '\u215C': '3/8', '\u215D': '5/8', '\u215E': '7/8'
+      };
+
+      for (const [glyph, frac] of Object.entries(vulgarMap)) {
+        if (str.includes(glyph)) {
+          str = str.replace(new RegExp(`(\\d)\\s*${glyph}`, 'g'), `$1 ${frac}`);
+          str = str.replace(new RegExp(glyph, 'g'), frac);
+        }
+      }
+
+      let parsed = NaN;
+      const mixedMatch = str.match(/^(\d+)\s+(\d+)\s*\/\s*(\d+)$/);
+      const fracMatch = str.match(/^(\d+(?:\.\d+)?)\s*\/\s*(\d+(?:\.\d+)?)$/);
+      const decMatch = str.match(/^(?:\d+(?:\.\d*)?|\.\d+)$/);
+
+      if (mixedMatch) {
+        const whole = Number(mixedMatch[1]);
+        const num = Number(mixedMatch[2]);
+        const den = Number(mixedMatch[3]);
+        if (den > 0) parsed = whole + (num / den);
+      } else if (fracMatch) {
+        const num = Number(fracMatch[1]);
+        const den = Number(fracMatch[2]);
+        if (den > 0) parsed = num / den;
+      } else if (decMatch) {
+        parsed = Number(str);
+      }
+
+      if (!Number.isFinite(parsed) || parsed <= 0) return null;
+      const rounded = roundGoalNumber(parsed);
+      return rounded > 0 ? rounded : null;
+    }
+
+    function getGoalQuickIncrements(goal) {
+      const arr = Array.isArray(goal?.quickIncrements) ? goal.quickIncrements : null;
+      const first = parseGoalIncrementValue(arr ? arr[0] : null) ?? DEFAULT_GOAL_QUICK_INCREMENTS[0];
+      const second = parseGoalIncrementValue(arr ? arr[1] : null) ?? DEFAULT_GOAL_QUICK_INCREMENTS[1];
+      return [first, second];
+    }
+
     function calculateGoalPercent(goal) {
       if (!goal || !goal.targetValue || goal.targetValue <= 0) return 0;
       const pct = Math.round((Number(goal.currentValue || 0) / Number(goal.targetValue)) * 100);
@@ -4692,6 +4787,9 @@
           : 'bg-amber-950/80 text-amber-300 border-amber-800';
 
         const statusLabel = isDone ? 'Completed' : overdue ? 'Overdue' : goal.status === 'paused' ? 'Paused' : 'Active';
+        const [inc1, inc2] = getGoalQuickIncrements(goal);
+        const inc1Label = formatGoalNumber(inc1);
+        const inc2Label = formatGoalNumber(inc2);
 
         return `
           <div class="card-base p-4 bg-[#0E1524] border border-[#24344D] flex flex-col justify-between space-y-3 transition hover:border-slate-700">
@@ -4717,7 +4815,7 @@
               <!-- Progress Bar -->
               <div class="mt-3 space-y-1">
                 <div class="flex justify-between items-baseline text-xs font-mono">
-                  <span class="text-slate-400 font-medium">${goal.currentValue} / ${goal.targetValue} ${escapeHtml(goal.unit)}</span>
+                  <span class="text-slate-400 font-medium">${formatGoalNumber(goal.currentValue)} / ${formatGoalNumber(goal.targetValue)} ${escapeHtml(goal.unit)}</span>
                   <span class="${isDone ? 'text-emerald-400 font-bold' : overdue ? 'text-rose-400 font-bold' : 'text-amber-400 font-bold'}">${pct}%</span>
                 </div>
                 <div class="w-full bg-slate-800 rounded-full h-2 overflow-hidden">
@@ -4734,11 +4832,11 @@
             </div>
 
             <!-- Footer: Quick Progress & Actions -->
-            <div class="pt-2.5 border-t border-slate-800 flex items-center justify-between text-xs">
+            <div class="pt-2.5 border-t border-slate-800 flex flex-wrap items-center justify-between gap-2 text-xs">
               <!-- Left: Quick Increment Buttons (§15) -->
               <div class="flex items-center gap-1">
-                <button onclick="quickUpdateGoal('${goal.id}', 1)" title="Add 1 to progress" class="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 font-mono text-[11px] border border-slate-700 btn-focus">+1</button>
-                <button onclick="quickUpdateGoal('${goal.id}', 5)" title="Add 5 to progress" class="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 font-mono text-[11px] border border-slate-700 btn-focus">+5</button>
+                <button onclick="quickUpdateGoal('${goal.id}', ${inc1})" title="Add ${inc1Label} to progress" class="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 font-mono text-[11px] border border-slate-700 btn-focus">+${inc1Label}</button>
+                <button onclick="quickUpdateGoal('${goal.id}', ${inc2})" title="Add ${inc2Label} to progress" class="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 font-mono text-[11px] border border-slate-700 btn-focus">+${inc2Label}</button>
                 <button onclick="toggleGoalComplete('${goal.id}')" title="${isDone ? 'Reopen goal' : 'Mark completed'}" class="p-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-emerald-400 border border-slate-700 btn-focus">
                   <i data-lucide="${isDone ? 'rotate-ccw' : 'check'}" class="w-3.5 h-3.5"></i>
                 </button>
@@ -4859,6 +4957,8 @@
       const priorityInput = document.getElementById('goal-input-priority');
       const statusInput = document.getElementById('goal-input-status');
       const deadlineInput = document.getElementById('goal-input-deadline');
+      const inc1Input = document.getElementById('goal-input-inc1');
+      const inc2Input = document.getElementById('goal-input-inc2');
       const descInput = document.getElementById('goal-input-desc');
       const notesInput = document.getElementById('goal-input-notes');
       const weekStartInput = document.getElementById('goal-input-weekstart');
@@ -4891,6 +4991,9 @@
           if (customUnitInput) customUnitInput.value = goal.unit || '';
         }
 
+        const [inc1, inc2] = getGoalQuickIncrements(goal);
+        if (inc1Input) inc1Input.value = formatGoalNumber(inc1);
+        if (inc2Input) inc2Input.value = formatGoalNumber(inc2);
         priorityInput.value = goal.priority || 'medium';
         statusInput.value = (goal.status === 'completed' || goal.status === 'paused') ? goal.status : 'active';
         deadlineInput.value = goal.deadline || '';
@@ -4925,6 +5028,8 @@
           deadlineInput.value = getOffsetDateFrom(todayStr, 7);
         }
 
+        if (inc1Input) inc1Input.value = '1';
+        if (inc2Input) inc2Input.value = '5';
         descInput.value = '';
         notesInput.value = '';
       }
@@ -4946,8 +5051,23 @@
       const title = document.getElementById('goal-input-title').value.trim();
       const horizon = document.getElementById('goal-input-horizon').value;
       const subject = document.getElementById('goal-input-subject').value;
-      const targetValue = Math.max(1, parseInt(document.getElementById('goal-input-target').value, 10) || 100);
-      const currentValue = Math.max(0, parseInt(document.getElementById('goal-input-current').value, 10) || 0);
+      const parsedTarget = Number(document.getElementById('goal-input-target').value);
+      const targetValue = Number.isFinite(parsedTarget) && parsedTarget >= 1 ? roundGoalNumber(parsedTarget) : 100;
+      const parsedCurrent = Number(document.getElementById('goal-input-current').value);
+      const currentValue = Number.isFinite(parsedCurrent) && parsedCurrent >= 0 ? roundGoalNumber(parsedCurrent) : 0;
+
+      const inc1 = parseGoalIncrementValue(document.getElementById('goal-input-inc1')?.value);
+      const inc2 = parseGoalIncrementValue(document.getElementById('goal-input-inc2')?.value);
+      if (inc1 === null) {
+        showToast('First quick increment must be a positive number greater than zero (e.g. 1, 5, 0.5, 1/2).', 'warn');
+        document.getElementById('goal-input-inc1')?.focus();
+        return;
+      }
+      if (inc2 === null) {
+        showToast('Second quick increment must be a positive number greater than zero (e.g. 5, 10, 0.25, 1/4).', 'warn');
+        document.getElementById('goal-input-inc2')?.focus();
+        return;
+      }
 
       // Phase 4.0.1: Custom Unit extraction and validation (§2)
       const unitSelect = document.getElementById('goal-input-unit').value;
@@ -4997,6 +5117,7 @@
           goal.targetValue = targetValue;
           goal.currentValue = currentValue;
           goal.unit = unit;
+          goal.quickIncrements = [inc1, inc2];
           goal.priority = priority;
           goal.status = status;
           goal.deadline = deadline;
@@ -5030,6 +5151,7 @@
           targetValue,
           currentValue: status === 'completed' ? targetValue : currentValue,
           unit,
+          quickIncrements: [inc1, inc2],
           deadline,
           startDate: getTodayLocalDate(),
           weekStart: horizon === 'weekly' ? weekStart : '',
@@ -5059,20 +5181,23 @@
       const goal = (appState.goals || []).find(g => g.id === goalId);
       if (!goal) return;
 
+      const parsedDelta = parseGoalIncrementValue(delta);
+      if (parsedDelta === null) return;
+
       const previousStatus = goal.status;
-      goal.currentValue = Math.max(0, goal.currentValue + delta);
+      goal.currentValue = roundGoalNumber(Math.max(0, (Number(goal.currentValue) || 0) + parsedDelta));
       if (goal.currentValue >= goal.targetValue) {
         goal.status = 'completed';
         if (!goal.completedAt) goal.completedAt = new Date().toISOString();
       }
       goal.updatedAt = new Date().toISOString();
       const action = goal.status === 'completed' && previousStatus !== 'completed' ? 'completed' : 'progress updated';
-      appendHistoryEvent({ module: 'Goals', action, entityType: 'goal', entityId: goal.id, title: `${action === 'completed' ? 'Completed' : 'Logged progress for'} goal: ${goal.title}`, description: `${goal.currentValue}/${goal.targetValue} ${goal.unit}`, subject: goal.subject });
+      appendHistoryEvent({ module: 'Goals', action, entityType: 'goal', entityId: goal.id, title: `${action === 'completed' ? 'Completed' : 'Logged progress for'} goal: ${goal.title}`, description: `${formatGoalNumber(goal.currentValue)}/${formatGoalNumber(goal.targetValue)} ${goal.unit}`, subject: goal.subject });
       saveAppState(false);
       renderGoals();
       renderWeeklyGoals(currentWeeklyPlannerWeekStart || getWeekStartLocalDate(getTodayLocalDate()));
       renderDashboardGoalFocus();
-      showToast(`Progress updated: ${goal.currentValue}/${goal.targetValue}`, 'info');
+      showToast(`Progress updated: ${formatGoalNumber(goal.currentValue)}/${formatGoalNumber(goal.targetValue)}`, 'info');
     }
 
     function toggleGoalComplete(goalId) {
@@ -5201,6 +5326,9 @@ showToast(`Target achieved! "${goal.title}"`, 'success');
       container.innerHTML = weeklyGoals.map(goal => {
         const pct = calculateGoalPercent(goal);
         const isDone = (goal.status === 'completed');
+        const [inc1, inc2] = getGoalQuickIncrements(goal);
+        const inc1Label = formatGoalNumber(inc1);
+        const inc2Label = formatGoalNumber(inc2);
 
         return `
           <div class="p-3.5 rounded-lg bg-[#0E1524] border border-[#24344D] flex flex-col justify-between space-y-2.5">
@@ -5219,7 +5347,7 @@ showToast(`Target achieved! "${goal.title}"`, 'success');
 
               <!-- Value and Progress Bar -->
               <div class="flex justify-between items-baseline text-xs font-mono mt-1 mb-1.5">
-                <span class="text-slate-400">${goal.currentValue} / ${goal.targetValue} ${escapeHtml(goal.unit)}</span>
+                <span class="text-slate-400">${formatGoalNumber(goal.currentValue)} / ${formatGoalNumber(goal.targetValue)} ${escapeHtml(goal.unit)}</span>
                 <span class="${isDone ? 'text-emerald-400 font-bold' : 'text-yellow-400'}">${pct}%</span>
               </div>
 
@@ -5232,8 +5360,8 @@ showToast(`Target achieved! "${goal.title}"`, 'success');
             <div class="flex items-center justify-between text-[11px] text-slate-400 pt-1.5 border-t border-slate-800">
               <span class="font-mono">Deadline: ${escapeHtml(goal.deadline || 'Sunday')}</span>
               <div class="flex items-center gap-1">
-                <button onclick="quickUpdateGoal('${goal.id}', 1)" class="px-1.5 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 font-mono text-[10px]">+1</button>
-                <button onclick="quickUpdateGoal('${goal.id}', 5)" class="px-1.5 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 font-mono text-[10px]">+5</button>
+                <button onclick="quickUpdateGoal('${goal.id}', ${inc1})" title="Add ${inc1Label} to progress" class="px-1.5 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 font-mono text-[10px]">+${inc1Label}</button>
+                <button onclick="quickUpdateGoal('${goal.id}', ${inc2})" title="Add ${inc2Label} to progress" class="px-1.5 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 font-mono text-[10px]">+${inc2Label}</button>
                 <button onclick="toggleGoalComplete('${goal.id}')" title="${isDone ? 'Reopen goal' : 'Mark completed'}" class="px-1.5 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-emerald-400 font-mono text-[10px]">
                   <i data-lucide="${isDone ? 'rotate-ccw' : 'check'}" class="w-3 h-3"></i>
                 </button>
