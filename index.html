@@ -326,35 +326,120 @@
   </aside>
 <!-- For Mobile View: Toggleable Drawer -->
   <div id="mobile-menu-backdrop" onclick="toggleMobileMenu()" class="fixed inset-0 bg-black/60 z-40 hidden md:hidden backdrop-blur-sm transition-opacity"></div>
-  <div id="mobile-drawer" class="fixed top-0 bottom-0 left-0 w-72 bg-[#111827] border-r border-[#24344D] z-50 transform -translate-x-full transition-transform duration-200 ease-in-out md:hidden flex flex-col">
-    <div class="h-16 flex items-center justify-between px-5 border-b border-[#24344D]">
-      <div class="flex items-center gap-3">
-        <div class="w-8 h-8 rounded-lg bg-blue-900 flex items-center justify-center text-white font-bold text-base">
+  <div id="mobile-drawer" class="fixed top-0 bottom-0 left-0 w-72 max-w-[85vw] bg-[#111827] border-r border-[#24344D] z-50 transform -translate-x-full transition-transform duration-200 ease-in-out md:hidden flex flex-col">
+    <!-- Brand / Title -->
+    <div class="h-16 flex items-center justify-between px-5 border-b border-[#24344D] shrink-0">
+      <div class="flex items-center gap-3 min-w-0">
+        <div class="w-8 h-8 rounded-lg bg-blue-900 flex items-center justify-center text-white font-bold text-base shadow-sm shrink-0">
           <img src="logo.png" alt="EduCore OS" class="h-10 w-auto object-contain">
         </div>
-        <span class="font-bold text-base text-white">EduCore OS</span>
+        <div class="min-w-0">
+          <span class="font-bold text-base tracking-tight text-white block truncate">EduCore OS</span>
+          <span class="text-[10px] uppercase font-mono tracking-widest text-slate-400 block truncate">Preparation Suite</span>
+        </div>
       </div>
-      <button onclick="toggleMobileMenu()" class="p-1 rounded-lg text-slate-400 hover:text-white" aria-label="Close navigation">
+      <button onclick="toggleMobileMenu()" class="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800/60 transition shrink-0" aria-label="Close navigation">
         <i data-lucide="x" class="w-5 h-5"></i>
       </button>
     </div>
-    <div class="flex-1 overflow-y-auto p-3 space-y-1">
-      <a href="#dashboard" onclick="navigateAndClose('dashboard')" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-slate-300">Dashboard</a>
-      <a href="#planner" onclick="navigateAndClose('planner')" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-slate-300">Planner</a>
-      <a href="#goals" onclick="navigateAndClose('goals')" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-slate-300">Goals</a>
-      <div class="py-1 border-t border-slate-800 my-1"></div>
-      <a href="#study-syllabus" onclick="navigateAndClose('study-syllabus')" class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-blue-400">Syllabus</a>
-      <a href="#study-revision" onclick="navigateAndClose('study-revision')" class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-green-400">Revision</a>
-      <a href="#study-backlog" onclick="navigateAndClose('study-backlog')" class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-amber-400">Backlog</a>
-      <a href="#study-mistakes" onclick="navigateAndClose('study-mistakes')" class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-rose-400">Mistake Notebook</a>
-      <div class="py-1 border-t border-slate-800 my-1"></div>
-      <a href="#tests" onclick="navigateAndClose('tests')" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-slate-300">Tests</a>
-      <a href="#analytics" onclick="navigateAndClose('analytics')" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-slate-300">Analytics</a>
-      <a href="#intelligence" onclick="navigateAndClose('intelligence')" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-violet-300">Intelligence</a>
-      <a href="#execution" onclick="navigateAndClose('execution')" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-cyan-300">Execution</a>
-      <a href="#ai-mentor" onclick="navigateAndClose('ai-mentor')" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-slate-300">AI Mentor</a>
-      <a href="#history" onclick="navigateAndClose('history')" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-slate-300">History</a>
-      <a href="#settings" onclick="navigateAndClose('settings')" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-slate-300">Settings</a>
+
+    <!-- Navigation List (mirrors desktop sidebar hierarchy) -->
+    <nav class="flex-1 overflow-y-auto py-3 px-3 space-y-1">
+      <div class="text-[11px] font-semibold text-slate-400 px-3 py-1.5 uppercase tracking-wider font-mono">Overview</div>
+
+      <a href="#dashboard" onclick="navigateAndClose('dashboard')" id="mobile-nav-dashboard" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800/60 transition">
+        <i data-lucide="layout-dashboard" class="w-4 h-4 text-slate-400 shrink-0"></i>
+        Dashboard
+      </a>
+
+      <a href="#planner" onclick="navigateAndClose('planner')" id="mobile-nav-planner" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800/60 transition">
+        <i data-lucide="calendar" class="w-4 h-4 text-slate-400 shrink-0"></i>
+        Planner
+      </a>
+
+      <a href="#goals" onclick="navigateAndClose('goals')" id="mobile-nav-goals" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800/60 transition">
+        <i data-lucide="target" class="w-4 h-4 text-slate-400 shrink-0"></i>
+        Goals
+      </a>
+
+      <div class="pt-3 text-[11px] font-semibold text-slate-400 px-3 py-1.5 uppercase tracking-wider font-mono">Study & Content</div>
+
+      <div class="space-y-0.5">
+        <a href="#study-syllabus" onclick="navigateAndClose('study-syllabus')" id="mobile-nav-study-syllabus" class="nav-link flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800/60 transition">
+          <i data-lucide="book-open" class="w-4 h-4 text-blue-400 shrink-0"></i>
+          Syllabus
+        </a>
+        <a href="#study-revision" onclick="navigateAndClose('study-revision')" id="mobile-nav-study-revision" class="nav-link flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800/60 transition">
+          <i data-lucide="rotate-cw" class="w-4 h-4 text-green-400 shrink-0"></i>
+          Revision
+        </a>
+        <a href="#study-backlog" onclick="navigateAndClose('study-backlog')" id="mobile-nav-study-backlog" class="nav-link flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800/60 transition">
+          <i data-lucide="layers" class="w-4 h-4 text-amber-400 shrink-0"></i>
+          Backlog
+        </a>
+        <a href="#study-mistakes" onclick="navigateAndClose('study-mistakes')" id="mobile-nav-study-mistakes" class="nav-link flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800/60 transition">
+          <i data-lucide="alert-octagon" class="w-4 h-4 text-rose-400 shrink-0"></i>
+          Mistake Notebook
+        </a>
+      </div>
+
+      <!-- Tests & Diagnostics -->
+      <div class="pt-3 text-[11px] font-semibold text-slate-400 px-3 py-1.5 uppercase tracking-wider font-mono">Testing & Analysis</div>
+
+      <a href="#tests" onclick="navigateAndClose('tests')" id="mobile-nav-tests" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800/60 transition">
+        <i data-lucide="file-check-2" class="w-4 h-4 text-slate-400 shrink-0"></i>
+        Tests
+      </a>
+
+      <a href="#analytics" onclick="navigateAndClose('analytics')" id="mobile-nav-analytics" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800/60 transition">
+        <i data-lucide="bar-chart-3" class="w-4 h-4 text-slate-400 shrink-0"></i>
+        Analytics
+      </a>
+
+      <a href="#intelligence" onclick="navigateAndClose('intelligence')" id="mobile-nav-intelligence" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800/60 transition">
+        <i data-lucide="brain-circuit" class="w-4 h-4 text-violet-400 shrink-0"></i>
+        Intelligence
+      </a>
+
+      <a href="#execution" onclick="navigateAndClose('execution')" id="mobile-nav-execution" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800/60 transition">
+        <i data-lucide="play-circle" class="w-4 h-4 text-cyan-400 shrink-0"></i>
+        Execution
+      </a>
+
+      <a href="#ai-mentor" onclick="navigateAndClose('ai-mentor')" id="mobile-nav-ai-mentor" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800/60 transition">
+        <i data-lucide="bot" class="w-4 h-4 text-indigo-400 shrink-0"></i>
+        AI Mentor
+        <span class="ml-auto text-[10px] px-1.5 py-0.5 rounded bg-indigo-950 text-indigo-300 border border-indigo-800 font-mono">Assistant</span>
+      </a>
+
+      <!-- Records & System -->
+      <div class="pt-3 text-[11px] font-semibold text-slate-400 px-3 py-1.5 uppercase tracking-wider font-mono">Records</div>
+
+      <a href="#history" onclick="navigateAndClose('history')" id="mobile-nav-history" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800/60 transition">
+        <i data-lucide="history" class="w-4 h-4 text-slate-400 shrink-0"></i>
+        History
+      </a>
+
+      <a href="#settings" onclick="navigateAndClose('settings')" id="mobile-nav-settings" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800/60 transition">
+        <i data-lucide="settings" class="w-4 h-4 text-slate-400 shrink-0"></i>
+        Settings
+      </a>
+    </nav>
+
+    <!-- Subject Color Legend Footer -->
+    <div class="p-3 border-t border-[#24344D] bg-[#0d1420]/80 shrink-0">
+      <div class="text-[10px] font-mono uppercase text-slate-400 mb-1.5">Subject Legend</div>
+      <div class="flex items-center justify-between text-xs font-medium">
+        <span class="flex items-center gap-1.5 text-blue-400">
+          <span class="w-2.5 h-2.5 rounded-full bg-[#2563EB]"></span> Phy
+        </span>
+        <span class="flex items-center gap-1.5 text-green-400">
+          <span class="w-2.5 h-2.5 rounded-full bg-[#16A34A]"></span> Chem
+        </span>
+        <span class="flex items-center gap-1.5 text-yellow-400">
+          <span class="w-2.5 h-2.5 rounded-full bg-[#CA8A04]"></span> Maths
+        </span>
+      </div>
     </div>
   </div>
 
@@ -1153,10 +1238,41 @@
       <section id="view-ai-mentor" class="app-view hidden space-y-6">
         <div class="border-b border-[#24344D] pb-4">
           <h2 class="text-xl font-bold text-white">AI Mentor</h2>
-          <p class="text-xs text-slate-400">Grounded advice from stored Planner state.</p>
+          <p class="text-xs text-slate-400">Intelligent preparation assistant for EduCore OS.</p>
         </div>
-        <div class="card-base p-5 text-center text-xs text-slate-400">
-          AI Mentor remains a lightweight placeholder. Preparation Intelligence provides deterministic, data-derived study priorities without an external AI service.
+
+        <div class="flex items-center justify-center min-h-[24rem] sm:min-h-[calc(100vh-14.5rem)] py-4">
+          <div id="ai-mentor-coming-soon-card" class="relative w-full max-w-2xl overflow-hidden rounded-2xl border border-[#24344D] bg-gradient-to-br from-[#0F172A] via-[#131E34] to-[#0B1221] px-6 py-12 sm:px-10 sm:py-16 text-center shadow-[0_20px_50px_rgba(2,6,23,0.65),0_0_40px_rgba(59,130,246,0.08)]">
+            <div aria-hidden="true" class="pointer-events-none absolute -top-24 left-1/2 -translate-x-1/2 h-56 w-80 rounded-full bg-gradient-to-b from-blue-500/20 via-cyan-400/10 to-transparent blur-3xl"></div>
+            <div aria-hidden="true" class="pointer-events-none absolute -bottom-24 right-1/4 h-44 w-64 rounded-full bg-gradient-to-t from-cyan-500/10 to-transparent blur-3xl"></div>
+
+            <div class="relative z-10 flex flex-col items-center space-y-5">
+              <div class="flex h-16 w-16 sm:h-20 sm:w-20 items-center justify-center rounded-2xl border border-cyan-500/30 bg-gradient-to-br from-blue-600/20 via-cyan-500/10 to-slate-900/80 shadow-[0_0_30px_rgba(6,182,212,0.16)]">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="h-8 w-8 sm:h-9 sm:w-9 text-cyan-300" aria-hidden="true">
+                  <path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"></path>
+                  <path d="M20 3v4"></path>
+                  <path d="M22 5h-4"></path>
+                  <path d="M4 17v2"></path>
+                  <path d="M5 18H3"></path>
+                </svg>
+              </div>
+
+              <div class="inline-flex items-center gap-2 rounded-full border border-blue-500/30 bg-blue-950/50 px-3.5 py-1 text-[11px] font-mono uppercase tracking-[0.2em] text-cyan-300">
+                <span class="h-1.5 w-1.5 rounded-full bg-cyan-400"></span>
+                <span>EduCore AI</span>
+              </div>
+
+              <h3 class="text-3xl sm:text-5xl font-bold uppercase tracking-[0.14em] bg-gradient-to-r from-white via-blue-100 to-cyan-300 bg-clip-text text-transparent">
+                COMING SOON
+              </h3>
+
+              <div aria-hidden="true" class="h-px w-24 bg-gradient-to-r from-transparent via-cyan-400/60 to-transparent"></div>
+
+              <p class="max-w-md text-sm sm:text-base text-slate-300 leading-relaxed">
+                A smarter learning experience is on its way.
+              </p>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -2479,7 +2595,7 @@
       'analytics': { title: 'Analytics Engine', subtitle: 'Derived performance patterns from recorded tests' },
       'intelligence': { title: 'Preparation Intelligence', subtitle: 'Cross-module evidence and explainable priorities' },
       'execution': { title: 'Execution Center', subtitle: 'A focused plan for your next study actions' },
-      'ai-mentor': { title: 'AI Mentor', subtitle: 'Explainable guidance grounded in your stored data' },
+      'ai-mentor': { title: 'AI Mentor', subtitle: 'Intelligent study assistance — Coming Soon' },
       'history': { title: 'History & Archive', subtitle: 'Meaningful activity and a unified view of archived records' },
       'settings': { title: 'System & Data Settings', subtitle: 'Backup, restore, and application preferences' }
     };
@@ -8869,6 +8985,8 @@ showToast(`Target achieved! "${goal.title}"`, 'success');
       document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
       const activeLink = document.getElementById(`nav-${viewId}`);
       if (activeLink) activeLink.classList.add('active');
+      const mobileActiveLink = document.getElementById(`mobile-nav-${viewId}`);
+      if (mobileActiveLink) mobileActiveLink.classList.add('active');
 
       const meta = viewMetadata[viewId];
       if (meta) {
@@ -8908,7 +9026,7 @@ showToast(`Target achieved! "${goal.title}"`, 'success');
         renderHistory();
       }
 
-      lucide.createIcons();
+      if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
     }
 
     function toggleMobileMenu() {
@@ -8922,6 +9040,7 @@ showToast(`Target achieved! "${goal.title}"`, 'success');
       } else {
         drawer.classList.remove('-translate-x-full');
         backdrop.classList.remove('hidden');
+        if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
       }
     }
 
